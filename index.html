@@ -126,7 +126,7 @@ function render(filter = '') {
       const btn = document.createElement('a');
       btn.className = 'btn' + (p.stock === 0 ? ' disabled' : '');
       btn.href = `https://wa.me/51942434659?text=Hola, me interesa el modelo ${p.name}`;
-      btn.innerHTML = `<img src='imagenes/whatsapp-logo.png' alt='WhatsApp'>Comprar ahora`;
+      btn.innerHTML = `<img src='imagenes/whatsapp-logo.png' alt='WhatsApp' style='width:18px;height:auto;margin-right:5px;'>Comprar ahora`;
       card.appendChild(btn);
 
       grid.appendChild(card);
@@ -146,7 +146,7 @@ function openDetail(p, brand) {
       <h3>${p.name}</h3>
       <img src="${p.image}" alt="${p.name}">
       <p class="price">Precio: S/ ${p.price}</p>
-      ${p.stock === 0 ? '<p style="color:red">AGOTADO</p>' : `<a class='btn' href='https://wa.me/51942434659?text=Hola, me interesa el modelo ${p.name}'><img src='imagenes/whatsapp-logo.png' alt='WhatsApp'>Comprar ahora</a>`}
+      ${p.stock === 0 ? '<p style="color:red">AGOTADO</p>' : `<a class='btn' href='https://wa.me/51942434659?text=Hola, me interesa el modelo ${p.name}'><img src='imagenes/whatsapp-logo.png' alt='WhatsApp' style='width:18px;height:auto;margin-right:5px;'>Comprar ahora</a>`}
     </div>
   `;
 }
