@@ -1,16 +1,72 @@
 {
-  "TARMAC": [
+  "HOTWHEELS": [
+    { "name": "Bugatti 35", "price": 35, "stock": 2, "image": "" },
+    { "name": "Cruiser 35", "price": 35, "stock": 2, "image": "" },
+    { "name": "Huracan LWK", "price": 35, "stock": 1, "image": "" },
+    { "name": "Mazda 787B", "price": 35, "stock": 1, "image": "" },
+    { "name": "Mustang FYF", "price": 35, "stock": 2, "image": "" },
+    { "name": "SkyStriker GIJOE", "price": 35, "stock": 1, "image": "" },
+
     {
-      "name": "Porsche 911 GT3 R Driftshop Special Edition",
-      "price": 230,
-      "stock": 1,
-      "image": "imagenes/TarmacDriftshop.webp"
+      "name": "Fast & Furious 25th Anniversary Set (Incluye Eclipse Spectraflame, Real Riders)",
+      "price": 300,
+      "stock": 10,
+      "image": ""
     },
     {
-      "name": "Porsche 911 (992) GT3 RS – White – Limited to 999 pcs",
-      "price": 170,
+      "name": "Team Transport 2025 H (AE86, Plymouth Duster, Ferrari 250 GTO & Fiat 642)",
+      "price": 300,
       "stock": 1,
-      "image": "imagenes/tarmacMinichamps.webp"
+      "image": ""
+    },
+    {
+      "name": "W Motors Lykan Hypersport",
+      "price": 35,
+      "stock": 1,
+      "image": ""
+    }
+  ],
+
+  "M2": [
+    { "name": "Cheyenne 1970", "price": 70, "stock": 1, "image": "" }
+  ],
+
+  "MiniGT - Kaido House": [
+    {
+      "name": "Grasshopper",
+      "price": 100,
+      "stock": 1,
+      "image": "imagenes/Grasshopper.webp"
+    },
+    {
+      "name": "Nissan Veilside",
+      "price": 80,
+      "stock": 1,
+      "image": "imagenes/NissanVeilside.webp"
+    },
+    {
+      "name": "Toyota GR86 LB",
+      "price": 70,
+      "stock": 1,
+      "image": ""
+    },
+    {
+      "name": "Rexy - Porsche 911 GT3 R #77 AO Racing 2024 IMSA Daytona",
+      "price": 180,
+      "stock": 1,
+      "image": ""
+    },
+    {
+      "name": "Lamborghini Huracan LB★WORKS ver. 2 Mad Mike NIMBUL",
+      "price": 85,
+      "stock": 1,
+      "image": ""
+    },
+    {
+      "name": "Qube Carz Set Nissan Skyline / R35 / ER34 / S15",
+      "price": 200,
+      "stock": 1,
+      "image": "imagenes/QubeCarz.webp"
     }
   ],
 
@@ -29,24 +85,21 @@
     }
   ],
 
-  "MiniGT / Kaido House": [
+  "STAR RACE": [
     {
-      "name": "Nissan Veilside",
-      "price": 80,
+      "name": "Star Race Iron Dame",
+      "price": 75,
       "stock": 1,
-      "image": "imagenes/NissanVeilside.webp"
-    },
-    {
-      "name": "Grasshopper",
-      "price": 100,
-      "stock": 1,
-      "image": "imagenes/Grasshopper.webp"
-    },
-    {
-      "name": "Qube Carz Set Nissan Skyline / R35 / ER34 / S15",
-      "price": 200,
-      "stock": 1,
-      "image": "imagenes/QubeCarz.webp"
+      "image": ""
     }
-  ]
-}
+  ],
+
+  "TARMAC": [
+    {
+      "name": "Porsche 911 GT3 R Driftshop Special Edition",
+      "price": 230,
+      "stock": 1,
+      "image": "imagenes/TarmacDriftshop.webp"
+    },
+    {
+      "name": "Porsche 911 (992
