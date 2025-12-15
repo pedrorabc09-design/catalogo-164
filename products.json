@@ -28,31 +28,31 @@
       "name": "Mustang FYF",
       "price": 35,
       "stock": 2,
-      "image": ""
+      "image": "imagenes/Mustangfyf.webp"
     },
     {
       "name": "SkyStriker GIJOE",
       "price": 35,
       "stock": 1,
-      "image": ""
+      "image": "imagenes/Skystriker.webp"
     },
     {
       "name": "Fast & Furious 25th Anniversary Set (Incluye Eclipse Spectraflame)",
       "price": 300,
       "stock": 10,
-      "image": ""
+      "image": "imagenes/FastFuriosSet5autos.webp"
     },
     {
       "name": "Team Transport 2025 H (AE86 / Duster / Ferrari 250 GTO / Fiat 642)",
       "price": 300,
       "stock": 1,
-      "image": ""
+      "image": "imagenes/TeamTransportH.webp"
     },
     {
       "name": "W Motors Lykan Hypersport",
       "price": 35,
       "stock": 1,
-      "image": ""
+      "image": "imagenes/LykanSport.webp"
     }
   ],
 
