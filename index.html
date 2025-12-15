@@ -49,7 +49,7 @@ const app = document.getElementById('app');
 const searchInput = document.getElementById('search');
 let data = {
   "Hot Wheels": [
-    {"name":"Hot Wheels Premium Car Culture Eurospeed Bugatti Bolide","price":35,"stock":2,"image":"imagenes/tarmacMinichamps.webp"},
+    {"name":"Hot Wheels Premium Car Culture Eurospeed Bugatti Bolide","price":35,"stock":2,"image":"imagenes/BugattiBolide.webp"},
     {"name":"Hot Wheels Premium Fast & Furious Toyota FJ Cruiser","price":35,"stock":2,"image":"imagenes/ToyotaCruiser.webp"},
     {"name":"Hot Wheels 2024 Premium Car Culture Slide Street 2 - LB-Works Lamborghini Huracan","price":35,"stock":1,"image":"imagenes/HuracanLB.webp"},
     {"name":"Hot Wheels Premium Car Culture Hammer Drop Mazda 787B.","price":35,"stock":1,"image":"imagenes/Mazda787b.webp"},
@@ -91,7 +91,7 @@ function render(filter = '') {
   for (const brand in data) {
     data[brand].forEach(p => {
       if (p.originalPrice && p.originalPrice > p.price) {
-        productosConDescuento.push({...p, brand});
+        productosConDescuento.push({...p, brand}); // <-- marca incluida
       }
     });
   }
@@ -127,7 +127,7 @@ function render(filter = '') {
     grid.className = 'grid';
 
     products.forEach(p => {
-      const card = createCard(p);
+      const card = createCard({...p, brand}); // <-- también aseguramos brand aquí
       grid.appendChild(card);
     });
 
@@ -135,7 +135,6 @@ function render(filter = '') {
   }
 }
 
-// Función para crear la tarjeta de producto
 function createCard(p) {
   const card = document.createElement('div');
   card.className = 'card';
@@ -183,7 +182,6 @@ function createCard(p) {
   return card;
 }
 
-// Pantalla detalle
 function openDetail(p, brand) {
   app.innerHTML = `
     <div class="detail">
