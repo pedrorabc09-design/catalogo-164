@@ -1,11 +1,41 @@
 {
   "HOTWHEELS": [
-    { "name": "Bugatti 35", "price": 35, "stock": 2, "image": "" },
-    { "name": "Cruiser 35", "price": 35, "stock": 2, "image": "" },
-    { "name": "Huracan LWK", "price": 35, "stock": 1, "image": "" },
-    { "name": "Mazda 787B", "price": 35, "stock": 1, "image": "" },
-    { "name": "Mustang FYF", "price": 35, "stock": 2, "image": "" },
-    { "name": "SkyStriker GIJOE", "price": 35, "stock": 1, "image": "" },
+    {
+      "name": "Bugatti 35",
+      "price": 35,
+      "stock": 2,
+      "image": "imagenes/BugattiBolide.webp"
+    },
+    {
+      "name": "Cruiser 35",
+      "price": 35,
+      "stock": 2,
+      "image": "imagenes/ToyotaCruiser.webp"
+    },
+    {
+      "name": "Huracan LWK",
+      "price": 35,
+      "stock": 1,
+      "image": "imagenes/HuracanLB.webp"
+    },
+    {
+      "name": "Mazda 787B",
+      "price": 35,
+      "stock": 1,
+      "image": "imagenes/Mazda787b.webp"
+    },
+    {
+      "name": "Mustang FYF",
+      "price": 35,
+      "stock": 2,
+      "image": ""
+    },
+    {
+      "name": "SkyStriker GIJOE",
+      "price": 35,
+      "stock": 1,
+      "image": ""
+    },
     {
       "name": "Fast & Furious 25th Anniversary Set (Incluye Eclipse Spectraflame)",
       "price": 300,
@@ -27,7 +57,12 @@
   ],
 
   "M2": [
-    { "name": "Cheyenne 1970", "price": 70, "stock": 1, "image": "" }
+    {
+      "name": "Cheyenne 1970",
+      "price": 70,
+      "stock": 1,
+      "image": "imagenes/Cheyenne.webp"
+    }
   ],
 
   "MiniGT - Kaido House": [
@@ -47,19 +82,19 @@
       "name": "Toyota GR86 LB",
       "price": 70,
       "stock": 1,
-      "image": ""
+      "image": "imagenes/ToyotaGR86.webp"
     },
     {
       "name": "Rexy Porsche 911 GT3 R #77 AO Racing Daytona 2024",
       "price": 180,
       "stock": 1,
-      "image": ""
+      "image": "imagenes/Rexy.webp"
     },
     {
       "name": "Lamborghini Huracan LB WORKS Mad Mike NIMBUL",
       "price": 85,
       "stock": 1,
-      "image": ""
+      "image": "imagenes/Nimbul.webp"
     },
     {
       "name": "Qube Carz Set Nissan Skyline / R35 / ER34 / S15",
@@ -89,7 +124,7 @@
       "name": "Star Race Iron Dame",
       "price": 75,
       "stock": 1,
-      "image": ""
+      "image": "imagenes/IronDames.webp"
     }
   ],
 
