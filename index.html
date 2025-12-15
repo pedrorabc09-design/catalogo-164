@@ -85,6 +85,34 @@ let data = {
 
 function render(filter = '') {
   app.innerHTML = '';
+
+  // 1️⃣ Productos con descuento
+  let productosConDescuento = [];
+  for (const brand in data) {
+    data[brand].forEach(p => {
+      if (p.originalPrice && p.originalPrice > p.price) {
+        productosConDescuento.push({...p, brand});
+      }
+    });
+  }
+
+  if (productosConDescuento.length > 0) {
+    const h2 = document.createElement('h2');
+    h2.textContent = "Productos con descuento";
+    app.appendChild(h2);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+
+    productosConDescuento.forEach(p => {
+      const card = createCard(p);
+      grid.appendChild(card);
+    });
+
+    app.appendChild(grid);
+  }
+
+  // 2️⃣ Secciones por marca
   for (const brand in data) {
     const products = data[brand].filter(p =>
       p.name.toLowerCase().includes(filter) || brand.toLowerCase().includes(filter)
@@ -99,49 +127,7 @@ function render(filter = '') {
     grid.className = 'grid';
 
     products.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'card';
-
-      if (p.stock === 0) {
-        const ag = document.createElement('div');
-        ag.className = 'agotado';
-        ag.textContent = 'AGOTADO';
-        card.appendChild(ag);
-      }
-
-      if (p.originalPrice && p.originalPrice > p.price) {
-        const discount = document.createElement('div');
-        discount.className = 'discount';
-        discount.textContent = `${Math.round((p.originalPrice - p.price)/p.originalPrice*100)}% OFF`;
-        card.appendChild(discount);
-      }
-
-      if (p.image) {
-        const img = document.createElement('img');
-        img.src = p.image;
-        img.onclick = () => openDetail(p, brand);
-        card.appendChild(img);
-      }
-
-      const name = document.createElement('h3');
-      name.textContent = p.name;
-      card.appendChild(name);
-
-      const price = document.createElement('div');
-      price.className = 'price';
-      if (p.originalPrice && p.originalPrice > p.price) {
-        price.innerHTML = `<span class="price-original">S/ ${p.originalPrice}</span> S/ ${p.price}`;
-      } else {
-        price.textContent = `S/ ${p.price}`;
-      }
-      card.appendChild(price);
-
-      const btn = document.createElement('a');
-      btn.className = 'btn' + (p.stock === 0 ? ' disabled' : '');
-      btn.href = `https://wa.me/51942434659?text=Hola, me interesa el modelo ${p.name}`;
-      btn.innerHTML = `<img src='imagenes/whatsapp-logo.png' alt='WhatsApp' style='width:18px;height:auto;margin-right:5px;'>Comprar ahora`;
-      card.appendChild(btn);
-
+      const card = createCard(p);
       grid.appendChild(card);
     });
 
@@ -149,6 +135,55 @@ function render(filter = '') {
   }
 }
 
+// Función para crear la tarjeta de producto
+function createCard(p) {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  if (p.stock === 0) {
+    const ag = document.createElement('div');
+    ag.className = 'agotado';
+    ag.textContent = 'AGOTADO';
+    card.appendChild(ag);
+  }
+
+  if (p.originalPrice && p.originalPrice > p.price) {
+    const discount = document.createElement('div');
+    discount.className = 'discount';
+    discount.textContent = `${Math.round((p.originalPrice - p.price)/p.originalPrice*100)}% OFF`;
+    card.appendChild(discount);
+  }
+
+  if (p.image) {
+    const img = document.createElement('img');
+    img.src = p.image;
+    img.onclick = () => openDetail(p, p.brand);
+    card.appendChild(img);
+  }
+
+  const name = document.createElement('h3');
+  name.textContent = p.name;
+  card.appendChild(name);
+
+  const price = document.createElement('div');
+  price.className = 'price';
+  if (p.originalPrice && p.originalPrice > p.price) {
+    price.innerHTML = `<span class="price-original">S/ ${p.originalPrice}</span> S/ ${p.price}`;
+  } else {
+    price.textContent = `S/ ${p.price}`;
+  }
+  card.appendChild(price);
+
+  const btn = document.createElement('a');
+  btn.className = 'btn' + (p.stock === 0 ? ' disabled' : '');
+  btn.href = `https://wa.me/51942434659?text=Hola, me interesa el modelo ${p.name}`;
+  btn.innerHTML = `<img src='imagenes/whatsapp-logo.png' alt='WhatsApp' style='width:18px;height:auto;margin-right:5px;'>Comprar ahora`;
+  card.appendChild(btn);
+
+  return card;
+}
+
+// Pantalla detalle
 function openDetail(p, brand) {
   app.innerHTML = `
     <div class="detail">
