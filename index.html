@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo 1:64</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h1>🚗 Catálogo carros 1:64</h1>
+<p class="sub">Stock real – pedidos por WhatsApp</p>
+
+<div id="catalogo"></div>
+
+<script>
+const WHATSAPP = "51942434659";
+
+fetch("products.json")
+  .then(res => res.json())
+  .then(data => {
+    const cont = document.getElementById("catalogo");
+
+    for (const marca in data) {
+      const h2 = document.createElement("h2");
+      h2.textContent = marca;
+      cont.appendChild(h2);
+
+      const grid = document.createElement("div");
+      grid.className = "grid";
+
+      data[marca].forEach(p => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const estado = p.stock > 0
+          ? `<span class="ok">🟢 Disponible (${p.stock})</span>`
+          : `<span class="bad">🔴 Agotado</span>`;
+
+        const mensaje = encodeURIComponent(
+          `Hola, quiero el modelo: ${p.name} (${marca})`
+        );
+
+        card.innerHTML = `
+          <h3>${p.name}</h3>
+          <p class="price">S/ ${p.price}</p>
+          ${estado}
+          ${p.stock > 0 ? `
+            <a class="btn" target="_blank"
+              href="https://wa.me/${WHATSAPP}?text=${mensaje}">
+              📲 Pedir por WhatsApp
+            </a>` : ""}
+        `;
+
+        grid.appendChild(card);
+      });
+
+      cont.appendChild(grid);
+    }
+  });
+</script>
+
+</body>
+</html>

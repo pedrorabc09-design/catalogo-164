@@ -1,0 +1,35 @@
+{
+  "HOTWHEELS": [
+    { "name": "Bugatti", "price": 35, "stock": 2 },
+    { "name": "Cruiser", "price": 35, "stock": 2 },
+    { "name": "Huracan LWK", "price": 35, "stock": 1 },
+    { "name": "Mazda 787B", "price": 35, "stock": 1 },
+    { "name": "Mustang FYF", "price": 35, "stock": 2 },
+    { "name": "SkyStriker GIJOE", "price": 35, "stock": 1 },
+    { "name": "Fast & Furious 25th Anniversary Set (5 autos – Eclipse Spectraflame)", "price": 300, "stock": 10, "type": "set" },
+    { "name": "Team Transport 2025 H (AE86, Duster, Ferrari 250 GTO & Fiat 642)", "price": 300, "stock": 1, "type": "set" },
+    { "name": "W Motors Lykan Hypersport", "price": 35, "stock": 1 }
+  ],
+  "M2": [
+    { "name": "Cheyenne 1970", "price": 70, "stock": 1 }
+  ],
+  "MiniGT / Kaido House": [
+    { "name": "Grasshopper", "price": 100, "stock": 1 },
+    { "name": "Nissan Veilside", "price": 80, "stock": 1 },
+    { "name": "Toyota GR86 LB", "price": 70, "stock": 1 },
+    { "name": "Rexy Porsche 911 GT3 R #77 AO Racing IMSA Daytona", "price": 180, "stock": 1 },
+    { "name": "Lamborghini Huracan LB★WORKS ver.2 Mad Mike NIMBUL", "price": 85, "stock": 1 },
+    { "name": "Qube Carz Set Skyline / R35 / ER34 / S15", "price": 200, "stock": 1, "type": "set" }
+  ],
+  "POP RACE": [
+    { "name": "Hakosuka", "price": 80, "stock": 1 },
+    { "name": "Top Secret GT300 Supra Carbon Hood", "price": 85, "stock": 1 }
+  ],
+  "STAR RACE": [
+    { "name": "Iron Dame", "price": 75, "stock": 1 }
+  ],
+  "TARMAC": [
+    { "name": "Porsche 911 GT3 R Driftshop Special Edition", "price": 230, "stock": 1 },
+    { "name": "Porsche 911 (992) GT3 RS White – Limited 999 pcs", "price": 170, "stock": 1 }
+  ]
+}
