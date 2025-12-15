@@ -5,193 +5,125 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Catálogo 1:64</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f4f4f4;
-    }
-    header {
-      background: #111;
-      color: #fff;
-      padding: 16px;
-      text-align: center;
-    }
-    .container {
-      padding: 16px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    h2 {
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 6px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    h1 { text-align: center; }
+    h2 { margin-top: 40px; }
 
-    @media (max-width: 1024px) {
-      .grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
+    .search { max-width: 400px; margin: 20px auto; }
+    .search input { width: 100%; padding: 10px; font-size: 16px; }
 
-    @media (max-width: 768px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: white; border-radius: 8px; padding: 10px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
-    @media (max-width: 480px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    .card {
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-    .card img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      cursor: pointer;
-    }
+    .card img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; }
+    .card h3 { font-size: 16px; margin: 10px 0 5px; }
+    .price { font-weight: bold; }
 
-    /* Modal imagen completa */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 8px;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .card-content {
-      padding: 12px;
-      flex: 1;
-    }
-    .price {
-      font-weight: bold;
-      margin: 6px 0;
-    }
-    .stock {
-      font-size: 0.9em;
-      color: #555;
-    }
-    .agotado {
-      position: absolute;
-      top: 10px;
-      left: -40px;
-      background: #c00;
-      color: #fff;
-      padding: 6px 50px;
-      transform: rotate(-45deg);
-      font-weight: bold;
-      font-size: 0.8em;
-    }
-    .btn {
-      display: block;
-      text-align: center;
-      padding: 10px;
-      background: #25D366;
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .btn.disabled {
-      background: #999;
-      pointer-events: none;
-    }
+    .agotado { position: absolute; top: 10px; left: 10px; background: red; color: white; padding: 4px 6px; font-size: 12px; border-radius: 4px; }
+
+    .btn { display: block; text-align: center; background: #25d366; color: white; padding: 8px; border-radius: 6px; margin-top: 8px; text-decoration: none; }
+    .btn.disabled { background: #999; pointer-events: none; }
+
+    /* Página detalle */
+    .detail { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+    .detail img { width: 100%; max-height: 500px; object-fit: contain; }
+    .back { margin-bottom: 10px; display: inline-block; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Catálogo Carros 1:64</h1>
-    <p>Disponibilidad en tiempo real</p>
-  </header>
 
-  <div class="container" id="catalogo"></div>
+<h1>Catálogo 1:64</h1>
 
-  <script>
-    const phone = "51XXXXXXXXX"; // <-- cambia por tu número
+<div class="search">
+  <input type="text" id="search" placeholder="Buscar modelo o marca..." />
+</div>
 
-    fetch('products.json')
-      .then(res => res.json())
-      .then(data => {
-        const cont = document.getElementById('catalogo');
+<div id="app"></div>
 
-        for (const brand in data) {
-          const h2 = document.createElement('h2');
-          h2.textContent = brand;
-          cont.appendChild(h2);
+<script>
+const app = document.getElementById('app');
+const searchInput = document.getElementById('search');
+let data = {};
 
-          const grid = document.createElement('div');
-          grid.className = 'grid';
+fetch('products.json')
+  .then(r => r.json())
+  .then(json => {
+    data = json;
+    render();
+  });
 
-          data[brand].forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'card';
+function render(filter = '') {
+  app.innerHTML = '';
+  for (const brand in data) {
+    const products = data[brand].filter(p =>
+      p.name.toLowerCase().includes(filter) || brand.toLowerCase().includes(filter)
+    );
+    if (!products.length) continue;
 
-            if (p.stock === 0) {
-              const ag = document.createElement('div');
-              ag.className = 'agotado';
-              ag.textContent = 'AGOTADO';
-              card.appendChild(ag);
-            }
+    const h2 = document.createElement('h2');
+    h2.textContent = brand;
+    app.appendChild(h2);
 
-            if (p.image) {
-              const img = document.createElement('img');
-              img.src = p.image;
-              img.alt = p.name;
-              card.appendChild(img);
-            }
+    const grid = document.createElement('div');
+    grid.className = 'grid';
 
-            const content = document.createElement('div');
-            content.className = 'card-content';
-            content.innerHTML = `
-              <h3>${p.name}</h3>
-              <div class="price">S/ ${p.price}</div>
-              <div class="stock">Stock: ${p.stock}</div>
-            `;
-            card.appendChild(content);
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
 
-            const msg = encodeURIComponent(`Hola, me interesa el modelo ${p.name} a S/ ${p.price}`);
-            const btn = document.createElement('a');
-            btn.href = `https://wa.me/${phone}?text=${msg}`;
-            btn.textContent = 'Comprar por WhatsApp';
-            btn.className = 'btn' + (p.stock === 0 ? ' disabled' : '');
-            card.appendChild(btn);
+      if (p.stock === 0) {
+        const ag = document.createElement('div');
+        ag.className = 'agotado';
+        ag.textContent = 'AGOTADO';
+        card.appendChild(ag);
+      }
 
-            grid.appendChild(card);
-          });
+      if (p.image) {
+        const img = document.createElement('img');
+        img.src = p.image;
+        img.onclick = () => openDetail(p, brand);
+        card.appendChild(img);
+      }
 
-          cont.appendChild(grid);
-        }
-      })
-      .catch(() => {
-        document.getElementById('catalogo').innerHTML = '<p>Error cargando el catálogo</p>';
-      });
-  </script>
-  <!-- Modal imagen -->
-  <div class="modal" id="imgModal" onclick="this.classList.remove('active')">
-    <img id="modalImg" src="" alt="Imagen completa">
-  </div>
+      const name = document.createElement('h3');
+      name.textContent = p.name;
+      card.appendChild(name);
+
+      const price = document.createElement('div');
+      price.className = 'price';
+      price.textContent = `S/ ${p.price}`;
+      card.appendChild(price);
+
+      const btn = document.createElement('a');
+      btn.textContent = 'Comprar por WhatsApp';
+      btn.className = 'btn' + (p.stock === 0 ? ' disabled' : '');
+      btn.href = `https://wa.me/51942434659?text=Hola, me interesa el modelo ${p.name}`;
+      card.appendChild(btn);
+
+      grid.appendChild(card);
+    });
+
+    app.appendChild(grid);
+  }
+}
+
+function openDetail(p, brand) {
+  app.innerHTML = `
+    <div class="detail">
+      <a class="back" href="#" onclick="render(searchInput.value.toLowerCase()); return false;">← Volver</a>
+      <h2>${brand}</h2>
+      <h3>${p.name}</h3>
+      <img src="${p.image}" alt="${p.name}">
+      <p class="price">Precio: S/ ${p.price}</p>
+      ${p.stock === 0 ? '<p style="color:red">AGOTADO</p>' : `<a class="btn" href="https://wa.me/51942434659?text=Hola, me interesa el modelo ${p.name}">Comprar por WhatsApp</a>`}
+    </div>
+  `;
+}
+
+searchInput.addEventListener('input', e => {
+  render(e.target.value.toLowerCase());
+});
+</script>
 
 </body>
 </html>
