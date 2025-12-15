@@ -28,7 +28,8 @@
     /* Página detalle */
     .detail { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; font-family: 'Roboto Slab', serif; }
     .detail img { width: 100%; max-height: 500px; object-fit: contain; }
-    .back { margin-bottom: 10px; display: inline-block; }
+    .back { margin-bottom: 10px; display: inline-block; cursor: pointer; }
+    .back img { width: 50px; height: auto; }
   </style>
 </head>
 <body>
@@ -111,7 +112,9 @@ function render(filter = '') {
 function openDetail(p, brand) {
   app.innerHTML = `
     <div class="detail">
-      <a class="back" href="#" onclick="render(searchInput.value.toLowerCase()); return false;">← Volver</a>
+      <div class="back" onclick="render(searchInput.value.toLowerCase());">
+        <img src="imagenes/Volver.webp" alt="Volver">
+      </div>
       <h2>${brand}</h2>
       <h3>${p.name}</h3>
       <img src="${p.image}" alt="${p.name}">
