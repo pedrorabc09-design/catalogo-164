@@ -1,142 +1,162 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo Carros 1:64</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo 1:64</title>
   <style>
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #111;
+      color: #fff;
       padding: 16px;
-      background: #f5f5f5;
-    }
-
-    h1 {
       text-align: center;
-      margin-bottom: 5px;
     }
-
-    .sub {
-      text-align: center;
-      color: #666;
-      margin-bottom: 25px;
+    .container {
+      padding: 16px;
+      max-width: 1200px;
+      margin: auto;
     }
-
     h2 {
-      margin-top: 40px;
       border-bottom: 2px solid #ddd;
-      padding-bottom: 5px;
+      padding-bottom: 6px;
     }
-
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 16px;
-      margin-top: 16px;
     }
 
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
     .card {
       background: #fff;
-      border-radius: 10px;
-      padding: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,.1);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
+      position: relative;
     }
-
     .card img {
       width: 100%;
-      height: 180px;
-      object-fit: contain;
-      margin-bottom: 10px;
+      height: 160px;
+      object-fit: cover;
     }
-
-    .card h3 {
-      font-size: 16px;
-      margin: 5px 0;
+    .card-content {
+      padding: 12px;
+      flex: 1;
     }
-
     .price {
       font-weight: bold;
-      margin: 4px 0;
+      margin: 6px 0;
     }
-
-    .ok {
-      color: green;
-      font-size: 14px;
+    .stock {
+      font-size: 0.9em;
+      color: #555;
     }
-
-    .bad {
-      color: red;
-      font-size: 14px;
-    }
-
-    .btn {
-      margin-top: auto;
-      background: #25D366;
+    .agotado {
+      position: absolute;
+      top: 10px;
+      left: -40px;
+      background: #c00;
       color: #fff;
+      padding: 6px 50px;
+      transform: rotate(-45deg);
+      font-weight: bold;
+      font-size: 0.8em;
+    }
+    .btn {
+      display: block;
       text-align: center;
       padding: 10px;
-      border-radius: 6px;
+      background: #25D366;
+      color: #fff;
       text-decoration: none;
       font-weight: bold;
-      margin-top: 10px;
     }
-
-    .btn:hover {
-      background: #1ebe5d;
+    .btn.disabled {
+      background: #999;
+      pointer-events: none;
     }
   </style>
 </head>
-
 <body>
+  <header>
+    <h1>Catálogo Carros 1:64</h1>
+    <p>Disponibilidad en tiempo real</p>
+  </header>
 
-  <h1>🚗 Catálogo carros 1:64</h1>
-  <p class="sub">Stock real – pedidos por WhatsApp</p>
-
-  <div id="catalogo"></div>
+  <div class="container" id="catalogo"></div>
 
   <script>
-    const WHATSAPP = "51942434659";
+    const phone = "51XXXXXXXXX"; // <-- cambia por tu número
 
-    fetch("products.json")
+    fetch('products.json')
       .then(res => res.json())
       .then(data => {
-        const cont = document.getElementById("catalogo");
+        const cont = document.getElementById('catalogo');
 
-        for (const marca in data) {
-          const h2 = document.createElement("h2");
-          h2.textContent = marca;
+        for (const brand in data) {
+          const h2 = document.createElement('h2');
+          h2.textContent = brand;
           cont.appendChild(h2);
 
-          const grid = document.createElement("div");
-          grid.className = "grid";
+          const grid = document.createElement('div');
+          grid.className = 'grid';
 
-          data[marca].forEach(p => {
-            const card = document.createElement("div");
-            card.className = "card";
+          data[brand].forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'card';
 
-            const estado = p.stock > 0
-              ? `<span class="ok">🟢 Disponible (${p.stock})</span>`
-              : `<span class="bad">🔴 Agotado</span>`;
+            if (p.stock === 0) {
+              const ag = document.createElement('div');
+              ag.className = 'agotado';
+              ag.textContent = 'AGOTADO';
+              card.appendChild(ag);
+            }
 
-            const mensaje = encodeURIComponent(
-              `Hola, estoy interesado en el modelo: ${p.name} (${marca})`
-            );
+            if (p.image) {
+              const img = document.createElement('img');
+              img.src = p.image;
+              img.alt = p.name;
+              card.appendChild(img);
+            }
 
-            card.innerHTML = `
-              ${p.image ? `<img src="${p.image}" alt="${p.name}">` : ""}
+            const content = document.createElement('div');
+            content.className = 'card-content';
+            content.innerHTML = `
               <h3>${p.name}</h3>
-              <p class="price">S/ ${p.price}</p>
-              ${estado}
-              ${p.stock > 0 ? `
-                <a class="btn" target="_blank"
-                  href="https://wa.me/${WHATSAPP}?text=${mensaje}">
-                  📲 Pedir por WhatsApp
-                </a>` : ""}
+              <div class="price">S/ ${p.price}</div>
+              <div class="stock">Stock: ${p.stock}</div>
             `;
+            card.appendChild(content);
+
+            const msg = encodeURIComponent(`Hola, me interesa el modelo ${p.name} a S/ ${p.price}`);
+            const btn = document.createElement('a');
+            btn.href = `https://wa.me/${phone}?text=${msg}`;
+            btn.textContent = 'Comprar por WhatsApp';
+            btn.className = 'btn' + (p.stock === 0 ? ' disabled' : '');
+            card.appendChild(btn);
 
             grid.appendChild(card);
           });
@@ -145,10 +165,8 @@
         }
       })
       .catch(() => {
-        document.getElementById("catalogo").innerHTML =
-          "<p>Error cargando el catálogo</p>";
+        document.getElementById('catalogo').innerHTML = '<p>Error cargando el catálogo</p>';
       });
   </script>
-
 </body>
 </html>
