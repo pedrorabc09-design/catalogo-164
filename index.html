@@ -12,22 +12,24 @@ body {
   background: #f4f4f4;
 }
 
+/* HEADER */
 header {
-  background: #111;
+  background: linear-gradient(90deg, #1e1e1e, #2c2c2c);
   color: white;
-  padding: 10px;
+  padding: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 header img.logo {
-  height: 40px;
+  height: 42px;
 }
 
 header h1 {
   flex: 1;
   font-size: 20px;
+  margin: 0;
 }
 
 header .icons img {
@@ -36,6 +38,7 @@ header .icons img {
   cursor: pointer;
 }
 
+/* SEARCH */
 #search {
   width: 100%;
   padding: 10px;
@@ -43,12 +46,13 @@ header .icons img {
   font-size: 16px;
 }
 
+/* CONTENT */
 section {
   padding: 10px;
 }
 
 h2 {
-  margin-top: 20px;
+  margin: 20px 0 10px;
 }
 
 .grid {
@@ -57,6 +61,7 @@ h2 {
   gap: 12px;
 }
 
+/* CARD */
 .card {
   background: white;
   border-radius: 8px;
@@ -79,7 +84,7 @@ h2 {
 }
 
 .price {
-  color: #d32f2f;
+  color: #c62828;
   font-weight: bold;
 }
 
@@ -90,15 +95,16 @@ h2 {
 }
 
 .discount {
-  background: #d32f2f;
+  background: #c62828;
   color: white;
   font-size: 11px;
-  padding: 2px 6px;
+  padding: 3px 6px;
   border-radius: 4px;
   display: inline-block;
   margin-bottom: 4px;
 }
 
+/* BUTTON */
 .btn {
   margin-top: auto;
   background: #25d366;
@@ -111,6 +117,7 @@ h2 {
   justify-content: center;
   align-items: center;
   gap: 6px;
+  font-size: 14px;
 }
 
 .btn img {
@@ -161,6 +168,24 @@ function render() {
   const cont = document.getElementById("catalog");
   cont.innerHTML = "";
 
+  // 🔥 OFERTAS PRIMERO
+  const ofertas = [];
+  for (const marca in catalogo) {
+    catalogo[marca].forEach(p => {
+      if (p.originalPrice && p.originalPrice > p.price &&
+          p.name.toLowerCase().includes(q)) {
+        ofertas.push(p);
+      }
+    });
+  }
+
+  if (ofertas.length) {
+    cont.innerHTML += `<h2>🔥 Productos en oferta</h2><div class="grid"></div>`;
+    const grid = cont.querySelector(".grid:last-child");
+    ofertas.forEach(p => grid.appendChild(cardHTML(p)));
+  }
+
+  // 🧱 MARCAS
   for (const marca in catalogo) {
     const items = catalogo[marca].filter(p =>
       p.name.toLowerCase().includes(q)
@@ -169,29 +194,33 @@ function render() {
 
     cont.innerHTML += `<h2>${marca}</h2><div class="grid"></div>`;
     const grid = cont.querySelector(".grid:last-child");
-
-    items.forEach(p => {
-      let discount = "";
-      if (p.originalPrice && p.originalPrice > p.price) {
-        const percent = Math.round((1 - p.price / p.originalPrice) * 100);
-        discount = `<div class="discount">${percent}% OFF</div>`;
-      }
-
-      grid.innerHTML += `
-      <div class="card">
-        ${discount}
-        <img src="${p.image}">
-        <div class="name">${p.name}</div>
-        ${p.originalPrice ? `<div class="old">S/ ${p.originalPrice}</div>` : ""}
-        <div class="price">S/ ${p.price}</div>
-        <a class="btn ${p.stock === 0 ? "disabled" : ""}"
-           href="https://wa.me/51942434659?text=${encodeURIComponent("Hola, me interesa: " + p.name)}"
-           target="_blank">
-          <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-        </a>
-      </div>`;
-    });
+    items.forEach(p => grid.appendChild(cardHTML(p)));
   }
+}
+
+function cardHTML(p) {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  let discount = "";
+  if (p.originalPrice && p.originalPrice > p.price) {
+    const percent = Math.round((1 - p.price / p.originalPrice) * 100);
+    discount = `<div class="discount">${percent}% OFF</div>`;
+  }
+
+  card.innerHTML = `
+    ${discount}
+    <img src="${p.image}">
+    <div class="name">${p.name}</div>
+    ${p.originalPrice ? `<div class="old">S/ ${p.originalPrice}</div>` : ""}
+    <div class="price">S/ ${p.price}</div>
+    <a class="btn ${p.stock === 0 ? "disabled" : ""}"
+       href="https://wa.me/51942434659?text=${encodeURIComponent("Hola, me interesa: " + p.name)}"
+       target="_blank">
+      <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+    </a>
+  `;
+  return card;
 }
 </script>
 
