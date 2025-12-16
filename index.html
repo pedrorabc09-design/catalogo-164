@@ -38,6 +38,7 @@ header input {
   border: none;
 }
 
+/* ICONS */
 header .icons img {
   width: 28px;
   margin-left: 8px;
@@ -60,13 +61,17 @@ header .icons img {
 /* SLIDER */
 .slider {
   position: relative;
-  overflow: hidden;
+  overflow-x: auto;
+  scroll-behavior: smooth;
 }
+
+/* HIDE SCROLLBAR */
+.slider::-webkit-scrollbar { display: none; }
+.slider { scrollbar-width: none; -ms-overflow-style: none; }
 
 .track {
   display: flex;
   gap: 10px;
-  transition: transform 0.3s ease;
 }
 
 /* CARD */
@@ -80,7 +85,7 @@ header .icons img {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  animation: fadeUp 0.4s ease forwards;
+  animation: fadeUp 0.3s ease forwards;
 }
 
 .card img {
@@ -131,12 +136,10 @@ header .icons img {
   color: white;
   border-radius: 6px;
   text-decoration: none;
-  padding: 0 10px;
 }
 
 .buy-btn img {
   width: 18px;
-  height: 18px;
 }
 
 .buy-btn.disabled {
@@ -144,7 +147,7 @@ header .icons img {
   pointer-events: none;
 }
 
-/* ARROWS */
+/* ARROWS (DESKTOP ONLY) */
 .arrow {
   position: absolute;
   top: 40%;
@@ -156,8 +159,12 @@ header .icons img {
   z-index: 5;
 }
 
-.arrow.left { left: -4px; }
-.arrow.right { right: -4px; }
+.arrow.left { left: 0; }
+.arrow.right { right: 0; }
+
+@media (max-width: 768px) {
+  .arrow { display: none; }
+}
 
 /* DETAIL */
 #detail {
@@ -287,10 +294,8 @@ function section(title, products) {
     </div>
   `;
 
+  const slider = div.querySelector(".slider");
   const track = div.querySelector(".track");
-  let index = 0;
-  const visible = 4;
-  const cardWidth = 210;
 
   products.forEach(p => {
     const c = document.createElement("div");
@@ -312,25 +317,15 @@ function section(title, products) {
     track.appendChild(c);
   });
 
-  const left = div.querySelector(".left");
-  const right = div.querySelector(".right");
+  div.querySelector(".left").onclick = () =>
+    slider.scrollBy({ left: -210, behavior: "smooth" });
 
-  left.onclick = () => {
-    if (index > 0) {
-      index--;
-      track.style.transform = `translateX(-${cardWidth * index}px)`;
-    }
-  };
+  div.querySelector(".right").onclick = () =>
+    slider.scrollBy({ left: 210, behavior: "smooth" });
 
-  right.onclick = () => {
-    if (index < products.length - visible) {
-      index++;
-      track.style.transform = `translateX(-${cardWidth * index}px)`;
-    }
-  };
-
-  if (products.length <= visible) {
-    left.style.display = right.style.display = "none";
+  if (products.length <= 4) {
+    div.querySelector(".left").style.display = "none";
+    div.querySelector(".right").style.display = "none";
   }
 
   return div;
