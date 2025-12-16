@@ -12,42 +12,53 @@ body {
   background: #f3f4f6;
 }
 
-/* ===== HEADER ===== */
+/* ================= HEADER ================= */
 header {
   background: #334155;
   color: white;
-  padding: 10px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
 }
 
 header img.logo {
-  height: 40px;
+  height: 60px;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 20px;
+.search-box {
   flex: 1;
+  display: flex;
+  gap: 6px;
 }
 
-header input {
-  padding: 6px;
+.search-box input {
+  flex: 1;
+  padding: 8px;
   border-radius: 6px;
   border: none;
 }
 
-header .icons img {
-  width: 28px;
+.search-box button {
+  background: #475569;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
   cursor: pointer;
 }
 
-/* ===== SCREENS ===== */
+header .icons img {
+  width: 32px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* ================= SCREENS ================= */
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* ===== SECTIONS ===== */
+/* ================= SECTIONS ================= */
 .section {
   padding: 10px;
 }
@@ -56,7 +67,7 @@ header .icons img {
   margin: 8px 0;
 }
 
-/* ===== SLIDER ===== */
+/* ================= SLIDER ================= */
 .slider {
   position: relative;
 }
@@ -76,9 +87,10 @@ header .icons img {
 .track {
   display: flex;
   gap: 10px;
+  transition: transform 0.3s ease;
 }
 
-/* ===== CARD ===== */
+/* ================= CARD ================= */
 .card {
   min-width: 200px;
   max-width: 200px;
@@ -93,7 +105,7 @@ header .icons img {
 
 .card img {
   width: 100%;
-  height: 120px;
+  height: 130px;
   object-fit: contain;
 }
 
@@ -102,7 +114,7 @@ header .icons img {
   margin: 6px 0;
 }
 
-/* ===== PRICE ===== */
+/* ================= PRICE ================= */
 .price {
   font-weight: bold;
   color: #16a34a;
@@ -114,20 +126,32 @@ header .icons img {
   color: #6b7280;
 }
 
-/* ===== DISCOUNT ===== */
+/* ================= BADGES ================= */
 .discount-badge {
   position: absolute;
   top: 8px;
   left: 8px;
   background: #dc2626;
   color: white;
-  font-size: 13px;
+  font-size: 12px;
   padding: 4px 6px;
   border-radius: 4px;
   font-weight: bold;
 }
 
-/* ===== BUY BUTTON ===== */
+.stock-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #f59e0b;
+  color: white;
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* ================= BUY BUTTON ================= */
 .buy-btn {
   margin-top: auto;
   height: 36px;
@@ -144,7 +168,6 @@ header .icons img {
 
 .buy-btn img {
   width: 18px;
-  height: 18px;
 }
 
 .buy-btn.disabled {
@@ -152,7 +175,7 @@ header .icons img {
   pointer-events: none;
 }
 
-/* ===== ARROWS ===== */
+/* ================= ARROWS ================= */
 .arrow {
   position: absolute;
   top: 40%;
@@ -171,7 +194,7 @@ header .icons img {
   .arrow { display: none; }
 }
 
-/* ===== DETAIL ===== */
+/* ================= DETAIL ================= */
 #detail {
   padding: 12px;
 }
@@ -187,7 +210,7 @@ header .icons img {
   cursor: pointer;
 }
 
-/* ===== FLOAT WHATSAPP ===== */
+/* ================= FLOAT WHATSAPP ================= */
 .whatsapp-float {
   position: fixed;
   right: 16px;
@@ -212,8 +235,12 @@ header .icons img {
 
 <header>
   <img src="imagenes/logo.png" class="logo">
-  <h1>IGNICAR TOYS</h1>
-  <input id="search" placeholder="Buscar...">
+
+  <div class="search-box">
+    <input id="search" placeholder="Buscar modelos...">
+    <button onclick="toggleCategories()">☰</button>
+  </div>
+
   <div class="icons">
     <a href="https://www.facebook.com/profile.php?id=100064895565079" target="_blank">
       <img src="imagenes/facebook.png">
@@ -258,10 +285,11 @@ const dStock = document.getElementById("dStock");
 const dBuy   = document.getElementById("dBuy");
 
 fetch("products.json")
-  .then(res => res.json())
+  .then(r => r.json())
   .then(json => {
     DATA = json;
     render();
+    startAutoSlide();
   });
 
 function showScreen(id) {
@@ -275,28 +303,16 @@ function render() {
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  const query = searchInput.value.toLowerCase();
-
   let offers = [];
-
   for (const brand in DATA) {
-    DATA[brand].forEach(p => {
-      if (p.discount) offers.push({ ...p, brand });
-    });
+    DATA[brand].forEach(p => p.discount && offers.push({ ...p, brand }));
   }
 
-  if (offers.length) {
-    content.appendChild(createSection("🔥 Ofertas", offers));
-  }
+  if (offers.length) content.appendChild(createSection("🔥 Ofertas", offers));
 
   for (const brand in DATA) {
-    const filtered = DATA[brand]
-      .filter(p => p.name.toLowerCase().includes(query))
-      .map(p => ({ ...p, brand }));
-
-    if (filtered.length) {
-      content.appendChild(createSection(brand, filtered));
-    }
+    const list = DATA[brand].map(p => ({ ...p, brand }));
+    content.appendChild(createSection(brand, list));
   }
 }
 
@@ -325,6 +341,7 @@ function createSection(title, products) {
 
     card.innerHTML = `
       ${p.discount ? `<div class="discount-badge">-${p.discount}%</div>` : ""}
+      ${p.stock === 1 ? `<div class="stock-badge">Última unidad</div>` : ""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
       ${p.discount ? `<div class="old-price">S/ ${p.price}</div>` : ""}
@@ -335,7 +352,6 @@ function createSection(title, products) {
         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </a>
     `;
-
     track.appendChild(card);
   });
 
@@ -355,7 +371,6 @@ function createSection(title, products) {
 
 function openDetail(p) {
   showScreen("detail");
-
   dBrand.textContent = p.brand;
   dName.textContent = p.name;
   dImage.src = p.image;
@@ -375,6 +390,19 @@ function openDetail(p) {
     dBuy.href = "https://wa.me/51942434659?text=" +
       encodeURIComponent("Hola, quiero comprar: " + p.name);
   }
+}
+
+/* ===== AUTOSLIDE ===== */
+function startAutoSlide() {
+  document.querySelectorAll(".viewport").forEach(vp => {
+    setInterval(() => {
+      vp.scrollBy({ left: 210, behavior: "smooth" });
+    }, 10000);
+  });
+}
+
+function toggleCategories() {
+  alert("Aquí luego pondremos el menú de categorías 😄");
 }
 </script>
 
