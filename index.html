@@ -6,135 +6,187 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* ---------- GENERAL ---------- */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  background: #f2f4f8;
 }
 
-/* HEADER */
+h1, h2 {
+  margin: 10px 0;
+}
+
+.hidden { display: none; }
+
+/* ---------- HEADER ---------- */
 header {
-  background: linear-gradient(90deg, #1e3c72, #2a5298);
+  background: #1f2937;
   color: white;
-  padding: 12px;
+  padding: 10px;
+}
+
+.header-top {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-header img.logo {
-  height: 42px;
+.header-top img.logo {
+  height: 40px;
 }
 
-header h1 {
+.header-top h1 {
   flex: 1;
   font-size: 20px;
-  margin: 0;
 }
 
-header .icons img {
-  height: 26px;
-  margin-left: 10px;
+.header-icons img {
+  width: 26px;
   cursor: pointer;
+  margin-left: 8px;
 }
 
-/* SEARCH */
 #search {
   width: 100%;
-  padding: 10px;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 6px;
   border: none;
-  font-size: 16px;
 }
 
-/* VIEWS */
-.view {
-  display: none;
+/* ---------- CATALOG ---------- */
+#catalog {
   padding: 10px;
 }
 
-.view.active {
-  display: block;
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
 }
 
-/* CAROUSEL */
+.arrow {
+  width: 32px;
+  height: 160px;
+  background: #374151;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.arrow:disabled {
+  opacity: 0.3;
+}
+
+.carousel-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
 .carousel {
   display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
+  gap: 10px;
+  transition: transform 0.35s ease;
 }
 
+/* ---------- CARD ---------- */
 .card {
-  min-width: 170px;
+  width: 170px;
   background: white;
   border-radius: 8px;
-  padding: 10px;
+  padding: 8px;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
 .card img {
   width: 100%;
-  height: 140px;
+  height: 110px;
   object-fit: cover;
   border-radius: 6px;
 }
 
-.name {
+.card .name {
   font-size: 13px;
-  font-weight: bold;
-}
-
-.price {
-  color: #c62828;
-  font-weight: bold;
-}
-
-/* DETAIL */
-.detail img {
-  width: 100%;
-  max-height: 420px;
-  object-fit: contain;
-  background: #fff;
-  border-radius: 10px;
-}
-
-.detail h2 {
-  margin-top: 10px;
-}
-
-.note {
-  font-size: 14px;
   margin: 6px 0;
 }
 
-/* BUTTON */
-.btn {
-  margin-top: 12px;
+.card .price {
+  color: #d97706;
+  font-weight: bold;
+}
+
+/* ---------- DETAIL ---------- */
+#detail {
+  padding: 10px;
+}
+
+.detail-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  background: white;
+  border-radius: 8px;
+}
+
+.detail-name {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.detail-price {
+  font-size: 16px;
+  color: #d97706;
+  font-weight: bold;
+}
+
+.detail-stock {
+  margin: 6px 0;
+}
+
+.buy-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
   background: #25d366;
   color: white;
-  padding: 12px;
+  border: none;
   border-radius: 6px;
-  text-align: center;
-  text-decoration: none;
+  font-size: 16px;
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 8px;
+  align-items: center;
 }
 
-.btn img {
-  width: 20px;
+.buy-btn img {
+  width: 22px;
 }
 
-.btn.disabled {
-  background: #999;
-  pointer-events: none;
+.buy-btn:disabled {
+  background: #9ca3af;
 }
 
-/* BACK */
-.back {
-  margin-top: 12px;
-  display: inline-block;
+/* ---------- WHATSAPP FLOAT ---------- */
+.whatsapp-float {
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  width: 55px;
+  height: 55px;
+  background: #25d366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.whatsapp-float img {
+  width: 30px;
 }
 </style>
 </head>
@@ -142,28 +194,32 @@ header .icons img {
 <body>
 
 <header>
-  <img src="imagenes/logo.png" class="logo">
-  <h1>IGNICAR TOYS</h1>
-  <div class="icons">
-    <a href="https://www.facebook.com/profile.php?id=100064895565079" target="_blank">
-      <img src="imagenes/facebook.png">
-    </a>
-    <a href="https://wa.me/51942434659" target="_blank">
-      <img src="imagenes/whatsapp-logo.png">
-    </a>
+  <div class="header-top">
+    <img src="imagenes/logo.png" class="logo">
+    <h1>IGNICAR TOYS</h1>
+    <div class="header-icons">
+      <a href="https://www.facebook.com/profile.php?id=100064895565079" target="_blank">
+        <img src="imagenes/facebook.png">
+      </a>
+      <a href="https://wa.me/51942434659" target="_blank">
+        <img src="imagenes/whatsapp-logo.png">
+      </a>
+    </div>
   </div>
+  <input id="search" placeholder="Buscar modelos o marcas...">
 </header>
 
-<input id="search" placeholder="Buscar modelo o marca...">
+<div id="catalog"></div>
 
-<!-- CATALOGO -->
-<div id="catalog" class="view active"></div>
+<div id="detail" class="hidden"></div>
 
-<!-- DETALLE -->
-<div id="detail" class="view detail"></div>
+<a href="https://wa.me/51942434659" class="whatsapp-float" target="_blank">
+  <img src="imagenes/whatsapp-logo.png">
+</a>
 
 <script>
 let data = {};
+let positions = {};
 
 fetch("products.json")
   .then(r => r.json())
@@ -175,20 +231,41 @@ fetch("products.json")
 document.getElementById("search").addEventListener("input", renderCatalog);
 
 function renderCatalog() {
-  showView("catalog");
-  const q = document.getElementById("search").value.toLowerCase();
-  const cont = document.getElementById("catalog");
-  cont.innerHTML = "";
+  show("catalog");
+  const q = search.value.toLowerCase();
+  const c = document.getElementById("catalog");
+  c.innerHTML = "";
+  positions = {};
 
-  for (const marca in data) {
-    const items = data[marca].filter(p =>
-      p.name.toLowerCase().includes(q) || marca.toLowerCase().includes(q)
+  for (const brand in data) {
+    const items = data[brand].filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      brand.toLowerCase().includes(q)
     );
     if (!items.length) continue;
 
-    cont.innerHTML += `<h2>${marca}</h2>`;
+    positions[brand] = 0;
+    c.innerHTML += `<h2>${brand}</h2>`;
+
+    const wrap = document.createElement("div");
+    wrap.className = "carousel-wrapper";
+
+    const left = document.createElement("button");
+    left.className = "arrow";
+    left.innerHTML = "‹";
+    left.onclick = () => move(brand, -1);
+
+    const right = document.createElement("button");
+    right.className = "arrow";
+    right.innerHTML = "›";
+    right.onclick = () => move(brand, 1);
+
+    const view = document.createElement("div");
+    view.className = "carousel-viewport";
+
     const row = document.createElement("div");
     row.className = "carousel";
+    row.id = `row-${brand}`;
 
     items.forEach(p => {
       const card = document.createElement("div");
@@ -198,41 +275,52 @@ function renderCatalog() {
         <div class="name">${p.name}</div>
         <div class="price">S/ ${p.price}</div>
       `;
-      card.onclick = () => showDetail(p);
+      card.onclick = () => openDetail(p, brand);
       row.appendChild(card);
     });
 
-    cont.appendChild(row);
+    view.appendChild(row);
+    wrap.append(left, view, right);
+    c.appendChild(wrap);
+    updateArrows(brand, items.length);
   }
 }
 
-function showDetail(p) {
-  const d = document.getElementById("detail");
-  d.innerHTML = `
-    <img src="${p.image}">
-    <h2>${p.name}</h2>
-    <div class="price">S/ ${p.price}</div>
-    <div class="note">Stock disponible: ${p.stock}</div>
-
-    ${
-      p.stock > 0
-      ? `<a class="btn" target="_blank"
-           href="https://wa.me/51942434659?text=${encodeURIComponent("Hola, me interesa: " + p.name)}">
-           <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-         </a>`
-      : `<div class="btn disabled">AGOTADO</div>`
-    }
-
-    <a class="back" onclick="showView('catalog')">
-      <img src="imagenes/Volver.png">
-    </a>
-  `;
-  showView("detail");
+function move(brand, dir) {
+  const row = document.getElementById(`row-${brand}`);
+  const max = row.children.length - 5;
+  positions[brand] = Math.max(0, Math.min(max, positions[brand] + dir));
+  row.style.transform = `translateX(${-positions[brand] * 180}px)`;
+  updateArrows(brand, row.children.length);
 }
 
-function showView(id) {
-  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+function updateArrows(brand, total) {
+  const wrap = document.getElementById(`row-${brand}`).parentElement.parentElement;
+  const [l, r] = wrap.querySelectorAll(".arrow");
+  l.disabled = positions[brand] === 0;
+  r.disabled = positions[brand] >= total - 5;
+}
+
+function openDetail(p, brand) {
+  show("detail");
+  detail.innerHTML = `
+    <img src="imagenes/Volver.png" onclick="renderCatalog()" style="width:40px;cursor:pointer">
+    <h2>${brand}</h2>
+    <img src="${p.image}" class="detail-img">
+    <div class="detail-name">${p.name}</div>
+    <div class="detail-price">S/ ${p.price}</div>
+    <div class="detail-stock">Stock: ${p.stock}</div>
+    <button class="buy-btn" ${p.stock<=0?'disabled':''}
+      onclick="window.open('https://wa.me/51942434659','_blank')">
+      <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+    </button>
+  `;
+}
+
+function show(id) {
+  catalog.classList.add("hidden");
+  detail.classList.add("hidden");
+  document.getElementById(id).classList.remove("hidden");
 }
 </script>
 
