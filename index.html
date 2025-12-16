@@ -14,7 +14,7 @@ body {
 
 /* HEADER */
 header {
-  background: linear-gradient(90deg, #2b2b2b, #3a3a3a);
+  background: linear-gradient(90deg, #1e3c72, #2a5298);
   color: white;
   padding: 12px;
   display: flex;
@@ -46,13 +46,14 @@ header .icons img {
   font-size: 16px;
 }
 
-/* CONTENT */
-section {
+/* VIEWS */
+.view {
+  display: none;
   padding: 10px;
 }
 
-h2 {
-  margin: 20px 0 10px;
+.view.active {
+  display: block;
 }
 
 /* CAROUSEL */
@@ -61,38 +62,14 @@ h2 {
   gap: 12px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 10px;
 }
 
-.carousel::-webkit-scrollbar {
-  height: 6px;
-}
-
-.carousel::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 10px;
-}
-
-/* CARD */
 .card {
   min-width: 170px;
-  max-width: 170px;
   background: white;
   border-radius: 8px;
   padding: 10px;
-  display: flex;
-  flex-direction: column;
-
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeUp 0.4s ease forwards;
-}
-
-@keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  cursor: pointer;
 }
 
 .card img {
@@ -103,9 +80,8 @@ h2 {
 }
 
 .name {
-  font-weight: bold;
   font-size: 13px;
-  margin: 6px 0;
+  font-weight: bold;
 }
 
 .price {
@@ -113,57 +89,52 @@ h2 {
   font-weight: bold;
 }
 
-.old {
-  text-decoration: line-through;
-  font-size: 12px;
-  color: #777;
+/* DETAIL */
+.detail img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 10px;
 }
 
-.discount {
-  background: #c62828;
-  color: white;
-  font-size: 11px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  display: inline-block;
-  margin-bottom: 4px;
+.detail h2 {
+  margin-top: 10px;
+}
+
+.note {
+  font-size: 14px;
+  margin: 6px 0;
 }
 
 /* BUTTON */
 .btn {
-  margin-top: auto;
+  margin-top: 12px;
   background: #25d366;
   color: white;
-  padding: 8px;
+  padding: 12px;
   border-radius: 6px;
   text-align: center;
   text-decoration: none;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
+  gap: 8px;
 }
 
 .btn img {
-  width: 18px;
-  height: 18px;
+  width: 20px;
 }
 
 .btn.disabled {
-  background: #aaa;
+  background: #999;
   pointer-events: none;
 }
 
-/* CATEGORY CARD */
-.category-card {
-  min-width: 100%;
-  background: #222;
-  color: white;
-  border-radius: 10px;
-  padding: 20px;
-  font-size: 18px;
-  font-weight: bold;
+/* BACK */
+.back {
+  margin-top: 12px;
+  display: inline-block;
 }
 </style>
 </head>
@@ -185,88 +156,83 @@ h2 {
 
 <input id="search" placeholder="Buscar modelo o marca...">
 
-<section id="catalog"></section>
+<!-- CATALOGO -->
+<div id="catalog" class="view active"></div>
+
+<!-- DETALLE -->
+<div id="detail" class="view detail"></div>
 
 <script>
-let catalogo = {};
+let data = {};
 
 fetch("products.json")
   .then(r => r.json())
   .then(d => {
-    catalogo = d;
-    render();
-    autoScroll();
+    data = d;
+    renderCatalog();
   });
 
-document.getElementById("search").addEventListener("input", render);
+document.getElementById("search").addEventListener("input", renderCatalog);
 
-function render() {
+function renderCatalog() {
+  showView("catalog");
   const q = document.getElementById("search").value.toLowerCase();
   const cont = document.getElementById("catalog");
   cont.innerHTML = "";
 
-  for (const marca in catalogo) {
-    const productos = catalogo[marca];
-    const marcaMatch = marca.toLowerCase().includes(q);
-    const items = productos.filter(p =>
-      p.name.toLowerCase().includes(q)
+  for (const marca in data) {
+    const items = data[marca].filter(p =>
+      p.name.toLowerCase().includes(q) || marca.toLowerCase().includes(q)
     );
+    if (!items.length) continue;
 
-    if (!marcaMatch && !items.length) continue;
+    cont.innerHTML += `<h2>${marca}</h2>`;
+    const row = document.createElement("div");
+    row.className = "carousel";
 
-    /* Card de categoría si coincide la marca */
-    if (q && marcaMatch) {
-      cont.innerHTML += `<div class="category-card">${marca}</div>`;
-    } else {
-      cont.innerHTML += `<h2>${marca}</h2>`;
+    items.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${p.image}">
+        <div class="name">${p.name}</div>
+        <div class="price">S/ ${p.price}</div>
+      `;
+      card.onclick = () => showDetail(p);
+      row.appendChild(card);
+    });
+
+    cont.appendChild(row);
+  }
+}
+
+function showDetail(p) {
+  const d = document.getElementById("detail");
+  d.innerHTML = `
+    <img src="${p.image}">
+    <h2>${p.name}</h2>
+    <div class="price">S/ ${p.price}</div>
+    <div class="note">Stock disponible: ${p.stock}</div>
+
+    ${
+      p.stock > 0
+      ? `<a class="btn" target="_blank"
+           href="https://wa.me/51942434659?text=${encodeURIComponent("Hola, me interesa: " + p.name)}">
+           <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+         </a>`
+      : `<div class="btn disabled">AGOTADO</div>`
     }
 
-    const carousel = document.createElement("div");
-    carousel.className = "carousel";
-
-    items.slice(0, 10).forEach(p => {
-      carousel.appendChild(cardHTML(p));
-    });
-
-    cont.appendChild(carousel);
-  }
-}
-
-function cardHTML(p) {
-  const card = document.createElement("div");
-  card.className = "card";
-
-  let discount = "";
-  if (p.originalPrice && p.originalPrice > p.price) {
-    const percent = Math.round((1 - p.price / p.originalPrice) * 100);
-    discount = `<div class="discount">${percent}% OFF</div>`;
-  }
-
-  card.innerHTML = `
-    ${discount}
-    <img src="${p.image}">
-    <div class="name">${p.name}</div>
-    ${p.originalPrice ? `<div class="old">S/ ${p.originalPrice}</div>` : ""}
-    <div class="price">S/ ${p.price}</div>
-    <a class="btn ${p.stock === 0 ? "disabled" : ""}"
-       href="https://wa.me/51942434659?text=${encodeURIComponent("Hola, me interesa: " + p.name)}"
-       target="_blank">
-      <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+    <a class="back" onclick="showView('catalog')">
+      <img src="imagenes/Volver.png">
     </a>
   `;
-  return card;
+  showView("detail");
 }
 
-/* AUTO SCROLL */
-function autoScroll() {
-  setInterval(() => {
-    document.querySelectorAll(".carousel").forEach(c => {
-      c.scrollLeft += 180;
-      if (c.scrollLeft + c.clientWidth >= c.scrollWidth) {
-        c.scrollLeft = 0;
-      }
-    });
-  }, 10000);
+function showView(id) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 </script>
 
