@@ -22,23 +22,10 @@ header {
   gap: 12px;
 }
 
-header img.logo {
-  height: 40px;
-}
+header img.logo { height: 40px; }
+header h1 { font-size: 20px; margin: 0; flex: 1; }
+header input { padding: 6px; border-radius: 6px; border: none; }
 
-header h1 {
-  font-size: 20px;
-  margin: 0;
-  flex: 1;
-}
-
-header input {
-  padding: 6px;
-  border-radius: 6px;
-  border: none;
-}
-
-/* ICONS */
 header .icons img {
   width: 28px;
   margin-left: 8px;
@@ -49,26 +36,30 @@ header .icons img {
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* SECTIONS */
-.section {
-  padding: 10px;
-}
-
-.section h2 {
-  margin: 8px 0;
-}
+/* SECTION */
+.section { padding: 10px; }
+.section h2 { margin: 8px 0; }
 
 /* SLIDER */
 .slider {
   position: relative;
-  overflow-x: auto;
-  scroll-behavior: smooth;
 }
 
-/* HIDE SCROLLBAR */
-.slider::-webkit-scrollbar { display: none; }
-.slider { scrollbar-width: none; -ms-overflow-style: none; }
+/* VIEWPORT */
+.viewport {
+  overflow-x: hidden;
+}
 
+/* MOBILE SCROLL */
+@media (max-width: 768px) {
+  .viewport {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .viewport::-webkit-scrollbar { display: none; }
+}
+
+/* TRACK */
 .track {
   display: flex;
   gap: 10px;
@@ -76,7 +67,6 @@ header .icons img {
 
 /* CARD */
 .card {
-  position: relative;
   min-width: 200px;
   max-width: 200px;
   background: white;
@@ -85,7 +75,6 @@ header .icons img {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  animation: fadeUp 0.3s ease forwards;
 }
 
 .card img {
@@ -126,50 +115,45 @@ header .icons img {
 /* BUY BUTTON */
 .buy-btn {
   margin-top: auto;
+  height: 36px;
+  background: #25d366;
+  color: white;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 36px;
-  font-size: 14px;
-  background: #25d366;
-  color: white;
-  border-radius: 6px;
   text-decoration: none;
 }
 
-.buy-btn img {
-  width: 18px;
-}
+.buy-btn img { width: 18px; }
 
 .buy-btn.disabled {
   background: #9ca3af;
   pointer-events: none;
 }
 
-/* ARROWS (DESKTOP ONLY) */
+/* ARROWS */
 .arrow {
   position: absolute;
   top: 40%;
   background: #1f2937;
   color: white;
   border: none;
-  padding: 6px;
+  padding: 6px 10px;
   cursor: pointer;
-  z-index: 5;
+  z-index: 10;
 }
 
-.arrow.left { left: 0; }
-.arrow.right { right: 0; }
+.arrow.left { left: -5px; }
+.arrow.right { right: -5px; }
 
 @media (max-width: 768px) {
   .arrow { display: none; }
 }
 
 /* DETAIL */
-#detail {
-  padding: 12px;
-}
+#detail { padding: 12px; }
 
 #detail img.main {
   width: 100%;
@@ -177,9 +161,7 @@ header .icons img {
   object-fit: contain;
 }
 
-.back-btn img {
-  width: 40px;
-}
+.back-btn img { width: 40px; }
 
 /* FLOAT WHATSAPP */
 .whatsapp-float {
@@ -195,14 +177,7 @@ header .icons img {
   justify-content: center;
 }
 
-.whatsapp-float img {
-  width: 30px;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.whatsapp-float img { width: 30px; }
 </style>
 </head>
 
@@ -265,19 +240,13 @@ function render() {
 
   let offers = [];
   for (const brand in DATA) {
-    DATA[brand].forEach(p => {
-      if (p.discount) offers.push({ ...p, brand });
-    });
+    DATA[brand].forEach(p => p.discount && offers.push({ ...p, brand }));
   }
 
-  if (offers.length) {
-    content.appendChild(section("🔥 Ofertas", offers));
-  }
+  if (offers.length) content.appendChild(section("🔥 Ofertas", offers));
 
   for (const brand in DATA) {
-    content.appendChild(
-      section(brand, DATA[brand].map(p => ({ ...p, brand })))
-    );
+    content.appendChild(section(brand, DATA[brand].map(p => ({ ...p, brand }))));
   }
 }
 
@@ -289,12 +258,14 @@ function section(title, products) {
     <h2>${title}</h2>
     <div class="slider">
       <button class="arrow left">◀</button>
-      <div class="track"></div>
       <button class="arrow right">▶</button>
+      <div class="viewport">
+        <div class="track"></div>
+      </div>
     </div>
   `;
 
-  const slider = div.querySelector(".slider");
+  const viewport = div.querySelector(".viewport");
   const track = div.querySelector(".track");
 
   products.forEach(p => {
@@ -309,23 +280,23 @@ function section(title, products) {
       ${p.discount ? `<div class="old-price">S/ ${p.price}</div>` : ""}
       <div class="price">S/ ${p.finalPrice || p.price}</div>
       <a class="buy-btn ${p.stock === 0 ? "disabled" : ""}"
-        href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}"
-        target="_blank">
+         href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}"
+         target="_blank">
         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </a>
     `;
     track.appendChild(c);
   });
 
-  div.querySelector(".left").onclick = () =>
-    slider.scrollBy({ left: -210, behavior: "smooth" });
+  const left = div.querySelector(".left");
+  const right = div.querySelector(".right");
 
-  div.querySelector(".right").onclick = () =>
-    slider.scrollBy({ left: 210, behavior: "smooth" });
+  left.onclick = () => viewport.scrollBy({ left: -210, behavior: "smooth" });
+  right.onclick = () => viewport.scrollBy({ left: 210, behavior: "smooth" });
 
   if (products.length <= 4) {
-    div.querySelector(".left").style.display = "none";
-    div.querySelector(".right").style.display = "none";
+    left.style.display = "none";
+    right.style.display = "none";
   }
 
   return div;
@@ -333,19 +304,18 @@ function section(title, products) {
 
 function openDetail(p) {
   show("detail");
-  document.getElementById("d-brand").innerText = p.brand;
-  document.getElementById("d-name").innerText = p.name;
-  document.getElementById("d-image").src = p.image;
-  document.getElementById("d-price").innerText =
-    p.discount ? `S/ ${p.finalPrice} (Antes S/ ${p.price})` : `S/ ${p.price}`;
-  document.getElementById("d-stock").innerText = `Stock: ${p.stock}`;
+  d-brand.innerText = p.brand;
+  d-name.innerText = p.name;
+  d-image.src = p.image;
+  d-price.innerText = p.discount
+    ? `S/ ${p.finalPrice} (Antes S/ ${p.price})`
+    : `S/ ${p.price}`;
+  d-stock.innerText = `Stock: ${p.stock}`;
 
-  const buy = document.getElementById("d-buy");
-  if (p.stock === 0) {
-    buy.classList.add("disabled");
-  } else {
-    buy.classList.remove("disabled");
-    buy.href = `https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}`;
+  if (p.stock === 0) d-buy.classList.add("disabled");
+  else {
+    d-buy.classList.remove("disabled");
+    d-buy.href = `https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}`;
   }
 }
 </script>
