@@ -7,17 +7,12 @@
 
 <style>
 *{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial;background:#f3f4f6}
 
-body{
-  margin:0;
-  font-family:Segoe UI,Arial;
-  background:#f3f4f6
-}
-
-/* ===== HEADER ===== */
+/* HEADER */
 header{
   background:#1e293b;
-  padding:22px;
+  padding:24px;
   display:flex;
   align-items:center;
   gap:20px;
@@ -25,220 +20,112 @@ header{
   top:0;
   z-index:100
 }
-
-.logo{
-  height:120px;
-  max-width:240px;
-  object-fit:contain
-}
-
-.search-wrapper{
-  flex:1;
-  display:flex;
-  justify-content:center;
-  position:relative
-}
-
-.search-box{
-  display:flex;
-  width:750px;
-  gap:6px
-}
-
+.logo{height:130px;object-fit:contain}
+.search-wrapper{flex:1;display:flex;justify-content:center;position:relative}
+.search-box{display:flex;width:780px;gap:8px}
 .search-box input{
-  flex:1;
-  padding:14px;
-  font-size:16px;
-  border-radius:10px;
-  border:none
+  flex:1;padding:14px;font-size:16px;border-radius:10px;border:none
 }
-
 .search-box button{
-  background:#334155;
-  color:white;
-  border:none;
-  padding:14px 18px;
-  border-radius:10px;
-  cursor:pointer
+  background:#334155;color:white;border:none;
+  padding:14px 18px;border-radius:10px;cursor:pointer
 }
-
 #categories{
-  position:absolute;
-  top:64px;
-  background:white;
-  width:750px;
-  border-radius:10px;
-  display:none;
-  box-shadow:0 10px 24px rgba(0,0,0,.25)
+  position:absolute;top:70px;background:white;width:780px;
+  border-radius:10px;display:none;
+  box-shadow:0 10px 25px rgba(0,0,0,.25)
 }
-
-#categories div{
-  padding:14px;
-  cursor:pointer
-}
+#categories div{padding:14px;cursor:pointer}
 #categories div:hover{background:#e5e7eb}
+.icons img{width:40px;margin-left:14px}
 
-.icons img{
-  width:40px;
-  margin-left:14px
-}
-
-/* ===== SCREENS ===== */
+/* SCREENS */
 .screen{display:none}
 .screen.active{display:block}
 
-/* ===== SECTION ===== */
+/* SECTIONS */
 .section{padding:20px}
 .section h2{margin:10px 0}
 
-/* ===== SLIDER ===== */
-.slider{
-  position:relative
-}
-
-.viewport{
-  overflow:hidden;
-  width:100%
-}
-
+/* SLIDER */
+.slider{position:relative}
+.viewport{overflow:hidden;width:100%}
 .track{
-  display:flex;
-  gap:16px;
+  display:flex;gap:16px;
   transition:transform .35s ease;
-  will-change:transform
 }
 
-/* ===== CARD ===== */
+/* CARD */
 .card{
   flex:0 0 220px;
-  background:white;
-  border-radius:12px;
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  position:relative;
-  cursor:pointer
+  background:white;border-radius:12px;
+  padding:10px;display:flex;flex-direction:column;
+  position:relative;cursor:pointer
 }
-
-.card img{
-  height:150px;
-  object-fit:contain
-}
-
-.card h3{
-  font-size:14px;
-  margin:8px 0
-}
+.card img{height:150px;object-fit:contain}
+.card h3{font-size:14px;margin:8px 0}
 
 /* BADGES */
 .discount{
-  position:absolute;
-  top:8px;
-  left:8px;
-  background:#dc2626;
-  color:white;
-  font-size:12px;
-  padding:4px 6px;
-  border-radius:4px
+  position:absolute;top:8px;left:8px;
+  background:#dc2626;color:white;
+  font-size:12px;padding:4px 6px;border-radius:4px
 }
-
 .stock{
-  position:absolute;
-  top:8px;
-  right:8px;
-  background:#f59e0b;
-  color:white;
-  font-size:11px;
-  padding:4px 6px;
-  border-radius:4px
+  position:absolute;top:8px;right:8px;
+  background:#f59e0b;color:white;
+  font-size:11px;padding:4px 6px;border-radius:4px
 }
-
-.price{color:#16a34a;font-weight:bold}
 .old{font-size:13px;text-decoration:line-through;color:#6b7280}
+.price{color:#16a34a;font-weight:bold}
 
+/* BUY */
 .buy{
-  margin-top:auto;
-  height:36px;
-  background:#25d366;
-  color:white;
-  border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  text-decoration:none;
-  font-size:14px
+  margin-top:auto;height:36px;
+  background:#25d366;color:white;
+  border-radius:8px;display:flex;
+  align-items:center;justify-content:center;
+  gap:6px;text-decoration:none;font-size:14px
 }
 .buy img{width:18px}
 .buy.disabled{background:#9ca3af;pointer-events:none}
 
-/* ===== ARROWS ===== */
+/* ARROWS */
 .arrow{
-  position:absolute;
-  top:40%;
-  background:#1e293b;
-  color:white;
-  border:none;
-  padding:6px 10px;
-  cursor:pointer;
-  z-index:5
+  position:absolute;top:40%;
+  background:#1e293b;color:white;
+  border:none;padding:6px 10px;
+  cursor:pointer;z-index:5
 }
-.arrow.disabled{
-  opacity:.4;
-  pointer-events:none
-}
-.left{left:-12px}
-.right{right:-12px}
+.arrow.disabled{opacity:.4;pointer-events:none}
+.left{left:-14px}
+.right{right:-14px}
 
-/* ===== DETAIL ===== */
-#detail{
-  padding:20px;
-  max-width:900px;
-  margin:auto
-}
-
+/* DETAIL */
+#detail{padding:20px;max-width:900px;margin:auto}
 #detail img.main{
-  width:100%;
-  max-height:360px;
-  object-fit:contain
+  width:100%;max-height:360px;object-fit:contain
 }
-
-.back{
-  width:42px;
-  margin-bottom:12px;
-  cursor:pointer
-}
-
-.detail-buy{
-  height:42px;
-  margin-top:12px
-}
+.back{width:42px;margin-bottom:12px;cursor:pointer}
+.detail-buy{height:42px;margin-top:12px}
 
 /* FLOAT WHATSAPP */
 .float{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  background:#25d366;
-  width:54px;
-  height:54px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:999
+  position:fixed;right:18px;bottom:18px;
+  background:#25d366;width:54px;height:54px;
+  border-radius:50%;display:flex;
+  align-items:center;justify-content:center;z-index:999
 }
 .float img{width:28px}
 
-/* ===== RESPONSIVE ===== */
+/* RESPONSIVE */
 @media(max-width:768px){
   header{flex-wrap:wrap}
   .search-box{width:100%}
-  .logo{height:90px}
+  .logo{height:95px}
   .arrow{display:none}
   .viewport{
-    overflow-x:auto;
-    scrollbar-width:none
+    overflow-x:auto;scrollbar-width:none
   }
   .viewport::-webkit-scrollbar{display:none}
 }
@@ -311,9 +198,11 @@ function render(){
   root.innerHTML="";
 
   let offers=[];
-  for(const b in DATA){
-    DATA[b].forEach(p=>{
-      if(p.oldPrice) offers.push({...p,brand:b});
+  for(const brand in DATA){
+    DATA[brand].forEach(p=>{
+      if(p.discount && p.discount>0){
+        offers.push({...p,brand});
+      }
     });
   }
 
@@ -322,9 +211,9 @@ function render(){
     if(active==="OFFERS") return;
   }
 
-  for(const b in DATA){
-    if(active!=="ALL" && b!==active) continue;
-    root.appendChild(section(b,DATA[b].map(p=>({...p,brand:b}))));
+  for(const brand in DATA){
+    if(active!=="ALL" && brand!==active) continue;
+    root.appendChild(section(brand,DATA[brand].map(p=>({...p,brand}))));
   }
 }
 
@@ -334,11 +223,9 @@ function section(title,items){
   s.innerHTML=`
     <h2>${title}</h2>
     <div class="slider">
-      <button class="arrow left disabled">◀</button>
+      <button class="arrow left">◀</button>
       <button class="arrow right">▶</button>
-      <div class="viewport">
-        <div class="track"></div>
-      </div>
+      <div class="viewport"><div class="track"></div></div>
     </div>
   `;
 
@@ -348,16 +235,15 @@ function section(title,items){
   const right=s.querySelector(".right");
 
   items.forEach(p=>{
-    const d=p.oldPrice?Math.round((1-p.price/p.oldPrice)*100):0;
     const c=document.createElement("div");
     c.className="card";
     c.innerHTML=`
-      ${d?`<div class="discount">-${d}%</div>`:""}
+      ${p.discount?`<div class="discount">-${p.discount}%</div>`:""}
       ${p.stock===1?`<div class="stock">Última</div>`:""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
-      ${p.oldPrice?`<div class="old">S/ ${p.oldPrice}</div>`:""}
-      <div class="price">S/ ${p.price}</div>
+      ${p.discount?`<div class="old">S/ ${p.price}</div>`:""}
+      <div class="price">S/ ${p.discount?p.finalPrice:p.price}</div>
       <a class="buy ${p.stock?``:`disabled`}"
         href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
@@ -367,6 +253,7 @@ function section(title,items){
   });
 
   let offset=0;
+  const step=236;
 
   function update(){
     const max=Math.max(0,track.scrollWidth-viewport.clientWidth);
@@ -376,8 +263,8 @@ function section(title,items){
     right.classList.toggle("disabled",offset>=max);
   }
 
-  left.onclick=()=>{offset-=236;update()};
-  right.onclick=()=>{offset+=236;update()};
+  left.onclick=()=>{offset-=step;update()};
+  right.onclick=()=>{offset+=step;update()};
   update();
 
   return s;
@@ -391,8 +278,8 @@ function openDetail(p){
     <img src="imagenes/Volver.png" class="back" onclick="back()">
     <img src="${p.image}" class="main">
     <h2>${p.name}</h2>
-    ${p.oldPrice?`<div class="old">S/ ${p.oldPrice}</div>`:""}
-    <div class="price">S/ ${p.price}</div>
+    ${p.discount?`<div class="old">S/ ${p.price}</div>`:""}
+    <div class="price">S/ ${p.discount?p.finalPrice:p.price}</div>
     <p>Stock disponible: ${p.stock}</p>
     <a class="buy detail-buy ${p.stock?``:`disabled`}"
       href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
