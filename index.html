@@ -5,23 +5,21 @@
 <title>IGNICAR TOYS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Fuente -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-/* ---------- GENERAL ---------- */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f2f4f8;
-}
-
-h1, h2 {
-  margin: 10px 0;
+  font-family: 'Montserrat', sans-serif;
+  background: #f3f4f6;
 }
 
 .hidden { display: none; }
 
 /* ---------- HEADER ---------- */
 header {
-  background: #1f2937;
+  background: #334155;
   color: white;
   padding: 10px;
 }
@@ -32,7 +30,7 @@ header {
   gap: 10px;
 }
 
-.header-top img.logo {
+.logo {
   height: 40px;
 }
 
@@ -43,8 +41,8 @@ header {
 
 .header-icons img {
   width: 26px;
-  cursor: pointer;
   margin-left: 8px;
+  cursor: pointer;
 }
 
 #search {
@@ -63,22 +61,19 @@ header {
 .carousel-wrapper {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 20px;
 }
 
 .arrow {
-  width: 32px;
+  width: 34px;
   height: 160px;
-  background: #374151;
+  background: #1f2937;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 6px;
-}
-
-.arrow:disabled {
-  opacity: 0.3;
+  font-size: 20px;
 }
 
 .carousel-viewport {
@@ -88,7 +83,7 @@ header {
 
 .carousel {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   transition: transform 0.35s ease;
 }
 
@@ -116,7 +111,7 @@ header {
 
 .card .price {
   color: #d97706;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 /* ---------- DETAIL ---------- */
@@ -130,21 +125,6 @@ header {
   object-fit: contain;
   background: white;
   border-radius: 8px;
-}
-
-.detail-name {
-  font-size: 18px;
-  margin: 10px 0;
-}
-
-.detail-price {
-  font-size: 16px;
-  color: #d97706;
-  font-weight: bold;
-}
-
-.detail-stock {
-  margin: 6px 0;
 }
 
 .buy-btn {
@@ -173,10 +153,10 @@ header {
 /* ---------- WHATSAPP FLOAT ---------- */
 .whatsapp-float {
   position: fixed;
-  right: 15px;
-  bottom: 15px;
-  width: 55px;
-  height: 55px;
+  right: 16px;
+  bottom: 16px;
+  width: 56px;
+  height: 56px;
   background: #25d366;
   border-radius: 50%;
   display: flex;
@@ -210,7 +190,6 @@ header {
 </header>
 
 <div id="catalog"></div>
-
 <div id="detail" class="hidden"></div>
 
 <a href="https://wa.me/51942434659" class="whatsapp-float" target="_blank">
@@ -228,14 +207,17 @@ fetch("products.json")
     renderCatalog();
   });
 
-document.getElementById("search").addEventListener("input", renderCatalog);
+search.addEventListener("input", renderCatalog);
+
+function slug(txt) {
+  return txt.replace(/[^a-z0-9]/gi, "_");
+}
 
 function renderCatalog() {
   show("catalog");
-  const q = search.value.toLowerCase();
-  const c = document.getElementById("catalog");
-  c.innerHTML = "";
+  catalog.innerHTML = "";
   positions = {};
+  const q = search.value.toLowerCase();
 
   for (const brand in data) {
     const items = data[brand].filter(p =>
@@ -244,28 +226,20 @@ function renderCatalog() {
     );
     if (!items.length) continue;
 
-    positions[brand] = 0;
-    c.innerHTML += `<h2>${brand}</h2>`;
+    const id = slug(brand);
+    positions[id] = 0;
+
+    catalog.innerHTML += `<h2>${brand}</h2>`;
 
     const wrap = document.createElement("div");
     wrap.className = "carousel-wrapper";
 
-    const left = document.createElement("button");
-    left.className = "arrow";
-    left.innerHTML = "‹";
-    left.onclick = () => move(brand, -1);
-
-    const right = document.createElement("button");
-    right.className = "arrow";
-    right.innerHTML = "›";
-    right.onclick = () => move(brand, 1);
-
-    const view = document.createElement("div");
-    view.className = "carousel-viewport";
+    const viewport = document.createElement("div");
+    viewport.className = "carousel-viewport";
 
     const row = document.createElement("div");
     row.className = "carousel";
-    row.id = `row-${brand}`;
+    row.id = `row-${id}`;
 
     items.forEach(p => {
       const card = document.createElement("div");
@@ -279,37 +253,44 @@ function renderCatalog() {
       row.appendChild(card);
     });
 
-    view.appendChild(row);
-    wrap.append(left, view, right);
-    c.appendChild(wrap);
-    updateArrows(brand, items.length);
+    viewport.appendChild(row);
+
+    if (items.length > 4) {
+      const left = document.createElement("button");
+      left.className = "arrow";
+      left.innerHTML = "‹";
+      left.onclick = () => move(id, -1, items.length);
+
+      const right = document.createElement("button");
+      right.className = "arrow";
+      right.innerHTML = "›";
+      right.onclick = () => move(id, 1, items.length);
+
+      wrap.append(left, viewport, right);
+    } else {
+      wrap.append(viewport);
+    }
+
+    catalog.appendChild(wrap);
   }
 }
 
-function move(brand, dir) {
-  const row = document.getElementById(`row-${brand}`);
-  const max = row.children.length - 5;
-  positions[brand] = Math.max(0, Math.min(max, positions[brand] + dir));
-  row.style.transform = `translateX(${-positions[brand] * 180}px)`;
-  updateArrows(brand, row.children.length);
-}
-
-function updateArrows(brand, total) {
-  const wrap = document.getElementById(`row-${brand}`).parentElement.parentElement;
-  const [l, r] = wrap.querySelectorAll(".arrow");
-  l.disabled = positions[brand] === 0;
-  r.disabled = positions[brand] >= total - 5;
+function move(id, dir, total) {
+  const row = document.getElementById(`row-${id}`);
+  const max = total - 4;
+  positions[id] = Math.max(0, Math.min(max, positions[id] + dir));
+  row.style.transform = `translateX(${-positions[id] * 182}px)`;
 }
 
 function openDetail(p, brand) {
   show("detail");
   detail.innerHTML = `
-    <img src="imagenes/Volver.png" onclick="renderCatalog()" style="width:40px;cursor:pointer">
+    <img src="imagenes/Volver.png" style="width:40px;cursor:pointer" onclick="renderCatalog()">
     <h2>${brand}</h2>
     <img src="${p.image}" class="detail-img">
-    <div class="detail-name">${p.name}</div>
-    <div class="detail-price">S/ ${p.price}</div>
-    <div class="detail-stock">Stock: ${p.stock}</div>
+    <h3>${p.name}</h3>
+    <div class="price">S/ ${p.price}</div>
+    <div>Stock: ${p.stock}</div>
     <button class="buy-btn" ${p.stock<=0?'disabled':''}
       onclick="window.open('https://wa.me/51942434659','_blank')">
       <img src="imagenes/whatsapp-logo.png"> Comprar ahora
