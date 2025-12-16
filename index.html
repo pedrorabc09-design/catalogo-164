@@ -5,7 +5,6 @@
 <title>IGNICAR TOYS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Fuente -->
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -17,7 +16,7 @@ body {
 
 .hidden { display: none; }
 
-/* ---------- HEADER ---------- */
+/* HEADER */
 header {
   background: #334155;
   color: white;
@@ -30,9 +29,7 @@ header {
   gap: 10px;
 }
 
-.logo {
-  height: 40px;
-}
+.logo { height: 40px; }
 
 .header-top h1 {
   flex: 1;
@@ -53,10 +50,8 @@ header {
   border: none;
 }
 
-/* ---------- CATALOG ---------- */
-#catalog {
-  padding: 10px;
-}
+/* CATALOG */
+#catalog { padding: 10px; }
 
 .carousel-wrapper {
   display: flex;
@@ -67,13 +62,13 @@ header {
 
 .arrow {
   width: 34px;
-  height: 160px;
+  height: 240px;
   background: #1f2937;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 6px;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .carousel-viewport {
@@ -87,70 +82,70 @@ header {
   transition: transform 0.35s ease;
 }
 
-/* ---------- CARD ---------- */
+/* CARD */
 .card {
-  width: 170px;
+  width: 180px;
   background: white;
   border-radius: 8px;
   padding: 8px;
   flex-shrink: 0;
-  cursor: pointer;
 }
 
-.card img {
+.card img.car {
   width: 100%;
-  height: 110px;
+  height: 120px;
   object-fit: cover;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 .card .name {
   font-size: 13px;
   margin: 6px 0;
+  cursor: pointer;
 }
 
 .card .price {
   color: #d97706;
   font-weight: 700;
+  margin-bottom: 6px;
 }
 
-/* ---------- DETAIL ---------- */
-#detail {
-  padding: 10px;
+.card button {
+  width: 100%;
+  padding: 6px;
+  background: #25d366;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
 }
+
+.card button img {
+  width: 18px;
+}
+
+.card button:disabled {
+  background: #9ca3af;
+  cursor: default;
+}
+
+/* DETAIL */
+#detail { padding: 10px; }
 
 .detail-img {
   width: 100%;
-  max-height: 300px;
+  max-height: 320px;
   object-fit: contain;
   background: white;
   border-radius: 8px;
 }
 
-.buy-btn {
-  margin-top: 10px;
-  width: 100%;
-  padding: 10px;
-  background: #25d366;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  align-items: center;
-}
-
-.buy-btn img {
-  width: 22px;
-}
-
-.buy-btn:disabled {
-  background: #9ca3af;
-}
-
-/* ---------- WHATSAPP FLOAT ---------- */
+/* WHATSAPP FLOAT */
 .whatsapp-float {
   position: fixed;
   right: 16px;
@@ -165,9 +160,7 @@ header {
   z-index: 999;
 }
 
-.whatsapp-float img {
-  width: 30px;
-}
+.whatsapp-float img { width: 30px; }
 </style>
 </head>
 
@@ -199,18 +192,17 @@ header {
 <script>
 let data = {};
 let positions = {};
+const VISIBLE = 4;
+const STEP = 192; // ancho real card + gap
 
 fetch("products.json")
   .then(r => r.json())
-  .then(d => {
-    data = d;
-    renderCatalog();
-  });
+  .then(d => { data = d; renderCatalog(); });
 
 search.addEventListener("input", renderCatalog);
 
-function slug(txt) {
-  return txt.replace(/[^a-z0-9]/gi, "_");
+function slug(t) {
+  return t.replace(/[^a-z0-9]/gi, "_");
 }
 
 function renderCatalog() {
@@ -245,17 +237,22 @@ function renderCatalog() {
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <img src="${p.image}">
+        <img src="${p.image}" class="car">
         <div class="name">${p.name}</div>
         <div class="price">S/ ${p.price}</div>
+        <button ${p.stock<=0?'disabled':''}
+          onclick="event.stopPropagation(); window.open('https://wa.me/51942434659','_blank')">
+          <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+        </button>
       `;
-      card.onclick = () => openDetail(p, brand);
+      card.querySelector(".car").onclick = () => openDetail(p, brand);
+      card.querySelector(".name").onclick = () => openDetail(p, brand);
       row.appendChild(card);
     });
 
     viewport.appendChild(row);
 
-    if (items.length > 4) {
+    if (items.length > VISIBLE) {
       const left = document.createElement("button");
       left.className = "arrow";
       left.innerHTML = "‹";
@@ -276,10 +273,10 @@ function renderCatalog() {
 }
 
 function move(id, dir, total) {
-  const row = document.getElementById(`row-${id}`);
-  const max = total - 4;
+  const max = total - VISIBLE;
   positions[id] = Math.max(0, Math.min(max, positions[id] + dir));
-  row.style.transform = `translateX(${-positions[id] * 182}px)`;
+  document.getElementById(`row-${id}`)
+    .style.transform = `translateX(${-positions[id] * STEP}px)`;
 }
 
 function openDetail(p, brand) {
@@ -291,7 +288,7 @@ function openDetail(p, brand) {
     <h3>${p.name}</h3>
     <div class="price">S/ ${p.price}</div>
     <div>Stock: ${p.stock}</div>
-    <button class="buy-btn" ${p.stock<=0?'disabled':''}
+    <button class="card button" ${p.stock<=0?'disabled':''}
       onclick="window.open('https://wa.me/51942434659','_blank')">
       <img src="imagenes/whatsapp-logo.png"> Comprar ahora
     </button>
