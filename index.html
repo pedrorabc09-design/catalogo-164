@@ -55,22 +55,34 @@ h2 {
   margin: 20px 0 10px;
 }
 
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+/* CAROUSEL */
+.carousel {
+  display: flex;
   gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+}
+
+.carousel::-webkit-scrollbar {
+  height: 6px;
+}
+
+.carousel::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
 }
 
 /* CARD */
 .card {
+  min-width: 170px;
+  max-width: 170px;
   background: white;
   border-radius: 8px;
   padding: 10px;
   display: flex;
   flex-direction: column;
 
-  /* Animación */
   opacity: 0;
   transform: translateY(10px);
   animation: fadeUp 0.4s ease forwards;
@@ -143,25 +155,15 @@ h2 {
   pointer-events: none;
 }
 
-/* WHATSAPP FLOAT */
-.whatsapp-float {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  background: #25d366;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  z-index: 999;
-}
-
-.whatsapp-float img {
-  width: 30px;
-  height: 30px;
+/* CATEGORY CARD */
+.category-card {
+  min-width: 100%;
+  background: #222;
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -181,17 +183,9 @@ h2 {
   </div>
 </header>
 
-<input id="search" placeholder="Buscar modelo...">
+<input id="search" placeholder="Buscar modelo o marca...">
 
 <section id="catalog"></section>
-
-<!-- WhatsApp flotante -->
-<a href="https://wa.me/51942434659"
-   class="whatsapp-float"
-   target="_blank"
-   aria-label="WhatsApp">
-  <img src="imagenes/whatsapp-logo.png" alt="WhatsApp">
-</a>
 
 <script>
 let catalogo = {};
@@ -201,6 +195,7 @@ fetch("products.json")
   .then(d => {
     catalogo = d;
     render();
+    autoScroll();
   });
 
 document.getElementById("search").addEventListener("input", render);
@@ -210,33 +205,30 @@ function render() {
   const cont = document.getElementById("catalog");
   cont.innerHTML = "";
 
-  // 🔥 OFERTAS
-  const ofertas = [];
   for (const marca in catalogo) {
-    catalogo[marca].forEach(p => {
-      if (p.originalPrice && p.originalPrice > p.price &&
-          p.name.toLowerCase().includes(q)) {
-        ofertas.push(p);
-      }
-    });
-  }
-
-  if (ofertas.length) {
-    cont.innerHTML += `<h2>🔥 Productos en oferta</h2><div class="grid"></div>`;
-    const grid = cont.querySelector(".grid:last-child");
-    ofertas.forEach(p => grid.appendChild(cardHTML(p)));
-  }
-
-  // 🧱 MARCAS
-  for (const marca in catalogo) {
-    const items = catalogo[marca].filter(p =>
+    const productos = catalogo[marca];
+    const marcaMatch = marca.toLowerCase().includes(q);
+    const items = productos.filter(p =>
       p.name.toLowerCase().includes(q)
     );
-    if (!items.length) continue;
 
-    cont.innerHTML += `<h2>${marca}</h2><div class="grid"></div>`;
-    const grid = cont.querySelector(".grid:last-child");
-    items.forEach(p => grid.appendChild(cardHTML(p)));
+    if (!marcaMatch && !items.length) continue;
+
+    /* Card de categoría si coincide la marca */
+    if (q && marcaMatch) {
+      cont.innerHTML += `<div class="category-card">${marca}</div>`;
+    } else {
+      cont.innerHTML += `<h2>${marca}</h2>`;
+    }
+
+    const carousel = document.createElement("div");
+    carousel.className = "carousel";
+
+    items.slice(0, 10).forEach(p => {
+      carousel.appendChild(cardHTML(p));
+    });
+
+    cont.appendChild(carousel);
   }
 }
 
@@ -263,6 +255,18 @@ function cardHTML(p) {
     </a>
   `;
   return card;
+}
+
+/* AUTO SCROLL */
+function autoScroll() {
+  setInterval(() => {
+    document.querySelectorAll(".carousel").forEach(c => {
+      c.scrollLeft += 180;
+      if (c.scrollLeft + c.clientWidth >= c.scrollWidth) {
+        c.scrollLeft = 0;
+      }
+    });
+  }, 10000);
 }
 </script>
 
