@@ -14,44 +14,74 @@ body {
 
 /* ================= HEADER ================= */
 header {
-  background: #334155;
-  color: white;
-  padding: 16px;
+  background: #1e293b;
+  padding: 28px 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 header img.logo {
-  height: 60px;
+  height: 85px;
+}
+
+/* SEARCH */
+.search-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  position: relative;
 }
 
 .search-box {
-  flex: 1;
   display: flex;
+  width: 360px;
   gap: 6px;
 }
 
 .search-box input {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
   border: none;
 }
 
 .search-box button {
-  background: #475569;
+  background: #334155;
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 10px;
   cursor: pointer;
 }
 
-header .icons img {
-  width: 32px;
-  margin-left: 10px;
+/* CATEGORIES DROPDOWN */
+#categories {
+  position: absolute;
+  top: 48px;
+  background: white;
+  width: 360px;
+  border-radius: 6px;
+  display: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+#categories div {
+  padding: 10px;
   cursor: pointer;
+}
+
+#categories div:hover {
+  background: #e5e7eb;
+}
+
+/* ICONS */
+.icons img {
+  width: 36px;
+  margin-left: 12px;
 }
 
 /* ================= SCREENS ================= */
@@ -60,11 +90,11 @@ header .icons img {
 
 /* ================= SECTIONS ================= */
 .section {
-  padding: 10px;
+  padding: 14px;
 }
 
 .section h2 {
-  margin: 8px 0;
+  margin: 6px 0 10px;
 }
 
 /* ================= SLIDER ================= */
@@ -73,7 +103,7 @@ header .icons img {
 }
 
 .viewport {
-  overflow-x: hidden;
+  overflow: hidden; /* 🔴 PC NO SCROLL */
 }
 
 @media (max-width: 768px) {
@@ -86,16 +116,16 @@ header .icons img {
 
 .track {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   transition: transform 0.3s ease;
 }
 
 /* ================= CARD ================= */
 .card {
-  min-width: 200px;
-  max-width: 200px;
+  min-width: 210px;
+  max-width: 210px;
   background: white;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 8px;
   display: flex;
   flex-direction: column;
@@ -105,7 +135,7 @@ header .icons img {
 
 .card img {
   width: 100%;
-  height: 130px;
+  height: 140px;
   object-fit: contain;
 }
 
@@ -114,19 +144,7 @@ header .icons img {
   margin: 6px 0;
 }
 
-/* ================= PRICE ================= */
-.price {
-  font-weight: bold;
-  color: #16a34a;
-}
-
-.old-price {
-  font-size: 13px;
-  text-decoration: line-through;
-  color: #6b7280;
-}
-
-/* ================= BADGES ================= */
+/* BADGES */
 .discount-badge {
   position: absolute;
   top: 8px;
@@ -136,7 +154,6 @@ header .icons img {
   font-size: 12px;
   padding: 4px 6px;
   border-radius: 4px;
-  font-weight: bold;
 }
 
 .stock-badge {
@@ -148,10 +165,21 @@ header .icons img {
   font-size: 11px;
   padding: 4px 6px;
   border-radius: 4px;
-  font-weight: bold;
 }
 
-/* ================= BUY BUTTON ================= */
+/* PRICE */
+.price {
+  font-weight: bold;
+  color: #16a34a;
+}
+
+.old-price {
+  text-decoration: line-through;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* BUY */
 .buy-btn {
   margin-top: auto;
   height: 36px;
@@ -162,55 +190,37 @@ header .icons img {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  text-decoration: none;
   font-size: 14px;
+  text-decoration: none;
 }
 
-.buy-btn img {
-  width: 18px;
-}
+.buy-btn img { width: 18px; }
 
 .buy-btn.disabled {
   background: #9ca3af;
   pointer-events: none;
 }
 
-/* ================= ARROWS ================= */
+/* ARROWS */
 .arrow {
   position: absolute;
   top: 40%;
-  background: #334155;
+  background: #1e293b;
   color: white;
   border: none;
   padding: 6px 10px;
   cursor: pointer;
-  z-index: 10;
+  z-index: 5;
 }
 
-.arrow.left { left: -6px; }
-.arrow.right { right: -6px; }
+.arrow.left { left: -8px; }
+.arrow.right { right: -8px; }
 
 @media (max-width: 768px) {
   .arrow { display: none; }
 }
 
-/* ================= DETAIL ================= */
-#detail {
-  padding: 12px;
-}
-
-#detail img.main {
-  width: 100%;
-  max-height: 300px;
-  object-fit: contain;
-}
-
-.back-btn img {
-  width: 40px;
-  cursor: pointer;
-}
-
-/* ================= FLOAT WHATSAPP ================= */
+/* FLOAT WHATSAPP */
 .whatsapp-float {
   position: fixed;
   right: 16px;
@@ -225,9 +235,7 @@ header .icons img {
   z-index: 999;
 }
 
-.whatsapp-float img {
-  width: 30px;
-}
+.whatsapp-float img { width: 30px; }
 </style>
 </head>
 
@@ -236,9 +244,12 @@ header .icons img {
 <header>
   <img src="imagenes/logo.png" class="logo">
 
-  <div class="search-box">
-    <input id="search" placeholder="Buscar modelos...">
-    <button onclick="toggleCategories()">☰</button>
+  <div class="search-wrapper">
+    <div class="search-box">
+      <input id="search" placeholder="Buscar modelos...">
+      <button onclick="toggleCategories()">☰</button>
+    </div>
+    <div id="categories"></div>
   </div>
 
   <div class="icons">
@@ -255,64 +266,48 @@ header .icons img {
   <div id="content"></div>
 </div>
 
-<div id="detail" class="screen">
-  <div class="back-btn" onclick="showScreen('catalog')">
-    <img src="imagenes/Volver.png">
-  </div>
-  <h2 id="dBrand"></h2>
-  <img id="dImage" class="main">
-  <h3 id="dName"></h3>
-  <p id="dPrice"></p>
-  <p id="dStock"></p>
-  <a id="dBuy" class="buy-btn" target="_blank">
-    <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-  </a>
-</div>
-
 <a class="whatsapp-float" href="https://wa.me/51942434659" target="_blank">
   <img src="imagenes/whatsapp-logo.png">
 </a>
 
 <script>
 let DATA = {};
-let searchInput = document.getElementById("search");
-
-const dBrand = document.getElementById("dBrand");
-const dName  = document.getElementById("dName");
-const dImage = document.getElementById("dImage");
-const dPrice = document.getElementById("dPrice");
-const dStock = document.getElementById("dStock");
-const dBuy   = document.getElementById("dBuy");
+let activeCategory = "ALL";
 
 fetch("products.json")
   .then(r => r.json())
   .then(json => {
     DATA = json;
+    buildCategories();
     render();
-    startAutoSlide();
   });
 
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+function toggleCategories() {
+  const c = document.getElementById("categories");
+  c.style.display = c.style.display === "block" ? "none" : "block";
 }
 
-searchInput.addEventListener("input", render);
+function buildCategories() {
+  const c = document.getElementById("categories");
+  c.innerHTML = `<div onclick="setCategory('ALL')">Ver todo</div>`;
+  Object.keys(DATA).forEach(b => {
+    c.innerHTML += `<div onclick="setCategory('${b}')">${b}</div>`;
+  });
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  document.getElementById("categories").style.display = "none";
+  render();
+}
 
 function render() {
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  let offers = [];
   for (const brand in DATA) {
-    DATA[brand].forEach(p => p.discount && offers.push({ ...p, brand }));
-  }
-
-  if (offers.length) content.appendChild(createSection("🔥 Ofertas", offers));
-
-  for (const brand in DATA) {
-    const list = DATA[brand].map(p => ({ ...p, brand }));
-    content.appendChild(createSection(brand, list));
+    if (activeCategory !== "ALL" && brand !== activeCategory) continue;
+    content.appendChild(createSection(brand, DATA[brand].map(p => ({...p, brand}))));
   }
 }
 
@@ -337,18 +332,14 @@ function createSection(title, products) {
   products.forEach(p => {
     const card = document.createElement("div");
     card.className = "card";
-    card.onclick = () => openDetail(p);
 
     card.innerHTML = `
       ${p.discount ? `<div class="discount-badge">-${p.discount}%</div>` : ""}
       ${p.stock === 1 ? `<div class="stock-badge">Última unidad</div>` : ""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
-      ${p.discount ? `<div class="old-price">S/ ${p.price}</div>` : ""}
-      <div class="price">S/ ${p.finalPrice || p.price}</div>
-      <a class="buy-btn ${p.stock === 0 ? "disabled" : ""}"
-         href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}"
-         target="_blank">
+      <div class="price">S/ ${p.price}</div>
+      <a class="buy-btn" href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}" target="_blank">
         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </a>
     `;
@@ -358,8 +349,8 @@ function createSection(title, products) {
   const left = div.querySelector(".left");
   const right = div.querySelector(".right");
 
-  left.onclick = () => viewport.scrollBy({ left: -210, behavior: "smooth" });
-  right.onclick = () => viewport.scrollBy({ left: 210, behavior: "smooth" });
+  left.onclick = () => viewport.scrollBy({ left: -220, behavior: "smooth" });
+  right.onclick = () => viewport.scrollBy({ left: 220, behavior: "smooth" });
 
   if (products.length <= 4) {
     left.style.display = "none";
@@ -367,42 +358,6 @@ function createSection(title, products) {
   }
 
   return div;
-}
-
-function openDetail(p) {
-  showScreen("detail");
-  dBrand.textContent = p.brand;
-  dName.textContent = p.name;
-  dImage.src = p.image;
-  dStock.textContent = "Stock disponible: " + p.stock;
-
-  if (p.discount) {
-    dPrice.innerHTML = `<span class="old-price">S/ ${p.price}</span> <span class="price">S/ ${p.finalPrice}</span>`;
-  } else {
-    dPrice.innerHTML = `<span class="price">S/ ${p.price}</span>`;
-  }
-
-  if (p.stock === 0) {
-    dBuy.classList.add("disabled");
-    dBuy.removeAttribute("href");
-  } else {
-    dBuy.classList.remove("disabled");
-    dBuy.href = "https://wa.me/51942434659?text=" +
-      encodeURIComponent("Hola, quiero comprar: " + p.name);
-  }
-}
-
-/* ===== AUTOSLIDE ===== */
-function startAutoSlide() {
-  document.querySelectorAll(".viewport").forEach(vp => {
-    setInterval(() => {
-      vp.scrollBy({ left: 210, behavior: "smooth" });
-    }, 10000);
-  });
-}
-
-function toggleCategories() {
-  alert("Aquí luego pondremos el menú de categorías 😄");
 }
 </script>
 
