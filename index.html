@@ -34,7 +34,7 @@ header{
 }
 .search-area input{
   width:70%;
-  max-width:560px;
+  max-width:620px;
   padding:14px 18px;
   border-radius:14px;
   border:none;
@@ -91,14 +91,10 @@ main{padding:22px}
   overflow:hidden;
   scroll-behavior:smooth;
 }
-
-/* mobile */
 @media(max-width:768px){
   .track{overflow-x:auto}
   .track::-webkit-scrollbar{display:none}
 }
-
-/* arrows desktop */
 .arrow{
   position:absolute;
   top:45%;
@@ -174,7 +170,7 @@ main{padding:22px}
   border-radius:10px;
 }
 
-/* ===== DETAIL ===== */
+/* ===== DETAIL VIEW ===== */
 #detail{display:none;padding:20px}
 #detail.active{display:block}
 #catalog.active{display:block}
@@ -184,24 +180,58 @@ main{padding:22px}
   background:white;
   border-radius:18px;
   padding:22px;
-  width:100%;
-  max-width:900px;
+  max-width:1000px;
   margin:auto;
 }
+
+.detail-header{
+  margin-bottom:16px;
+}
+.detail-header img{
+  width:46px;
+  cursor:pointer;
+}
+
+.detail-content{
+  display:flex;
+  gap:32px;
+  align-items:flex-start;
+}
 .detail-img{
-  width:100%;
-  height:320px;
+  width:420px;
+  max-width:100%;
   object-fit:contain;
 }
-.detail-actions{
-  margin-top:20px;
-  display:flex;
-  gap:20px;
-  align-items:center;
+.detail-info{
+  flex:1;
 }
-.detail-actions img{
-  width:48px;
-  cursor:pointer;
+.detail-info h2{
+  margin-bottom:14px;
+}
+.detail-info p{
+  margin-bottom:10px;
+}
+.detail-buy{
+  margin-top:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:#25d366;
+  color:white;
+  padding:12px 18px;
+  border-radius:14px;
+  text-decoration:none;
+}
+.detail-buy img{
+  width:22px;
+}
+
+@media(max-width:768px){
+  .detail-content{
+    flex-direction:column;
+    align-items:center;
+  }
+  .detail-info{text-align:center}
 }
 </style>
 </head>
@@ -213,14 +243,11 @@ main{padding:22px}
     <img src="imagenes/logo.png" class="logo" onclick="goHome()">
 
     <div class="search-area">
-      <input id="search" placeholder="Buscar modelos...">
+      <input id="search" placeholder="Buscar modelos o marcas...">
       <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
 
     <div class="icons">
-      <a href="https://www.facebook.com/profile.php?id=100064895565079" target="_blank">
-        <img src="imagenes/facebook.png">
-      </a>
       <a href="https://wa.me/51942434659" target="_blank">
         <img src="imagenes/whatsapp-logo.png">
       </a>
@@ -235,16 +262,20 @@ main{padding:22px}
 
   <div id="detail">
     <div class="detail-box">
-      <h2 id="d-name"></h2>
-      <img id="d-image" class="detail-img">
-      <p id="d-price"></p>
-      <p id="d-stock"></p>
+      <div class="detail-header">
+        <img src="imagenes/Volver.png" onclick="goHome()">
+      </div>
 
-      <div class="detail-actions">
-        <img src="imagenes/Volver.png" onclick="goHome()" alt="Volver">
-        <a id="d-buy" target="_blank">
-          <img src="imagenes/whatsapp-logo.png">
-        </a>
+      <div class="detail-content">
+        <img id="d-image" class="detail-img">
+        <div class="detail-info">
+          <h2 id="d-name"></h2>
+          <p id="d-price"></p>
+          <p id="d-stock"></p>
+          <a id="d-buy" class="detail-buy" target="_blank">
+            <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -254,7 +285,6 @@ main{padding:22px}
 const catalog=document.getElementById("catalog");
 const detail=document.getElementById("detail");
 const search=document.getElementById("search");
-
 const dName=document.getElementById("d-name");
 const dImage=document.getElementById("d-image");
 const dPrice=document.getElementById("d-price");
@@ -268,7 +298,11 @@ fetch("products.json").then(r=>r.json()).then(d=>{
   render("");
 });
 
-function render(filter=""){
+search.addEventListener("input",e=>{
+  render(e.target.value.toLowerCase());
+});
+
+function render(filter){
   catalog.innerHTML="";
 
   let offers=[];
@@ -279,17 +313,17 @@ function render(filter=""){
     catalog.appendChild(section("🔥 Ofertas",offers));
   }
 
-  Object.entries(DATA).forEach(([b,ps])=>{
-    const filtered=ps.filter(p=>p.name.toLowerCase().includes(filter));
+  Object.entries(DATA).forEach(([brand,products])=>{
+    const matchBrand = brand.toLowerCase().includes(filter);
+    const filtered = matchBrand
+      ? products
+      : products.filter(p=>p.name.toLowerCase().includes(filter));
+
     if(filtered.length){
-      catalog.appendChild(section(b,filtered));
+      catalog.appendChild(section(brand,filtered));
     }
   });
 }
-
-search.addEventListener("input",e=>{
-  render(e.target.value.toLowerCase());
-});
 
 function section(title,products){
   const s=document.createElement("div");
@@ -355,16 +389,7 @@ function openDetail(p){
     : `<span class="price">S/ ${p.price}</span>`;
 
   dStock.innerText="Stock disponible: "+p.stock;
-
-  if(p.stock){
-    dBuy.href="https://wa.me/51942434659?text="+encodeURIComponent("Hola, quiero comprar: "+p.name);
-    dBuy.style.pointerEvents="auto";
-    dBuy.style.opacity="1";
-  }else{
-    dBuy.removeAttribute("href");
-    dBuy.style.pointerEvents="none";
-    dBuy.style.opacity="0.5";
-  }
+  dBuy.href="https://wa.me/51942434659?text="+encodeURIComponent("Hola, quiero comprar: "+p.name);
 }
 
 function goHome(){
