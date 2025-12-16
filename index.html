@@ -12,8 +12,9 @@ body {
   background: #f4f6f8;
 }
 
+/* HEADER */
 header {
-  background: #1e293b;
+  background: #1f2937;
   color: white;
   padding: 10px;
   display: flex;
@@ -43,38 +44,41 @@ header .icons img {
   cursor: pointer;
 }
 
-.screen {
-  display: none;
-}
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; }
 
-.screen.active {
-  display: block;
-}
-
+/* SECTIONS */
 .section {
   padding: 10px;
 }
 
 .section h2 {
-  margin: 5px 0;
+  margin: 8px 0;
 }
 
+/* SLIDER */
 .slider {
   position: relative;
+  overflow: hidden;
 }
 
 .track {
   display: flex;
   gap: 10px;
-  overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
+/* CARD */
 .card {
+  position: relative;
   min-width: 200px;
   max-width: 200px;
   background: white;
   border-radius: 8px;
   padding: 8px;
+  display: flex;
+  flex-direction: column;
   cursor: pointer;
   animation: fadeUp 0.4s ease forwards;
 }
@@ -87,11 +91,20 @@ header .icons img {
 
 .card h3 {
   font-size: 14px;
+  margin: 6px 0;
 }
 
-.price {
+/* DISCOUNT */
+.discount-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #dc2626;
+  color: white;
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 4px;
   font-weight: bold;
-  color: #16a34a;
 }
 
 .old-price {
@@ -100,45 +113,51 @@ header .icons img {
   font-size: 13px;
 }
 
+.price {
+  font-weight: bold;
+  color: #16a34a;
+}
+
+/* BUY BUTTON */
 .buy-btn {
-  margin-top: 6px;
+  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  height: 36px;
+  font-size: 14px;
   background: #25d366;
   color: white;
-  padding: 6px;
   border-radius: 6px;
   text-decoration: none;
-}
-
-.buy-btn.disabled {
-  background: #aaa;
-  pointer-events: none;
+  padding: 0 10px;
 }
 
 .buy-btn img {
   width: 18px;
+  height: 18px;
 }
 
+.buy-btn.disabled {
+  background: #9ca3af;
+  pointer-events: none;
+}
+
+/* ARROWS */
 .arrow {
   position: absolute;
   top: 40%;
-  background: #1e293b;
+  background: #1f2937;
   color: white;
   border: none;
   padding: 6px;
   cursor: pointer;
+  z-index: 5;
 }
 
-.arrow.left { left: -5px; }
-.arrow.right { right: -5px; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.arrow.left { left: -4px; }
+.arrow.right { right: -4px; }
 
 /* DETAIL */
 #detail {
@@ -155,7 +174,7 @@ header .icons img {
   width: 40px;
 }
 
-/* WhatsApp flotante */
+/* FLOAT WHATSAPP */
 .whatsapp-float {
   position: fixed;
   right: 16px;
@@ -171,6 +190,11 @@ header .icons img {
 
 .whatsapp-float img {
   width: 30px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -217,11 +241,11 @@ header .icons img {
 let DATA = {};
 
 fetch("products.json")
-.then(r => r.json())
-.then(json => {
-  DATA = json;
-  render();
-});
+  .then(r => r.json())
+  .then(json => {
+    DATA = json;
+    render();
+  });
 
 function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -232,11 +256,10 @@ function render() {
   const content = document.getElementById("content");
   content.innerHTML = "";
 
-  // OFERTAS
   let offers = [];
   for (const brand in DATA) {
     DATA[brand].forEach(p => {
-      if (p.discount) offers.push({...p, brand});
+      if (p.discount) offers.push({ ...p, brand });
     });
   }
 
@@ -245,7 +268,9 @@ function render() {
   }
 
   for (const brand in DATA) {
-    content.appendChild(section(brand, DATA[brand].map(p => ({...p, brand}))));
+    content.appendChild(
+      section(brand, DATA[brand].map(p => ({ ...p, brand })))
+    );
   }
 }
 
@@ -253,15 +278,19 @@ function section(title, products) {
   const div = document.createElement("div");
   div.className = "section";
 
-  div.innerHTML = `<h2>${title}</h2>
+  div.innerHTML = `
+    <h2>${title}</h2>
     <div class="slider">
       <button class="arrow left">◀</button>
       <div class="track"></div>
       <button class="arrow right">▶</button>
-    </div>`;
+    </div>
+  `;
 
   const track = div.querySelector(".track");
   let index = 0;
+  const visible = 4;
+  const cardWidth = 210;
 
   products.forEach(p => {
     const c = document.createElement("div");
@@ -269,15 +298,17 @@ function section(title, products) {
     c.onclick = () => openDetail(p);
 
     c.innerHTML = `
+      ${p.discount ? `<div class="discount-badge">-${p.discount}%</div>` : ""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
       ${p.discount ? `<div class="old-price">S/ ${p.price}</div>` : ""}
       <div class="price">S/ ${p.finalPrice || p.price}</div>
-      <a class="buy-btn ${p.stock===0?'disabled':''}"
-         href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}"
-         target="_blank">
-         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-      </a>`;
+      <a class="buy-btn ${p.stock === 0 ? "disabled" : ""}"
+        href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}"
+        target="_blank">
+        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+      </a>
+    `;
     track.appendChild(c);
   });
 
@@ -285,16 +316,20 @@ function section(title, products) {
   const right = div.querySelector(".right");
 
   left.onclick = () => {
-    index = Math.max(0, index - 1);
-    track.style.transform = `translateX(${-210 * index}px)`;
+    if (index > 0) {
+      index--;
+      track.style.transform = `translateX(-${cardWidth * index}px)`;
+    }
   };
 
   right.onclick = () => {
-    index = Math.min(products.length - 4, index + 1);
-    track.style.transform = `translateX(${-210 * index}px)`;
+    if (index < products.length - visible) {
+      index++;
+      track.style.transform = `translateX(-${cardWidth * index}px)`;
+    }
   };
 
-  if (products.length <= 4) {
+  if (products.length <= visible) {
     left.style.display = right.style.display = "none";
   }
 
