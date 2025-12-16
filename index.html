@@ -9,12 +9,12 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
-body{background:#f1f5f9;color:#111}
+body{background:#f1f5f9;color:#0f172a}
 
 /* ===== HEADER ===== */
 header{
   background:#1e293b;
-  padding:28px;
+  padding:32px 28px;
   color:white;
 }
 .header-top{
@@ -23,7 +23,7 @@ header{
   gap:24px;
 }
 .logo{
-  height:180px; /* DOBLE */
+  height:200px;
   cursor:pointer;
 }
 .search-area{
@@ -33,10 +33,10 @@ header{
   gap:12px;
 }
 .search-area input{
-  width:65%;
-  max-width:520px;
+  width:70%;
+  max-width:560px;
   padding:14px 18px;
-  border-radius:12px;
+  border-radius:14px;
   border:none;
 }
 .cat-btn{
@@ -44,7 +44,7 @@ header{
   color:white;
   border:none;
   padding:12px 16px;
-  border-radius:12px;
+  border-radius:14px;
   cursor:pointer;
   font-size:26px;
 }
@@ -61,12 +61,12 @@ header{
 #categories{
   display:none;
   position:absolute;
-  top:220px;
+  top:240px;
   left:50%;
   transform:translateX(-50%);
   background:white;
-  width:300px;
-  border-radius:14px;
+  width:320px;
+  border-radius:16px;
   box-shadow:0 15px 40px rgba(0,0,0,.25);
   z-index:50;
 }
@@ -101,9 +101,9 @@ main{padding:22px}
 /* arrows desktop */
 .arrow{
   position:absolute;
-  top:42%;
-  width:40px;
-  height:40px;
+  top:45%;
+  width:42px;
+  height:42px;
   border-radius:50%;
   border:none;
   background:#1e293b;
@@ -112,8 +112,8 @@ main{padding:22px}
   cursor:pointer;
   z-index:10;
 }
-.arrow.left{left:-20px}
-.arrow.right{right:-20px}
+.arrow.left{left:-22px}
+.arrow.right{right:-22px}
 .arrow.hidden{display:none}
 
 /* ===== CARD ===== */
@@ -121,7 +121,7 @@ main{padding:22px}
   background:white;
   width:220px;
   min-width:220px;
-  border-radius:16px;
+  border-radius:18px;
   padding:14px;
   display:flex;
   flex-direction:column;
@@ -145,10 +145,10 @@ main{padding:22px}
 }
 .buy-btn{
   margin-top:auto;
-  height:38px;
+  height:40px;
   background:#25d366;
   color:white;
-  border-radius:10px;
+  border-radius:12px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -175,7 +175,7 @@ main{padding:22px}
 }
 
 /* ===== DETAIL ===== */
-#detail{display:none}
+#detail{display:none;padding:20px}
 #detail.active{display:block}
 #catalog.active{display:block}
 #catalog{display:none}
@@ -184,17 +184,19 @@ main{padding:22px}
   background:white;
   border-radius:18px;
   padding:22px;
-  max-width:520px;
+  width:100%;
+  max-width:900px;
+  margin:auto;
 }
 .detail-img{
   width:100%;
-  height:260px;
+  height:320px;
   object-fit:contain;
 }
 .detail-actions{
   margin-top:20px;
   display:flex;
-  gap:18px;
+  gap:20px;
   align-items:center;
 }
 .detail-actions img{
@@ -239,7 +241,7 @@ main{padding:22px}
       <p id="d-stock"></p>
 
       <div class="detail-actions">
-        <img src="imagenes/volver.png" onclick="goHome()">
+        <img src="imagenes/Volver.png" onclick="goHome()" alt="Volver">
         <a id="d-buy" target="_blank">
           <img src="imagenes/whatsapp-logo.png">
         </a>
@@ -263,11 +265,12 @@ let DATA={};
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
-  render();
+  render("");
 });
 
 function render(filter=""){
   catalog.innerHTML="";
+
   let offers=[];
   Object.values(DATA).flat().forEach(p=>{
     if(p.discount) offers.push(p);
@@ -275,6 +278,7 @@ function render(filter=""){
   if(offers.length && !filter){
     catalog.appendChild(section("🔥 Ofertas",offers));
   }
+
   Object.entries(DATA).forEach(([b,ps])=>{
     const filtered=ps.filter(p=>p.name.toLowerCase().includes(filter));
     if(filtered.length){
@@ -327,8 +331,10 @@ function section(title,products){
   });
 
   right.onclick=()=>{
-    track.scrollBy({left:240,behavior:"smooth"});
-    left.classList.remove("hidden");
+    if(track.scrollLeft + track.clientWidth < track.scrollWidth){
+      track.scrollBy({left:240,behavior:"smooth"});
+      left.classList.remove("hidden");
+    }
   };
   left.onclick=()=>{
     track.scrollBy({left:-240,behavior:"smooth"});
@@ -343,19 +349,29 @@ function openDetail(p){
 
   dName.innerText=p.name;
   dImage.src=p.image;
+
   dPrice.innerHTML=p.discount
     ? `<span class="old-price">S/ ${p.price}</span> <span class="price">S/ ${p.finalPrice}</span>`
     : `<span class="price">S/ ${p.price}</span>`;
+
   dStock.innerText="Stock disponible: "+p.stock;
 
-  dBuy.href=p.stock
-    ? `https://wa.me/51942434659?text=${encodeURIComponent("Hola, quiero comprar: "+p.name)}`
-    : "#";
+  if(p.stock){
+    dBuy.href="https://wa.me/51942434659?text="+encodeURIComponent("Hola, quiero comprar: "+p.name);
+    dBuy.style.pointerEvents="auto";
+    dBuy.style.opacity="1";
+  }else{
+    dBuy.removeAttribute("href");
+    dBuy.style.pointerEvents="none";
+    dBuy.style.opacity="0.5";
+  }
 }
 
 function goHome(){
   detail.classList.remove("active");
   catalog.classList.add("active");
+  search.value="";
+  render("");
 }
 
 function toggleCategories(){
@@ -366,9 +382,9 @@ function toggleCategories(){
       const d=document.createElement("div");
       d.innerText=b;
       d.onclick=()=>{
+        c.style.display="none";
         catalog.innerHTML="";
         catalog.appendChild(section(b,DATA[b]));
-        c.style.display="none";
       };
       c.appendChild(d);
     });
