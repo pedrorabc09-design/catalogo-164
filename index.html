@@ -6,236 +6,207 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f3f4f6;
+body{
+  margin:0;
+  font-family:Segoe UI,Arial;
+  background:#f3f4f6
 }
 
 /* ================= HEADER ================= */
-header {
-  background: #1e293b;
-  padding: 28px 20px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+header{
+  background:#1f2937;
+  padding:34px 24px;
+  display:flex;
+  align-items:center;
+  gap:24px;
+  position:sticky;
+  top:0;
+  z-index:100
 }
 
-header img.logo {
-  height: 85px;
-}
+.logo{height:90px}
 
 /* SEARCH */
-.search-wrapper {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  position: relative;
+.search-wrapper{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  position:relative
 }
 
-.search-box {
-  display: flex;
-  width: 360px;
-  gap: 6px;
+.search-box{
+  display:flex;
+  width:460px;
+  gap:6px
 }
 
-.search-box input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
+.search-box input{
+  flex:1;
+  padding:12px;
+  border-radius:8px;
+  border:none
 }
 
-.search-box button {
-  background: #334155;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px;
-  cursor: pointer;
+.search-box button{
+  background:#374151;
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer
 }
 
-/* CATEGORIES DROPDOWN */
-#categories {
-  position: absolute;
-  top: 48px;
-  background: white;
-  width: 360px;
-  border-radius: 6px;
-  display: none;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+#categories{
+  position:absolute;
+  top:54px;
+  background:white;
+  width:460px;
+  border-radius:8px;
+  display:none;
+  box-shadow:0 10px 24px rgba(0,0,0,.25)
 }
 
-#categories div {
-  padding: 10px;
-  cursor: pointer;
+#categories div{
+  padding:12px;
+  cursor:pointer
 }
-
-#categories div:hover {
-  background: #e5e7eb;
-}
+#categories div:hover{background:#e5e7eb}
 
 /* ICONS */
-.icons img {
-  width: 36px;
-  margin-left: 12px;
-}
+.icons img{width:38px;margin-left:14px}
 
 /* ================= SCREENS ================= */
-.screen { display: none; }
-.screen.active { display: block; }
+.screen{display:none}
+.screen.active{display:block}
 
 /* ================= SECTIONS ================= */
-.section {
-  padding: 14px;
-}
-
-.section h2 {
-  margin: 6px 0 10px;
-}
+.section{padding:16px}
+.section h2{margin:8px 0}
 
 /* ================= SLIDER ================= */
-.slider {
-  position: relative;
+.viewport{overflow:hidden}
+@media(max-width:768px){
+  .viewport{overflow-x:auto;scrollbar-width:none}
+  .viewport::-webkit-scrollbar{display:none}
 }
 
-.viewport {
-  overflow: hidden; /* 🔴 PC NO SCROLL */
-}
-
-@media (max-width: 768px) {
-  .viewport {
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .viewport::-webkit-scrollbar { display: none; }
-}
-
-.track {
-  display: flex;
-  gap: 12px;
-  transition: transform 0.3s ease;
+.track{
+  display:flex;
+  gap:14px;
+  transition:transform .4s ease
 }
 
 /* ================= CARD ================= */
-.card {
-  min-width: 210px;
-  max-width: 210px;
-  background: white;
-  border-radius: 10px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  cursor: pointer;
+.card{
+  width:220px;
+  background:white;
+  border-radius:12px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  cursor:pointer;
+  position:relative
 }
 
-.card img {
-  width: 100%;
-  height: 140px;
-  object-fit: contain;
+.card img{
+  height:150px;
+  object-fit:contain
 }
 
-.card h3 {
-  font-size: 14px;
-  margin: 6px 0;
+.card h3{
+  font-size:14px;
+  margin:8px 0
 }
 
 /* BADGES */
-.discount-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: #dc2626;
-  color: white;
-  font-size: 12px;
-  padding: 4px 6px;
-  border-radius: 4px;
+.discount{
+  position:absolute;
+  top:8px;
+  left:8px;
+  background:#dc2626;
+  color:white;
+  font-size:12px;
+  padding:4px 6px;
+  border-radius:4px
 }
 
-.stock-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #f59e0b;
-  color: white;
-  font-size: 11px;
-  padding: 4px 6px;
-  border-radius: 4px;
+.stock{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:#f59e0b;
+  color:white;
+  font-size:11px;
+  padding:4px 6px;
+  border-radius:4px
 }
 
-/* PRICE */
-.price {
-  font-weight: bold;
-  color: #16a34a;
-}
+.price{color:#16a34a;font-weight:bold}
+.old{font-size:13px;text-decoration:line-through;color:#6b7280}
 
-.old-price {
-  text-decoration: line-through;
-  font-size: 13px;
-  color: #6b7280;
+.buy{
+  margin-top:auto;
+  height:38px;
+  background:#25d366;
+  color:white;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  text-decoration:none
 }
-
-/* BUY */
-.buy-btn {
-  margin-top: auto;
-  height: 36px;
-  background: #25d366;
-  color: white;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.buy-btn img { width: 18px; }
-
-.buy-btn.disabled {
-  background: #9ca3af;
-  pointer-events: none;
-}
+.buy img{width:18px}
+.buy.disabled{background:#9ca3af;pointer-events:none}
 
 /* ARROWS */
-.arrow {
-  position: absolute;
-  top: 40%;
-  background: #1e293b;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  cursor: pointer;
-  z-index: 5;
+.arrow{
+  position:absolute;
+  top:42%;
+  background:#1f2937;
+  color:white;
+  border:none;
+  padding:6px 10px;
+  cursor:pointer;
+  z-index:5
+}
+.left{left:-10px}
+.right{right:-10px}
+@media(max-width:768px){.arrow{display:none}}
+
+/* ================= DETAIL ================= */
+#detail{
+  padding:24px;
+  max-width:900px;
+  margin:auto
 }
 
-.arrow.left { left: -8px; }
-.arrow.right { right: -8px; }
+#detail img{
+  width:100%;
+  max-height:380px;
+  object-fit:contain
+}
 
-@media (max-width: 768px) {
-  .arrow { display: none; }
+.back{
+  margin-bottom:16px;
+  cursor:pointer
 }
 
 /* FLOAT WHATSAPP */
-.whatsapp-float {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  background: #25d366;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
+.float{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  background:#25d366;
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999
 }
-
-.whatsapp-float img { width: 30px; }
+.float img{width:32px}
 </style>
 </head>
 
@@ -247,7 +218,7 @@ header img.logo {
   <div class="search-wrapper">
     <div class="search-box">
       <input id="search" placeholder="Buscar modelos...">
-      <button onclick="toggleCategories()">☰</button>
+      <button onclick="toggleCat()">☰</button>
     </div>
     <div id="categories"></div>
   </div>
@@ -262,104 +233,138 @@ header img.logo {
   </div>
 </header>
 
-<div id="catalog" class="screen active">
-  <div id="content"></div>
-</div>
+<div id="catalog" class="screen active"></div>
+<div id="detail" class="screen"></div>
 
-<a class="whatsapp-float" href="https://wa.me/51942434659" target="_blank">
+<a class="float" href="https://wa.me/51942434659">
   <img src="imagenes/whatsapp-logo.png">
 </a>
 
 <script>
-let DATA = {};
-let activeCategory = "ALL";
+let DATA={}, active="ALL", timers=[];
 
-fetch("products.json")
-  .then(r => r.json())
-  .then(json => {
-    DATA = json;
-    buildCategories();
-    render();
-  });
+fetch("products.json").then(r=>r.json()).then(j=>{
+  DATA=j; buildCat(); render();
+});
 
-function toggleCategories() {
-  const c = document.getElementById("categories");
-  c.style.display = c.style.display === "block" ? "none" : "block";
+function toggleCat(){
+  const c=document.getElementById("categories");
+  c.style.display=c.style.display==="block"?"none":"block"
 }
 
-function buildCategories() {
-  const c = document.getElementById("categories");
-  c.innerHTML = `<div onclick="setCategory('ALL')">Ver todo</div>`;
-  Object.keys(DATA).forEach(b => {
-    c.innerHTML += `<div onclick="setCategory('${b}')">${b}</div>`;
-  });
+function buildCat(){
+  const c=document.getElementById("categories");
+  c.innerHTML='<div onclick="setCat(`ALL`)">Ver todo</div>';
+  Object.keys(DATA).forEach(b=>{
+    c.innerHTML+=`<div onclick="setCat('${b}')">${b}</div>`
+  })
 }
 
-function setCategory(cat) {
-  activeCategory = cat;
-  document.getElementById("categories").style.display = "none";
-  render();
+function setCat(c){
+  active=c;
+  document.getElementById("categories").style.display="none";
+  render()
 }
 
-function render() {
-  const content = document.getElementById("content");
-  content.innerHTML = "";
+function render(){
+  clearTimers();
+  const root=document.getElementById("catalog");
+  root.innerHTML="";
 
-  for (const brand in DATA) {
-    if (activeCategory !== "ALL" && brand !== activeCategory) continue;
-    content.appendChild(createSection(brand, DATA[brand].map(p => ({...p, brand}))));
+  // OFERTAS
+  const offers=[];
+  for(const b in DATA){
+    DATA[b].forEach(p=>{
+      if(p.oldPrice) offers.push({...p,brand:b})
+    })
+  }
+  if(offers.length){
+    root.appendChild(section("🔥 Productos en oferta",offers))
+  }
+
+  for(const b in DATA){
+    if(active!=="ALL"&&b!==active)continue;
+    root.appendChild(section(b,DATA[b].map(p=>({...p,brand:b}))))
   }
 }
 
-function createSection(title, products) {
-  const div = document.createElement("div");
-  div.className = "section";
+function section(title,items){
+  const s=document.createElement("div");
+  s.className="section";
+  s.innerHTML=`<h2>${title}</h2>
+  <div style="position:relative">
+    <button class="arrow left">◀</button>
+    <button class="arrow right">▶</button>
+    <div class="viewport"><div class="track"></div></div>
+  </div>`;
+  const v=s.querySelector(".viewport");
+  const t=s.querySelector(".track");
 
-  div.innerHTML = `
-    <h2>${title}</h2>
-    <div class="slider">
-      <button class="arrow left">◀</button>
-      <button class="arrow right">▶</button>
-      <div class="viewport">
-        <div class="track"></div>
-      </div>
-    </div>
-  `;
-
-  const viewport = div.querySelector(".viewport");
-  const track = div.querySelector(".track");
-
-  products.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      ${p.discount ? `<div class="discount-badge">-${p.discount}%</div>` : ""}
-      ${p.stock === 1 ? `<div class="stock-badge">Última unidad</div>` : ""}
+  items.forEach(p=>{
+    const d=p.oldPrice?Math.round((1-p.price/p.oldPrice)*100):0;
+    const c=document.createElement("div");
+    c.className="card";
+    c.innerHTML=`
+      ${d?`<div class="discount">-${d}%</div>`:""}
+      ${p.stock===1?`<div class="stock">Última</div>`:""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
+      ${p.oldPrice?`<div class="old">S/ ${p.oldPrice}</div>`:""}
       <div class="price">S/ ${p.price}</div>
-      <a class="buy-btn" href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}" target="_blank">
-        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-      </a>
-    `;
-    track.appendChild(card);
+      <a class="buy ${p.stock?``:`disabled`}" 
+         href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
+         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+      </a>`;
+    c.onclick=e=>{if(!e.target.closest("a"))showDetail(p)};
+    t.appendChild(c)
   });
 
-  const left = div.querySelector(".left");
-  const right = div.querySelector(".right");
+  let pos=0;
+  const max=Math.max(0,items.length-4);
+  const left=s.querySelector(".left");
+  const right=s.querySelector(".right");
 
-  left.onclick = () => viewport.scrollBy({ left: -220, behavior: "smooth" });
-  right.onclick = () => viewport.scrollBy({ left: 220, behavior: "smooth" });
+  left.onclick=()=>move(-1);
+  right.onclick=()=>move(1);
 
-  if (products.length <= 4) {
-    left.style.display = "none";
-    right.style.display = "none";
+  function move(d){
+    pos=Math.max(0,Math.min(max,pos+d));
+    t.style.transform=`translateX(-${pos*234}px)`
   }
 
-  return div;
-}
-</script>
+  if(items.length<=4){left.style.display=right.style.display="none"}
 
+  let timer=setInterval(()=>move(1),10000);
+  v.onmouseenter=()=>clearInterval(timer);
+  v.onmouseleave=()=>timer=setInterval(()=>move(1),10000);
+  timers.push(timer);
+
+  return s
+}
+
+function showDetail(p){
+  document.getElementById("catalog").classList.remove("active");
+  const d=document.getElementById("detail");
+  d.classList.add("active");
+  d.innerHTML=`
+    <img src="imagenes/Volver.png" class="back" onclick="back()">
+    <img src="${p.image}">
+    <h2>${p.name}</h2>
+    ${p.oldPrice?`<div class="old">S/ ${p.oldPrice}</div>`:""}
+    <div class="price">S/ ${p.price}</div>
+    <p>Stock: ${p.stock}</p>
+    <a class="buy ${p.stock?``:`disabled`}" 
+       href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
+       <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+    </a>`
+}
+
+function back(){
+  document.getElementById("detail").classList.remove("active");
+  document.getElementById("catalog").classList.add("active")
+}
+
+function clearTimers(){timers.forEach(t=>clearInterval(t));timers=[]}
+</script>
 </body>
 </html>
