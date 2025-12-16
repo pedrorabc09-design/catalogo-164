@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>IGNICAR TOYS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -11,156 +11,142 @@
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
-  background: #f3f4f6;
+  background: #f1f5f9;
 }
 
-.hidden { display: none; }
+.hidden { display:none }
 
 /* HEADER */
 header {
-  background: #334155;
-  color: white;
-  padding: 10px;
+  background:#334155;
+  color:white;
+  padding:10px;
 }
 
 .header-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
-.logo { height: 40px; }
+.logo { height:40px }
 
 .header-top h1 {
-  flex: 1;
-  font-size: 20px;
+  flex:1;
+  font-size:20px;
 }
 
 .header-icons img {
-  width: 26px;
-  margin-left: 8px;
-  cursor: pointer;
+  width:26px;
+  cursor:pointer;
 }
 
 #search {
-  width: 100%;
-  margin-top: 8px;
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
+  width:100%;
+  padding:8px;
+  margin-top:8px;
+  border-radius:6px;
+  border:none;
 }
 
-/* CATALOG */
-#catalog { padding: 10px; }
+/* CAROUSEL */
+.section { margin:16px 10px }
 
 .carousel-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
 .arrow {
-  width: 34px;
-  height: 240px;
-  background: #1f2937;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 22px;
+  width:34px;
+  height:260px;
+  background:#1f2937;
+  color:white;
+  border:none;
+  font-size:22px;
+  cursor:pointer;
+  border-radius:6px;
 }
 
-.carousel-viewport {
-  overflow: hidden;
-  width: 100%;
+.viewport {
+  overflow:hidden;
+  width:100%;
 }
 
-.carousel {
-  display: flex;
-  gap: 12px;
-  transition: transform 0.35s ease;
+.row {
+  display:flex;
+  gap:12px;
+  transition:transform .3s ease;
+  flex-wrap:nowrap;
 }
 
 /* CARD */
 .card {
-  width: 180px;
-  background: white;
-  border-radius: 8px;
-  padding: 8px;
-  flex-shrink: 0;
+  width:180px;
+  background:white;
+  border-radius:8px;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
 }
 
 .card img.car {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer;
+  height:120px;
+  object-fit:cover;
+  border-radius:6px;
+  cursor:pointer;
 }
 
-.card .name {
-  font-size: 13px;
-  margin: 6px 0;
-  cursor: pointer;
+.name {
+  font-size:13px;
+  margin:6px 0;
+  cursor:pointer;
 }
 
-.card .price {
-  color: #d97706;
-  font-weight: 700;
-  margin-bottom: 6px;
+.price {
+  font-weight:700;
+  color:#d97706;
+}
+
+.old-price {
+  text-decoration:line-through;
+  color:#64748b;
+  font-size:12px;
 }
 
 .card button {
-  width: 100%;
-  padding: 6px;
-  background: #25d366;
-  border: none;
-  color: white;
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
+  margin-top:auto;
+  padding:6px;
+  border:none;
+  border-radius:6px;
+  background:#25d366;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  cursor:pointer;
 }
 
-.card button img {
-  width: 18px;
-}
+.card button img { width:18px }
 
 .card button:disabled {
-  background: #9ca3af;
-  cursor: default;
+  background:#9ca3af;
+  cursor:default;
 }
 
 /* DETAIL */
-#detail { padding: 10px; }
+#detail { padding:10px }
 
 .detail-img {
-  width: 100%;
-  max-height: 320px;
-  object-fit: contain;
-  background: white;
-  border-radius: 8px;
+  width:100%;
+  max-height:320px;
+  object-fit:contain;
+  background:white;
+  border-radius:8px;
 }
-
-/* WHATSAPP FLOAT */
-.whatsapp-float {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  width: 56px;
-  height: 56px;
-  background: #25d366;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.whatsapp-float img { width: 30px; }
 </style>
 </head>
 
@@ -179,123 +165,135 @@ header {
       </a>
     </div>
   </div>
-  <input id="search" placeholder="Buscar modelos o marcas...">
+  <input id="search" placeholder="Buscar modelos o marcas">
 </header>
 
 <div id="catalog"></div>
 <div id="detail" class="hidden"></div>
 
-<a href="https://wa.me/51942434659" class="whatsapp-float" target="_blank">
-  <img src="imagenes/whatsapp-logo.png">
-</a>
-
 <script>
 let data = {};
 let positions = {};
 const VISIBLE = 4;
-const STEP = 192; // ancho real card + gap
+const STEP = 192;
 
 fetch("products.json")
-  .then(r => r.json())
-  .then(d => { data = d; renderCatalog(); });
+.then(r=>r.json())
+.then(d=>{
+  data=d;
+  render();
+});
 
-search.addEventListener("input", renderCatalog);
+search.oninput = render;
 
-function slug(t) {
-  return t.replace(/[^a-z0-9]/gi, "_");
-}
-
-function renderCatalog() {
+function render(){
+  catalog.innerHTML="";
+  positions={};
   show("catalog");
-  catalog.innerHTML = "";
-  positions = {};
-  const q = search.value.toLowerCase();
 
-  for (const brand in data) {
+  const q = search.value.toLowerCase();
+  const offers=[];
+
+  for(const brand in data){
+    data[brand].forEach(p=>{
+      if(p.discount) offers.push({...p, brand});
+    });
+  }
+
+  if(offers.length){
+    renderSection("🔥 Ofertas", offers);
+  }
+
+  for(const brand in data){
     const items = data[brand].filter(p =>
       p.name.toLowerCase().includes(q) ||
       brand.toLowerCase().includes(q)
     );
-    if (!items.length) continue;
-
-    const id = slug(brand);
-    positions[id] = 0;
-
-    catalog.innerHTML += `<h2>${brand}</h2>`;
-
-    const wrap = document.createElement("div");
-    wrap.className = "carousel-wrapper";
-
-    const viewport = document.createElement("div");
-    viewport.className = "carousel-viewport";
-
-    const row = document.createElement("div");
-    row.className = "carousel";
-    row.id = `row-${id}`;
-
-    items.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <img src="${p.image}" class="car">
-        <div class="name">${p.name}</div>
-        <div class="price">S/ ${p.price}</div>
-        <button ${p.stock<=0?'disabled':''}
-          onclick="event.stopPropagation(); window.open('https://wa.me/51942434659','_blank')">
-          <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-        </button>
-      `;
-      card.querySelector(".car").onclick = () => openDetail(p, brand);
-      card.querySelector(".name").onclick = () => openDetail(p, brand);
-      row.appendChild(card);
-    });
-
-    viewport.appendChild(row);
-
-    if (items.length > VISIBLE) {
-      const left = document.createElement("button");
-      left.className = "arrow";
-      left.innerHTML = "‹";
-      left.onclick = () => move(id, -1, items.length);
-
-      const right = document.createElement("button");
-      right.className = "arrow";
-      right.innerHTML = "›";
-      right.onclick = () => move(id, 1, items.length);
-
-      wrap.append(left, viewport, right);
-    } else {
-      wrap.append(viewport);
-    }
-
-    catalog.appendChild(wrap);
+    if(items.length) renderSection(brand, items, brand);
   }
 }
 
-function move(id, dir, total) {
-  const max = total - VISIBLE;
-  positions[id] = Math.max(0, Math.min(max, positions[id] + dir));
-  document.getElementById(`row-${id}`)
-    .style.transform = `translateX(${-positions[id] * STEP}px)`;
+function renderSection(title, items, brand){
+  const id = title.replace(/\W/g,'');
+  positions[id]=0;
+
+  const sec=document.createElement("div");
+  sec.className="section";
+  sec.innerHTML=`<h2>${title}</h2>`;
+
+  const wrap=document.createElement("div");
+  wrap.className="carousel-wrapper";
+
+  const vp=document.createElement("div");
+  vp.className="viewport";
+
+  const row=document.createElement("div");
+  row.className="row";
+  row.id=id;
+
+  items.forEach(p=>{
+    const msg = encodeURIComponent(
+      `Hola, quiero comprar:\n${p.name}\nPrecio: S/ ${p.finalPrice||p.price}`
+    );
+
+    const c=document.createElement("div");
+    c.className="card";
+    c.innerHTML=`
+      <img src="${p.image}" class="car">
+      <div class="name">${p.name}</div>
+      ${p.discount ? `<div class="old-price">S/ ${p.price}</div>`:""}
+      <div class="price">S/ ${p.finalPrice||p.price}</div>
+      <button ${p.stock<=0?'disabled':''}
+        onclick="event.stopPropagation(); window.open('https://wa.me/51942434659?text=${msg}')">
+        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+      </button>
+    `;
+    c.querySelector(".car").onclick=()=>detail(p,brand);
+    c.querySelector(".name").onclick=()=>detail(p,brand);
+    row.appendChild(c);
+  });
+
+  vp.appendChild(row);
+
+  if(items.length>VISIBLE){
+    const l=document.createElement("button");
+    l.className="arrow";
+    l.innerHTML="‹";
+    l.onclick=()=>move(id,-1,items.length);
+
+    const r=document.createElement("button");
+    r.className="arrow";
+    r.innerHTML="›";
+    r.onclick=()=>move(id,1,items.length);
+
+    wrap.append(l,vp,r);
+  } else {
+    wrap.append(vp);
+  }
+
+  sec.appendChild(wrap);
+  catalog.appendChild(sec);
 }
 
-function openDetail(p, brand) {
+function move(id,dir,total){
+  const max=total-VISIBLE;
+  positions[id]=Math.max(0,Math.min(max,positions[id]+dir));
+  document.getElementById(id)
+    .style.transform=`translateX(${-positions[id]*STEP}px)`;
+}
+
+function detail(p,brand){
   show("detail");
-  detail.innerHTML = `
-    <img src="imagenes/Volver.png" style="width:40px;cursor:pointer" onclick="renderCatalog()">
+  detail.innerHTML=`
+    <img src="imagenes/Volver.png" style="width:40px;cursor:pointer" onclick="render()">
     <h2>${brand}</h2>
     <img src="${p.image}" class="detail-img">
     <h3>${p.name}</h3>
-    <div class="price">S/ ${p.price}</div>
     <div>Stock: ${p.stock}</div>
-    <button class="card button" ${p.stock<=0?'disabled':''}
-      onclick="window.open('https://wa.me/51942434659','_blank')">
-      <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-    </button>
   `;
 }
 
-function show(id) {
+function show(id){
   catalog.classList.add("hidden");
   detail.classList.add("hidden");
   document.getElementById(id).classList.remove("hidden");
