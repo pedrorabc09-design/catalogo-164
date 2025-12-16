@@ -3,250 +3,235 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>IGNICAR TOYS</title>
 
-<!-- FUENTE -->
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:'Montserrat', sans-serif;
-}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
+body{background:#f1f5f9;color:#0f172a}
 
-body{
-  background:#f5f5f5;
-  color:#222;
-}
-
-/* ================= HEADER ================= */
+/* ===== HEADER ===== */
 header{
-  background:#1f2937;
+  background:#1e293b;
+  padding:32px 28px;
   color:white;
-  padding:20px;
 }
-
 .header-top{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:20px;
+  gap:24px;
 }
-
 .logo{
-  display:flex;
-  align-items:center;
-  gap:15px;
+  height:200px;
   cursor:pointer;
 }
-
-.logo img{
-  height:80px;
-}
-
-.logo h1{
-  font-size:28px;
-  font-weight:700;
-}
-
-.search-container{
+.search-area{
   flex:1;
   display:flex;
   justify-content:center;
-  position:relative;
+  gap:12px;
 }
-
-.search-container input{
-  width:60%;
-  max-width:420px;
-  padding:10px 15px;
-  border-radius:20px;
+.search-area input{
+  width:70%;
+  max-width:620px;
+  padding:14px 18px;
+  border-radius:14px;
   border:none;
-  outline:none;
 }
-
+.cat-btn{
+  background:#334155;
+  color:white;
+  border:none;
+  padding:12px 16px;
+  border-radius:14px;
+  cursor:pointer;
+  font-size:26px;
+}
 .icons{
   display:flex;
-  gap:15px;
+  gap:16px;
 }
-
 .icons img{
   width:34px;
   cursor:pointer;
 }
 
-/* ================= CATEGORIES ================= */
-.categories{
-  display:flex;
-  gap:10px;
-  margin-top:15px;
-  flex-wrap:wrap;
-}
-
-.categories button{
-  background:#374151;
-  color:white;
-  border:none;
-  padding:6px 14px;
-  border-radius:15px;
-  cursor:pointer;
-}
-
-.categories button:hover{
-  background:#4b5563;
-}
-
-/* ================= SECTIONS ================= */
-section{
-  padding:20px;
-}
-
-.section-title{
-  font-size:22px;
-  margin-bottom:10px;
-  font-weight:700;
-}
-
-/* ================= SLIDER ================= */
-.slider{
-  position:relative;
-}
-
-.cards{
-  display:flex;
-  gap:15px;
-  overflow-x:auto;
-  scroll-behavior:smooth;
-  padding-bottom:10px;
-}
-
-.cards::-webkit-scrollbar{
+/* ===== CATEGORIES ===== */
+#categories{
   display:none;
+  position:absolute;
+  top:240px;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  width:320px;
+  border-radius:16px;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);
+  z-index:50;
 }
+#categories div{
+  padding:16px;
+  cursor:pointer;
+  color:#0f172a;
+  font-weight:600;
+}
+#categories div:hover{background:#e2e8f0}
 
+/* ===== MAIN ===== */
+main{padding:22px}
+.section{margin-bottom:36px}
+.section h2{margin-bottom:14px;color:#1e293b}
+
+/* ===== SLIDER ===== */
+.slider{position:relative}
+.track{
+  display:flex;
+  gap:16px;
+  overflow:hidden;
+  scroll-behavior:smooth;
+}
+@media(max-width:768px){
+  .track{overflow-x:auto}
+  .track::-webkit-scrollbar{display:none}
+}
+.arrow{
+  position:absolute;
+  top:45%;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:none;
+  background:#1e293b;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+  z-index:10;
+}
+.arrow.left{left:-22px}
+.arrow.right{right:-22px}
+.arrow.hidden{display:none}
+
+/* ===== CARD ===== */
 .card{
   background:white;
+  width:220px;
   min-width:220px;
-  max-width:220px;
-  border-radius:12px;
-  padding:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  border-radius:18px;
+  padding:14px;
   display:flex;
   flex-direction:column;
   cursor:pointer;
+  position:relative;
 }
-
 .card img{
   width:100%;
   height:140px;
   object-fit:contain;
 }
-
 .card h3{
   font-size:14px;
-  margin:8px 0;
+  margin:10px 0;
 }
-
-.price{
-  font-weight:700;
-  color:#d97706;
-}
-
+.price{font-weight:700;color:#16a34a}
 .old-price{
   text-decoration:line-through;
-  color:#777;
-  font-size:13px;
+  color:#64748b;
+  margin-right:6px;
 }
-
-.discount-badge{
-  background:red;
-  color:white;
-  padding:4px 6px;
-  font-size:12px;
-  border-radius:8px;
-  align-self:flex-start;
-}
-
 .buy-btn{
   margin-top:auto;
+  height:40px;
   background:#25d366;
   color:white;
-  border:none;
-  border-radius:10px;
-  padding:8px;
+  border-radius:12px;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:6px;
+  text-decoration:none;
+  font-size:14px;
+}
+.buy-btn img{width:18px}
+.buy-btn.disabled{
+  background:#9ca3af;
+  pointer-events:none;
+}
+
+/* ===== DISCOUNT ===== */
+.discount-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:#dc2626;
+  color:white;
+  font-size:12px;
+  padding:5px 9px;
+  border-radius:10px;
+}
+
+/* ===== DETAIL VIEW ===== */
+#detail{display:none;padding:20px}
+#detail.active{display:block}
+#catalog.active{display:block}
+#catalog{display:none}
+
+.detail-box{
+  background:white;
+  border-radius:18px;
+  padding:22px;
+  max-width:1000px;
+  margin:auto;
+}
+
+.detail-header{
+  margin-bottom:16px;
+}
+.detail-header img{
+  width:46px;
   cursor:pointer;
 }
 
-.buy-btn img{
-  width:18px;
-}
-
-.buy-btn.disabled{
-  background:#9ca3af;
-  cursor:not-allowed;
-}
-
-/* ================= PRODUCT DETAIL ================= */
-#detail{
-  display:none;
-  padding:20px;
-}
-
-.detail-container{
-  background:white;
-  padding:20px;
-  border-radius:12px;
+.detail-content{
   display:flex;
-  gap:20px;
-  flex-wrap:wrap;
+  gap:32px;
+  align-items:flex-start;
 }
-
-.detail-container img{
-  max-width:350px;
-  width:100%;
+.detail-img{
+  width:420px;
+  max-width:100%;
   object-fit:contain;
 }
-
 .detail-info{
   flex:1;
 }
-
 .detail-info h2{
+  margin-bottom:14px;
+}
+.detail-info p{
   margin-bottom:10px;
 }
-
-.back-btn{
-  background:none;
-  border:none;
-  cursor:pointer;
-  margin-bottom:15px;
+.detail-buy{
+  margin-top:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:#25d366;
+  color:white;
+  padding:12px 18px;
+  border-radius:14px;
+  text-decoration:none;
+}
+.detail-buy img{
+  width:22px;
 }
 
-.back-btn img{
-  width:40px;
-}
-
-/* ================= RESPONSIVE ================= */
 @media(max-width:768px){
-  .header-top{
+  .detail-content{
     flex-direction:column;
-    align-items:flex-start;
+    align-items:center;
   }
-
-  .search-container input{
-    width:100%;
-  }
-
-  .detail-container{
-    flex-direction:column;
-  }
+  .detail-info{text-align:center}
 }
 </style>
 </head>
@@ -255,170 +240,192 @@ section{
 
 <header>
   <div class="header-top">
-    <div class="logo" onclick="goHome()">
-      <img src="imagenes/logo.png">
-      <h1>IGNICAR TOYS</h1>
-    </div>
+    <img src="imagenes/logo.png" class="logo" onclick="goHome()">
 
-    <div class="search-container">
-      <input type="text" id="search" placeholder="Buscar modelo..." oninput="searchProducts()">
+    <div class="search-area">
+      <input id="search" placeholder="Buscar modelos o marcas...">
+      <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
 
     <div class="icons">
-      <a href="https://www.facebook.com/profile.php?id=100064895565079&sk=about" target="_blank">
-        <img src="imagenes/facebook.png">
-      </a>
-      <a href="https://wa.me/51942434659" target="_blank">
-        <img src="imagenes/whatsapp-logo.png">
-      </a>
-    </div>
-  </div>
+  <a href="https://www.facebook.com/profile.php?id=100064895565079&sk=about" target="_blank">
+    <img src="imagenes/facebook.png" alt="Facebook">
+  </a>
 
-  <div class="categories" id="categories"></div>
+  <a href="https://wa.me/51942434659" target="_blank">
+    <img src="imagenes/whatsapp-logo.png" alt="WhatsApp">
+  </a>
+</div>
+
+
+  <div id="categories"></div>
 </header>
 
-<section id="offers">
-  <div class="section-title">🔥 Ofertas</div>
-  <div class="cards" id="offerCards"></div>
-</section>
+<main>
+  <div id="catalog" class="active"></div>
 
-<section id="catalog"></section>
+  <div id="detail">
+    <div class="detail-box">
+      <div class="detail-header">
+        <img src="imagenes/Volver.png" onclick="goHome()">
+      </div>
 
-<section id="detail"></section>
-
-<script>
-let productsData = {};
-let currentCategory = null;
-
-fetch('products.json')
-.then(res => res.json())
-.then(data => {
-  productsData = data;
-  renderCategories();
-  renderAll();
-});
-
-function renderCategories(){
-  const catDiv = document.getElementById('categories');
-  catDiv.innerHTML = '<button onclick="goHome()">Todos</button>';
-  Object.keys(productsData).forEach(cat=>{
-    catDiv.innerHTML += `<button onclick="filterCategory('${cat}')">${cat}</button>`;
-  });
-}
-
-function renderAll(){
-  renderOffers();
-  renderCatalog(productsData);
-}
-
-function renderOffers(){
-  const offerDiv = document.getElementById('offerCards');
-  offerDiv.innerHTML='';
-  Object.values(productsData).flat().forEach(p=>{
-    if(p.discount){
-      offerDiv.appendChild(createCard(p));
-    }
-  });
-}
-
-function renderCatalog(data){
-  const catalog = document.getElementById('catalog');
-  catalog.innerHTML='';
-  Object.keys(data).forEach(cat=>{
-    const section = document.createElement('div');
-    section.innerHTML = `<div class="section-title">${cat}</div>`;
-    const cards = document.createElement('div');
-    cards.className='cards';
-    data[cat].forEach(p=>cards.appendChild(createCard(p)));
-    section.appendChild(cards);
-    catalog.appendChild(section);
-  });
-}
-
-function createCard(p){
-  const card = document.createElement('div');
-  card.className='card';
-  card.onclick=()=>showDetail(p);
-
-  if(p.discount){
-    card.innerHTML += `<div class="discount-badge">${p.discount}% OFF</div>`;
-  }
-
-  card.innerHTML += `
-    <img src="${p.image}">
-    <h3>${p.name}</h3>
-    ${p.discount ? `<div class="old-price">S/ ${p.price}</div>` : ''}
-    <div class="price">S/ ${p.finalPrice || p.price}</div>
-  `;
-
-  const btn = document.createElement('button');
-  btn.className='buy-btn';
-  btn.innerHTML=`<img src="imagenes/whatsapp-logo.png"> Comprar ahora`;
-
-  if(p.stock<=0){
-    btn.classList.add('disabled');
-    btn.disabled=true;
-  }else{
-    btn.onclick=(e)=>{
-      e.stopPropagation();
-      window.open(`https://wa.me/51942434659?text=Hola%20quiero%20comprar%20${encodeURIComponent(p.name)}`);
-    }
-  }
-
-  card.appendChild(btn);
-  return card;
-}
-
-function showDetail(p){
-  document.getElementById('catalog').style.display='none';
-  document.getElementById('offers').style.display='none';
-
-  const d = document.getElementById('detail');
-  d.style.display='block';
-  d.innerHTML=`
-    <button class="back-btn" onclick="goHome()">
-      <img src="imagenes/Volver.png">
-    </button>
-    <div class="detail-container">
-      <img src="${p.image}">
-      <div class="detail-info">
-        <h2>${p.name}</h2>
-        <p><strong>Precio:</strong> S/ ${p.finalPrice || p.price}</p>
-        <p><strong>Stock:</strong> ${p.stock}</p>
-        <br>
-        ${p.stock>0 ? `
-        <button class="buy-btn" onclick="window.open('https://wa.me/51942434659?text=Hola%20quiero%20comprar%20${encodeURIComponent(p.name)}')">
-          <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-        </button>` : `<p>Producto agotado</p>`}
+      <div class="detail-content">
+        <img id="d-image" class="detail-img">
+        <div class="detail-info">
+          <h2 id="d-name"></h2>
+          <p id="d-price"></p>
+          <p id="d-stock"></p>
+          <a id="d-buy" class="detail-buy" target="_blank">
+            <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+          </a>
+        </div>
       </div>
     </div>
-  `;
+  </div>
+</main>
+
+<script>
+const catalog=document.getElementById("catalog");
+const detail=document.getElementById("detail");
+const search=document.getElementById("search");
+const dName=document.getElementById("d-name");
+const dImage=document.getElementById("d-image");
+const dPrice=document.getElementById("d-price");
+const dStock=document.getElementById("d-stock");
+const dBuy=document.getElementById("d-buy");
+
+let DATA={};
+
+fetch("products.json").then(r=>r.json()).then(d=>{
+  DATA=d;
+  render("");
+});
+
+search.addEventListener("input",e=>{
+  render(e.target.value.toLowerCase());
+});
+
+function render(filter){
+  catalog.innerHTML="";
+
+  let offers=[];
+  Object.values(DATA).flat().forEach(p=>{
+    if(p.discount) offers.push(p);
+  });
+  if(offers.length && !filter){
+    catalog.appendChild(section("🔥 Ofertas",offers));
+  }
+
+  Object.entries(DATA).forEach(([brand,products])=>{
+    const matchBrand = brand.toLowerCase().includes(filter);
+    const filtered = matchBrand
+      ? products
+      : products.filter(p=>p.name.toLowerCase().includes(filter));
+
+    if(filtered.length){
+      catalog.appendChild(section(brand,filtered));
+    }
+  });
+}
+
+function section(title,products){
+  const s=document.createElement("div");
+  s.className="section";
+  s.innerHTML=`
+    <h2>${title}</h2>
+    <div class="slider">
+      <button class="arrow left hidden">‹</button>
+      <div class="track"></div>
+      <button class="arrow right hidden">›</button>
+    </div>`;
+  const track=s.querySelector(".track");
+  const left=s.querySelector(".left");
+  const right=s.querySelector(".right");
+
+  products.forEach(p=>{
+    const c=document.createElement("div");
+    c.className="card";
+    c.onclick=()=>openDetail(p);
+    c.innerHTML=`
+      ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
+      <img src="${p.image}">
+      <h3>${p.name}</h3>
+      <div>
+        ${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}
+        <span class="price">S/ ${p.discount?p.finalPrice:p.price}</span>
+      </div>
+      <a class="buy-btn ${p.stock===0?"disabled":""}"
+         href="${p.stock?`https://wa.me/51942434659?text=${encodeURIComponent("Hola, quiero comprar: "+p.name)}`:"#"}">
+        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+      </a>`;
+    track.appendChild(c);
+  });
+
+  requestAnimationFrame(()=>{
+    if(track.scrollWidth>track.clientWidth){
+      right.classList.remove("hidden");
+    }
+  });
+
+  right.onclick=()=>{
+    if(track.scrollLeft + track.clientWidth < track.scrollWidth){
+      track.scrollBy({left:240,behavior:"smooth"});
+      left.classList.remove("hidden");
+    }
+  };
+  left.onclick=()=>{
+    track.scrollBy({left:-240,behavior:"smooth"});
+  };
+
+  return s;
+}
+
+function openDetail(p){
+  catalog.classList.remove("active");
+  detail.classList.add("active");
+
+  dName.innerText=p.name;
+  dImage.src=p.image;
+
+  dPrice.innerHTML=p.discount
+    ? `<span class="old-price">S/ ${p.price}</span> <span class="price">S/ ${p.finalPrice}</span>`
+    : `<span class="price">S/ ${p.price}</span>`;
+
+  dStock.innerText="Stock disponible: "+p.stock;
+  dBuy.href="https://wa.me/51942434659?text="+encodeURIComponent("Hola, quiero comprar: "+p.name);
 }
 
 function goHome(){
-  document.getElementById('detail').style.display='none';
-  document.getElementById('catalog').style.display='block';
-  document.getElementById('offers').style.display='block';
+  detail.classList.remove("active");
+  catalog.classList.add("active");
+  search.value="";
+  render("");
 }
 
-function filterCategory(cat){
-  currentCategory = cat;
-  renderCatalog({[cat]:productsData[cat]});
+function toggleCategories(){
+  const c=document.getElementById("categories");
+  c.style.display=c.style.display==="block"?"none":"block";
+  if(!c.innerHTML){
+    Object.keys(DATA).forEach(b=>{
+      const d=document.createElement("div");
+      d.innerText=b;
+      d.onclick=()=>{
+        c.style.display="none";
+        catalog.innerHTML="";
+        catalog.appendChild(section(b,DATA[b]));
+      };
+      c.appendChild(d);
+    });
+  }
 }
 
-function searchProducts(){
-  const q = document.getElementById('search').value.toLowerCase();
-  if(!q){ goHome(); renderAll(); return; }
-
-  const result = {};
-  Object.keys(productsData).forEach(cat=>{
-    const matches = productsData[cat].filter(p =>
-      p.name.toLowerCase().includes(q) || cat.toLowerCase().includes(q)
-    );
-    if(matches.length) result[cat]=matches;
-  });
-  renderCatalog(result);
-}
+document.addEventListener("click",e=>{
+  const c=document.getElementById("categories");
+  if(!c.contains(e.target) && !e.target.closest(".cat-btn")){
+    c.style.display="none";
+  }
+});
 </script>
 
 </body>
