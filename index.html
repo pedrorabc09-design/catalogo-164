@@ -14,29 +14,29 @@ body{background:#f1f5f9;color:#111}
 /* ===== HEADER ===== */
 header{
   background:#1e293b;
-  padding:18px;
+  padding:22px;
   color:white;
 }
 .header-top{
   display:flex;
   align-items:center;
-  gap:18px;
+  gap:20px;
 }
 .logo{
-  height:78px;
+  height:90px;
   cursor:pointer;
 }
 .search-area{
   flex:1;
   display:flex;
   justify-content:center;
-  gap:8px;
+  gap:10px;
 }
 .search-area input{
-  width:55%;
-  max-width:420px;
-  padding:10px 14px;
-  border-radius:8px;
+  width:60%;
+  max-width:460px;
+  padding:12px 16px;
+  border-radius:10px;
   border:none;
 }
 .cat-btn{
@@ -44,15 +44,16 @@ header{
   color:white;
   border:none;
   padding:10px 14px;
-  border-radius:8px;
+  border-radius:10px;
   cursor:pointer;
+  font-size:22px;
 }
 .icons{
   display:flex;
-  gap:12px;
+  gap:14px;
 }
 .icons img{
-  width:28px;
+  width:30px;
   cursor:pointer;
 }
 
@@ -60,18 +61,19 @@ header{
 #categories{
   display:none;
   position:absolute;
-  top:110px;
+  top:120px;
   left:50%;
   transform:translateX(-50%);
   background:white;
-  width:260px;
-  border-radius:10px;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  width:280px;
+  border-radius:12px;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);
   z-index:20;
 }
 #categories div{
-  padding:12px;
+  padding:14px;
   cursor:pointer;
+  color:#0f172a;
 }
 #categories div:hover{
   background:#e2e8f0;
@@ -79,58 +81,63 @@ header{
 
 /* ===== MAIN ===== */
 main{padding:20px}
-.section{margin-bottom:30px}
-.section h2{margin-bottom:10px;color:#1e293b}
+.section{margin-bottom:34px}
+.section h2{margin-bottom:12px;color:#1e293b}
 
 /* ===== SLIDER ===== */
-.slider{
-  position:relative;
-}
+.slider{position:relative}
 .track{
   display:flex;
-  gap:12px;
-  overflow-x:auto;
+  gap:14px;
+  overflow:hidden;
   scroll-behavior:smooth;
 }
-.track::-webkit-scrollbar{display:none}
 
-/* arrows only desktop */
-@media(min-width:769px){
-  .arrow{
-    position:absolute;
-    top:40%;
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    border:none;
-    background:#1e293b;
-    color:white;
-    cursor:pointer;
-    z-index:5;
+/* mobile scroll */
+@media(max-width:768px){
+  .track{
+    overflow-x:auto;
   }
-  .arrow.left{left:-14px}
-  .arrow.right{right:-14px}
+  .track::-webkit-scrollbar{display:none}
 }
+
+/* arrows desktop only */
+.arrow{
+  position:absolute;
+  top:42%;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:none;
+  background:#1e293b;
+  color:white;
+  cursor:pointer;
+  z-index:5;
+}
+.arrow.left{left:-18px}
+.arrow.right{right:-18px}
+.arrow.hidden{display:none}
 
 /* ===== CARD ===== */
 .card{
   background:white;
-  width:200px;
-  min-width:200px;
-  border-radius:12px;
-  padding:10px;
+  width:210px;
+  min-width:210px;
+  border-radius:14px;
+  padding:12px;
   display:flex;
   flex-direction:column;
+  cursor:pointer;
   position:relative;
 }
 .card img{
   width:100%;
-  height:120px;
+  height:130px;
   object-fit:contain;
 }
 .card h3{
   font-size:14px;
-  margin:6px 0;
+  margin:8px 0;
 }
 .price{font-weight:700;color:#16a34a}
 .old-price{
@@ -160,13 +167,13 @@ main{padding:20px}
 /* ===== DISCOUNT ===== */
 .discount-badge{
   position:absolute;
-  top:6px;
-  left:6px;
+  top:8px;
+  left:8px;
   background:#dc2626;
   color:white;
   font-size:12px;
-  padding:4px 6px;
-  border-radius:6px;
+  padding:4px 8px;
+  border-radius:8px;
 }
 
 /* ===== DETAIL ===== */
@@ -182,10 +189,10 @@ main{padding:20px}
 .detail-actions{
   margin-top:16px;
   display:flex;
-  gap:14px;
+  gap:16px;
 }
 .detail-actions img{
-  width:40px;
+  width:42px;
   cursor:pointer;
 }
 </style>
@@ -199,7 +206,7 @@ main{padding:20px}
 
     <div class="search-area">
       <input id="search" placeholder="Buscar modelos...">
-      <button class="cat-btn" onclick="toggleCategories()">Categorías</button>
+      <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
 
     <div class="icons">
@@ -233,6 +240,14 @@ main{padding:20px}
 </main>
 
 <script>
+const catalog=document.getElementById("catalog");
+const detail=document.getElementById("detail");
+const dName=document.getElementById("d-name");
+const dImage=document.getElementById("d-image");
+const dPrice=document.getElementById("d-price");
+const dStock=document.getElementById("d-stock");
+const dBuy=document.getElementById("d-buy");
+
 let DATA={};
 
 fetch("products.json").then(r=>r.json()).then(d=>{
@@ -241,26 +256,17 @@ fetch("products.json").then(r=>r.json()).then(d=>{
 });
 
 function render(){
-  const c=document.getElementById("catalog");
-  c.innerHTML="";
-
+  catalog.innerHTML="";
   let offers=[];
-  Object.entries(DATA).forEach(([b,ps])=>{
-    ps.forEach(p=>{
-      if(p.discount){
-        offers.push({...p,brand:b});
-      }
-    });
+  Object.values(DATA).flat().forEach(p=>{
+    if(p.discount) offers.push(p);
   });
   if(offers.length){
-    c.appendChild(section("🔥 Ofertas",offers));
+    catalog.appendChild(section("🔥 Ofertas",offers));
   }
-
   Object.entries(DATA).forEach(([b,ps])=>{
-    c.appendChild(section(b,ps.map(p=>({...p,brand:b}))));
+    catalog.appendChild(section(b,ps));
   });
-
-  buildCategories();
 }
 
 function section(title,products){
@@ -269,11 +275,13 @@ function section(title,products){
   s.innerHTML=`
     <h2>${title}</h2>
     <div class="slider">
-      <button class="arrow left">‹</button>
+      <button class="arrow left hidden">‹</button>
       <div class="track"></div>
-      <button class="arrow right">›</button>
+      <button class="arrow right hidden">›</button>
     </div>`;
   const track=s.querySelector(".track");
+  const left=s.querySelector(".left");
+  const right=s.querySelector(".right");
 
   products.forEach(p=>{
     const c=document.createElement("div");
@@ -294,8 +302,17 @@ function section(title,products){
     track.appendChild(c);
   });
 
-  s.querySelector(".left").onclick=()=>track.scrollBy({left:-220,behavior:"smooth"});
-  s.querySelector(".right").onclick=()=>track.scrollBy({left:220,behavior:"smooth"});
+  if(track.scrollWidth>track.clientWidth){
+    right.classList.remove("hidden");
+  }
+
+  right.onclick=()=>{
+    track.scrollBy({left:220,behavior:"smooth"});
+    left.classList.remove("hidden");
+  };
+  left.onclick=()=>{
+    track.scrollBy({left:-220,behavior:"smooth"});
+  };
 
   return s;
 }
@@ -311,35 +328,29 @@ function openDetail(p){
   dStock.innerText="Stock disponible: "+p.stock;
   if(p.stock){
     dBuy.href=`https://wa.me/51942434659?text=${encodeURIComponent("Hola, quiero comprar: "+p.name)}`;
-  }else{
-    dBuy.removeAttribute("href");
   }
 }
 
 function goHome(){
   detail.classList.remove("active");
   catalog.classList.add("active");
-  render();
 }
 
 function toggleCategories(){
   const c=document.getElementById("categories");
   c.style.display=c.style.display==="block"?"none":"block";
-}
-
-function buildCategories(){
-  const c=document.getElementById("categories");
-  c.innerHTML=`<div onclick="goHome()">Todos</div>`;
-  Object.keys(DATA).forEach(b=>{
-    const d=document.createElement("div");
-    d.innerText=b;
-    d.onclick=()=>{
-      catalog.innerHTML="";
-      catalog.appendChild(section(b,DATA[b].map(p=>({...p,brand:b}))));
-      c.style.display="none";
-    };
-    c.appendChild(d);
-  });
+  if(!c.innerHTML){
+    Object.keys(DATA).forEach(b=>{
+      const d=document.createElement("div");
+      d.innerText=b;
+      d.onclick=()=>{
+        catalog.innerHTML="";
+        catalog.appendChild(section(b,DATA[b]));
+        c.style.display="none";
+      };
+      c.appendChild(d);
+    });
+  }
 }
 
 document.addEventListener("click",e=>{
