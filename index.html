@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+*{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:Segoe UI,Arial;
@@ -15,10 +17,10 @@ body{
 /* ===== HEADER ===== */
 header{
   background:#1e293b;
-  padding:28px 24px;
+  padding:22px;
   display:flex;
   align-items:center;
-  gap:24px;
+  gap:20px;
   position:sticky;
   top:0;
   z-index:100
@@ -26,6 +28,7 @@ header{
 
 .logo{
   height:120px;
+  max-width:240px;
   object-fit:contain
 }
 
@@ -38,7 +41,7 @@ header{
 
 .search-box{
   display:flex;
-  width:700px;
+  width:750px;
   gap:6px
 }
 
@@ -61,9 +64,9 @@ header{
 
 #categories{
   position:absolute;
-  top:60px;
+  top:64px;
   background:white;
-  width:700px;
+  width:750px;
   border-radius:10px;
   display:none;
   box-shadow:0 10px 24px rgba(0,0,0,.25)
@@ -76,8 +79,8 @@ header{
 #categories div:hover{background:#e5e7eb}
 
 .icons img{
-  width:42px;
-  margin-left:16px
+  width:40px;
+  margin-left:14px
 }
 
 /* ===== SCREENS ===== */
@@ -85,28 +88,29 @@ header{
 .screen.active{display:block}
 
 /* ===== SECTION ===== */
-.section{
-  padding:18px
-}
-.section h2{
-  margin:10px 0
-}
+.section{padding:20px}
+.section h2{margin:10px 0}
 
 /* ===== SLIDER ===== */
+.slider{
+  position:relative
+}
+
 .viewport{
-  overflow:hidden
+  overflow:hidden;
+  width:100%
 }
 
 .track{
   display:flex;
   gap:16px;
-  transition:transform .4s ease
+  transition:transform .35s ease;
+  will-change:transform
 }
 
 /* ===== CARD ===== */
 .card{
-  width:220px;
-  min-width:220px;
+  flex:0 0 220px;
   background:white;
   border-radius:12px;
   padding:10px;
@@ -154,7 +158,7 @@ header{
 
 .buy{
   margin-top:auto;
-  height:38px;
+  height:36px;
   background:#25d366;
   color:white;
   border-radius:8px;
@@ -188,18 +192,26 @@ header{
 
 /* ===== DETAIL ===== */
 #detail{
-  padding:24px;
+  padding:20px;
   max-width:900px;
   margin:auto
 }
-#detail img{
+
+#detail img.main{
   width:100%;
-  max-height:400px;
+  max-height:360px;
   object-fit:contain
 }
+
 .back{
-  margin-bottom:16px;
+  width:42px;
+  margin-bottom:12px;
   cursor:pointer
+}
+
+.detail-buy{
+  height:42px;
+  margin-top:12px
 }
 
 /* FLOAT WHATSAPP */
@@ -208,19 +220,26 @@ header{
   right:18px;
   bottom:18px;
   background:#25d366;
-  width:58px;
-  height:58px;
+  width:54px;
+  height:54px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   z-index:999
 }
-.float img{width:32px}
+.float img{width:28px}
 
+/* ===== RESPONSIVE ===== */
 @media(max-width:768px){
+  header{flex-wrap:wrap}
+  .search-box{width:100%}
+  .logo{height:90px}
   .arrow{display:none}
-  .viewport{overflow-x:auto;scrollbar-width:none}
+  .viewport{
+    overflow-x:auto;
+    scrollbar-width:none
+  }
   .viewport::-webkit-scrollbar{display:none}
 }
 </style>
@@ -233,7 +252,7 @@ header{
 
   <div class="search-wrapper">
     <div class="search-box">
-      <input id="search" placeholder="Buscar modelos...">
+      <input placeholder="Buscar modelos...">
       <button onclick="toggleCat()">☰</button>
     </div>
     <div id="categories"></div>
@@ -257,7 +276,7 @@ header{
 </a>
 
 <script>
-let DATA={}, active="ALL", timers=[];
+let DATA={}, active="ALL";
 
 fetch("products.json").then(r=>r.json()).then(j=>{
   DATA=j;
@@ -272,8 +291,10 @@ function toggleCat(){
 
 function buildCategories(){
   const c=document.getElementById("categories");
-  c.innerHTML=`<div onclick="setCat('ALL')">Ver todo</div>
-               <div onclick="setCat('OFFERS')">🔥 Ofertas</div>`;
+  c.innerHTML=`
+    <div onclick="setCat('ALL')">Ver todo</div>
+    <div onclick="setCat('OFFERS')">🔥 Ofertas</div>
+  `;
   Object.keys(DATA).forEach(b=>{
     c.innerHTML+=`<div onclick="setCat('${b}')">${b}</div>`;
   });
@@ -312,17 +333,19 @@ function section(title,items){
   s.className="section";
   s.innerHTML=`
     <h2>${title}</h2>
-    <div style="position:relative">
+    <div class="slider">
       <button class="arrow left disabled">◀</button>
       <button class="arrow right">▶</button>
-      <div class="viewport"><div class="track"></div></div>
-    </div>`;
-  
+      <div class="viewport">
+        <div class="track"></div>
+      </div>
+    </div>
+  `;
+
   const track=s.querySelector(".track");
+  const viewport=s.querySelector(".viewport");
   const left=s.querySelector(".left");
   const right=s.querySelector(".right");
-  let pos=0;
-  const max=Math.max(0,items.length-4);
 
   items.forEach(p=>{
     const d=p.oldPrice?Math.round((1-p.price/p.oldPrice)*100):0;
@@ -336,21 +359,25 @@ function section(title,items){
       ${p.oldPrice?`<div class="old">S/ ${p.oldPrice}</div>`:""}
       <div class="price">S/ ${p.price}</div>
       <a class="buy ${p.stock?``:`disabled`}"
-         href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
-         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+        href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
+        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </a>`;
     c.onclick=e=>{if(!e.target.closest("a"))openDetail(p)};
     track.appendChild(c);
   });
 
+  let offset=0;
+
   function update(){
-    track.style.transform=`translateX(-${pos*236}px)`;
-    left.classList.toggle("disabled",pos===0);
-    right.classList.toggle("disabled",pos===max);
+    const max=Math.max(0,track.scrollWidth-viewport.clientWidth);
+    offset=Math.max(0,Math.min(offset,max));
+    track.style.transform=`translateX(-${offset}px)`;
+    left.classList.toggle("disabled",offset===0);
+    right.classList.toggle("disabled",offset>=max);
   }
 
-  left.onclick=()=>{if(pos>0){pos--;update()}};
-  right.onclick=()=>{if(pos<max){pos++;update()}};
+  left.onclick=()=>{offset-=236;update()};
+  right.onclick=()=>{offset+=236;update()};
   update();
 
   return s;
@@ -362,15 +389,16 @@ function openDetail(p){
   d.classList.add("active");
   d.innerHTML=`
     <img src="imagenes/Volver.png" class="back" onclick="back()">
-    <img src="${p.image}">
+    <img src="${p.image}" class="main">
     <h2>${p.name}</h2>
     ${p.oldPrice?`<div class="old">S/ ${p.oldPrice}</div>`:""}
     <div class="price">S/ ${p.price}</div>
-    <p>Stock: ${p.stock}</p>
-    <a class="buy ${p.stock?``:`disabled`}"
-       href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
-       <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-    </a>`;
+    <p>Stock disponible: ${p.stock}</p>
+    <a class="buy detail-buy ${p.stock?``:`disabled`}"
+      href="https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}">
+      <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+    </a>
+  `;
 }
 
 function back(){
