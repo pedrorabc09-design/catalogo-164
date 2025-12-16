@@ -8,49 +8,63 @@
 <style>
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f4f6f8;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f4f6;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 header {
-  background: #1f2937;
+  background: #334155;
   color: white;
   padding: 10px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-header img.logo { height: 40px; }
-header h1 { font-size: 20px; margin: 0; flex: 1; }
-header input { padding: 6px; border-radius: 6px; border: none; }
+header img.logo {
+  height: 40px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+  flex: 1;
+}
+
+header input {
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+}
 
 header .icons img {
   width: 28px;
-  margin-left: 8px;
   cursor: pointer;
 }
 
-/* SCREENS */
+/* ===== SCREENS ===== */
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* SECTION */
-.section { padding: 10px; }
-.section h2 { margin: 8px 0; }
+/* ===== SECTIONS ===== */
+.section {
+  padding: 10px;
+}
 
-/* SLIDER */
+.section h2 {
+  margin: 8px 0;
+}
+
+/* ===== SLIDER ===== */
 .slider {
   position: relative;
 }
 
-/* VIEWPORT */
 .viewport {
   overflow-x: hidden;
 }
 
-/* MOBILE SCROLL */
 @media (max-width: 768px) {
   .viewport {
     overflow-x: auto;
@@ -59,13 +73,12 @@ header .icons img {
   .viewport::-webkit-scrollbar { display: none; }
 }
 
-/* TRACK */
 .track {
   display: flex;
   gap: 10px;
 }
 
-/* CARD */
+/* ===== CARD ===== */
 .card {
   min-width: 200px;
   max-width: 200px;
@@ -74,6 +87,7 @@ header .icons img {
   padding: 8px;
   display: flex;
   flex-direction: column;
+  position: relative;
   cursor: pointer;
 }
 
@@ -88,7 +102,19 @@ header .icons img {
   margin: 6px 0;
 }
 
-/* DISCOUNT */
+/* ===== PRICE ===== */
+.price {
+  font-weight: bold;
+  color: #16a34a;
+}
+
+.old-price {
+  font-size: 13px;
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+/* ===== DISCOUNT ===== */
 .discount-badge {
   position: absolute;
   top: 8px;
@@ -101,18 +127,7 @@ header .icons img {
   font-weight: bold;
 }
 
-.old-price {
-  text-decoration: line-through;
-  color: #888;
-  font-size: 13px;
-}
-
-.price {
-  font-weight: bold;
-  color: #16a34a;
-}
-
-/* BUY BUTTON */
+/* ===== BUY BUTTON ===== */
 .buy-btn {
   margin-top: auto;
   height: 36px;
@@ -124,20 +139,24 @@ header .icons img {
   justify-content: center;
   gap: 6px;
   text-decoration: none;
+  font-size: 14px;
 }
 
-.buy-btn img { width: 18px; }
+.buy-btn img {
+  width: 18px;
+  height: 18px;
+}
 
 .buy-btn.disabled {
   background: #9ca3af;
   pointer-events: none;
 }
 
-/* ARROWS */
+/* ===== ARROWS ===== */
 .arrow {
   position: absolute;
   top: 40%;
-  background: #1f2937;
+  background: #334155;
   color: white;
   border: none;
   padding: 6px 10px;
@@ -145,15 +164,17 @@ header .icons img {
   z-index: 10;
 }
 
-.arrow.left { left: -5px; }
-.arrow.right { right: -5px; }
+.arrow.left { left: -6px; }
+.arrow.right { right: -6px; }
 
 @media (max-width: 768px) {
   .arrow { display: none; }
 }
 
-/* DETAIL */
-#detail { padding: 12px; }
+/* ===== DETAIL ===== */
+#detail {
+  padding: 12px;
+}
 
 #detail img.main {
   width: 100%;
@@ -161,9 +182,12 @@ header .icons img {
   object-fit: contain;
 }
 
-.back-btn img { width: 40px; }
+.back-btn img {
+  width: 40px;
+  cursor: pointer;
+}
 
-/* FLOAT WHATSAPP */
+/* ===== FLOAT WHATSAPP ===== */
 .whatsapp-float {
   position: fixed;
   right: 16px;
@@ -175,9 +199,12 @@ header .icons img {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 999;
 }
 
-.whatsapp-float img { width: 30px; }
+.whatsapp-float img {
+  width: 30px;
+}
 </style>
 </head>
 
@@ -202,15 +229,15 @@ header .icons img {
 </div>
 
 <div id="detail" class="screen">
-  <button class="back-btn" onclick="show('catalog')">
+  <div class="back-btn" onclick="showScreen('catalog')">
     <img src="imagenes/Volver.png">
-  </button>
-  <h2 id="d-brand"></h2>
-  <img id="d-image" class="main">
-  <h3 id="d-name"></h3>
-  <p id="d-price"></p>
-  <p id="d-stock"></p>
-  <a id="d-buy" class="buy-btn" target="_blank">
+  </div>
+  <h2 id="dBrand"></h2>
+  <img id="dImage" class="main">
+  <h3 id="dName"></h3>
+  <p id="dPrice"></p>
+  <p id="dStock"></p>
+  <a id="dBuy" class="buy-btn" target="_blank">
     <img src="imagenes/whatsapp-logo.png"> Comprar ahora
   </a>
 </div>
@@ -221,36 +248,59 @@ header .icons img {
 
 <script>
 let DATA = {};
+let searchInput = document.getElementById("search");
+
+const dBrand = document.getElementById("dBrand");
+const dName  = document.getElementById("dName");
+const dImage = document.getElementById("dImage");
+const dPrice = document.getElementById("dPrice");
+const dStock = document.getElementById("dStock");
+const dBuy   = document.getElementById("dBuy");
 
 fetch("products.json")
-  .then(r => r.json())
+  .then(res => res.json())
   .then(json => {
     DATA = json;
     render();
   });
 
-function show(id) {
+function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
+
+searchInput.addEventListener("input", render);
 
 function render() {
   const content = document.getElementById("content");
   content.innerHTML = "";
 
+  const query = searchInput.value.toLowerCase();
+
   let offers = [];
+
   for (const brand in DATA) {
-    DATA[brand].forEach(p => p.discount && offers.push({ ...p, brand }));
+    DATA[brand].forEach(p => {
+      if (p.discount) offers.push({ ...p, brand });
+    });
   }
 
-  if (offers.length) content.appendChild(section("🔥 Ofertas", offers));
+  if (offers.length) {
+    content.appendChild(createSection("🔥 Ofertas", offers));
+  }
 
   for (const brand in DATA) {
-    content.appendChild(section(brand, DATA[brand].map(p => ({ ...p, brand }))));
+    const filtered = DATA[brand]
+      .filter(p => p.name.toLowerCase().includes(query))
+      .map(p => ({ ...p, brand }));
+
+    if (filtered.length) {
+      content.appendChild(createSection(brand, filtered));
+    }
   }
 }
 
-function section(title, products) {
+function createSection(title, products) {
   const div = document.createElement("div");
   div.className = "section";
 
@@ -269,11 +319,11 @@ function section(title, products) {
   const track = div.querySelector(".track");
 
   products.forEach(p => {
-    const c = document.createElement("div");
-    c.className = "card";
-    c.onclick = () => openDetail(p);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.onclick = () => openDetail(p);
 
-    c.innerHTML = `
+    card.innerHTML = `
       ${p.discount ? `<div class="discount-badge">-${p.discount}%</div>` : ""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
@@ -285,7 +335,8 @@ function section(title, products) {
         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </a>
     `;
-    track.appendChild(c);
+
+    track.appendChild(card);
   });
 
   const left = div.querySelector(".left");
@@ -303,19 +354,26 @@ function section(title, products) {
 }
 
 function openDetail(p) {
-  show("detail");
-  d-brand.innerText = p.brand;
-  d-name.innerText = p.name;
-  d-image.src = p.image;
-  d-price.innerText = p.discount
-    ? `S/ ${p.finalPrice} (Antes S/ ${p.price})`
-    : `S/ ${p.price}`;
-  d-stock.innerText = `Stock: ${p.stock}`;
+  showScreen("detail");
 
-  if (p.stock === 0) d-buy.classList.add("disabled");
-  else {
-    d-buy.classList.remove("disabled");
-    d-buy.href = `https://wa.me/51942434659?text=Hola,%20quiero%20comprar:%20${encodeURIComponent(p.name)}`;
+  dBrand.textContent = p.brand;
+  dName.textContent = p.name;
+  dImage.src = p.image;
+  dStock.textContent = "Stock disponible: " + p.stock;
+
+  if (p.discount) {
+    dPrice.innerHTML = `<span class="old-price">S/ ${p.price}</span> <span class="price">S/ ${p.finalPrice}</span>`;
+  } else {
+    dPrice.innerHTML = `<span class="price">S/ ${p.price}</span>`;
+  }
+
+  if (p.stock === 0) {
+    dBuy.classList.add("disabled");
+    dBuy.removeAttribute("href");
+  } else {
+    dBuy.classList.remove("disabled");
+    dBuy.href = "https://wa.me/51942434659?text=" +
+      encodeURIComponent("Hola, quiero comprar: " + p.name);
   }
 }
 </script>
