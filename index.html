@@ -11,32 +11,41 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
 body{background:#f1f5f9;color:#111}
 
-/* ===== CABECERA ===== */
+/* ===== HEADER ===== */
 header{
   background:#1e293b;
+  padding:18px;
   color:white;
-  padding:16px;
 }
 .header-top{
   display:flex;
   align-items:center;
-  gap:16px;
+  gap:18px;
 }
 .logo{
-  height:72px;
+  height:78px;
   cursor:pointer;
 }
-.search-box{
+.search-area{
   flex:1;
   display:flex;
   justify-content:center;
+  gap:8px;
 }
-.search-box input{
-  width:60%;
+.search-area input{
+  width:55%;
   max-width:420px;
   padding:10px 14px;
   border-radius:8px;
   border:none;
+}
+.cat-btn{
+  background:#334155;
+  color:white;
+  border:none;
+  padding:10px 14px;
+  border-radius:8px;
+  cursor:pointer;
 }
 .icons{
   display:flex;
@@ -44,22 +53,21 @@ header{
 }
 .icons img{
   width:28px;
-  height:28px;
   cursor:pointer;
 }
 
-/* ===== CATEGORÍAS ===== */
+/* ===== CATEGORIES ===== */
 #categories{
   display:none;
   position:absolute;
-  background:white;
-  top:96px;
+  top:110px;
   left:50%;
   transform:translateX(-50%);
+  background:white;
   width:260px;
   border-radius:10px;
   box-shadow:0 10px 30px rgba(0,0,0,.2);
-  z-index:10;
+  z-index:20;
 }
 #categories div{
   padding:12px;
@@ -69,38 +77,40 @@ header{
   background:#e2e8f0;
 }
 
-/* ===== SECCIONES ===== */
+/* ===== MAIN ===== */
 main{padding:20px}
-.section{margin-bottom:28px}
-.section h2{
-  margin-bottom:10px;
-  color:#1e293b;
-}
+.section{margin-bottom:30px}
+.section h2{margin-bottom:10px;color:#1e293b}
 
 /* ===== SLIDER ===== */
 .slider{
   position:relative;
-  overflow:hidden;
 }
 .track{
   display:flex;
   gap:12px;
-  transition:transform .3s ease;
+  overflow-x:auto;
+  scroll-behavior:smooth;
 }
-.arrow{
-  position:absolute;
-  top:40%;
-  background:#1e293b;
-  color:white;
-  border:none;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  cursor:pointer;
-  z-index:5;
+.track::-webkit-scrollbar{display:none}
+
+/* arrows only desktop */
+@media(min-width:769px){
+  .arrow{
+    position:absolute;
+    top:40%;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:none;
+    background:#1e293b;
+    color:white;
+    cursor:pointer;
+    z-index:5;
+  }
+  .arrow.left{left:-14px}
+  .arrow.right{right:-14px}
 }
-.arrow.left{left:-10px}
-.arrow.right{right:-10px}
 
 /* ===== CARD ===== */
 .card{
@@ -109,9 +119,9 @@ main{padding:20px}
   min-width:200px;
   border-radius:12px;
   padding:10px;
-  position:relative;
   display:flex;
   flex-direction:column;
+  position:relative;
 }
 .card img{
   width:100%;
@@ -147,7 +157,7 @@ main{padding:20px}
   pointer-events:none;
 }
 
-/* ===== DESCUENTO ===== */
+/* ===== DISCOUNT ===== */
 .discount-badge{
   position:absolute;
   top:6px;
@@ -159,11 +169,8 @@ main{padding:20px}
   border-radius:6px;
 }
 
-/* ===== DETALLE ===== */
-#detail{
-  display:none;
-  padding:20px;
-}
+/* ===== DETAIL ===== */
+#detail{display:none}
 #detail.active{display:block}
 #catalog.active{display:block}
 #catalog{display:none}
@@ -171,23 +178,15 @@ main{padding:20px}
 .detail-img{
   width:100%;
   max-width:420px;
-  margin:auto;
 }
 .detail-actions{
   margin-top:16px;
   display:flex;
-  gap:12px;
+  gap:14px;
 }
 .detail-actions img{
-  width:42px;
+  width:40px;
   cursor:pointer;
-}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  .arrow{display:none}
-  .slider{overflow-x:auto}
-  .slider::-webkit-scrollbar{display:none}
 }
 </style>
 </head>
@@ -198,8 +197,9 @@ main{padding:20px}
   <div class="header-top">
     <img src="imagenes/logo.png" class="logo" onclick="goHome()">
 
-    <div class="search-box">
-      <input id="search" placeholder="Buscar modelos..." onclick="toggleCategories()">
+    <div class="search-area">
+      <input id="search" placeholder="Buscar modelos...">
+      <button class="cat-btn" onclick="toggleCategories()">Categorías</button>
     </div>
 
     <div class="icons">
@@ -207,7 +207,7 @@ main{padding:20px}
         <img src="imagenes/facebook.png">
       </a>
       <a href="https://wa.me/51942434659" target="_blank">
-        <img src="imagenes/whatsapp.png">
+        <img src="imagenes/whatsapp-logo.png">
       </a>
     </div>
   </div>
@@ -223,31 +223,27 @@ main{padding:20px}
     <img id="d-image" class="detail-img">
     <p id="d-price"></p>
     <p id="d-stock"></p>
-
     <div class="detail-actions">
       <img src="imagenes/volver.png" onclick="goHome()">
       <a id="d-buy" target="_blank">
-        <img src="imagenes/whatsapp.png">
+        <img src="imagenes/whatsapp-logo.png">
       </a>
     </div>
   </div>
 </main>
 
 <script>
-let DATA={},active="ALL";
+let DATA={};
 
-/* ===== LOAD ===== */
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
   render();
 });
 
-/* ===== RENDER ===== */
 function render(){
   const c=document.getElementById("catalog");
   c.innerHTML="";
 
-  // OFERTAS
   let offers=[];
   Object.entries(DATA).forEach(([b,ps])=>{
     ps.forEach(p=>{
@@ -257,7 +253,7 @@ function render(){
     });
   });
   if(offers.length){
-    c.appendChild(section("🔥 Ofertas",offers,true));
+    c.appendChild(section("🔥 Ofertas",offers));
   }
 
   Object.entries(DATA).forEach(([b,ps])=>{
@@ -267,17 +263,18 @@ function render(){
   buildCategories();
 }
 
-/* ===== SECTION ===== */
-function section(title,products,isOffer=false){
+function section(title,products){
   const s=document.createElement("div");
   s.className="section";
-  s.innerHTML=`<h2>${title}</h2>
+  s.innerHTML=`
+    <h2>${title}</h2>
     <div class="slider">
       <button class="arrow left">‹</button>
       <div class="track"></div>
       <button class="arrow right">›</button>
     </div>`;
   const track=s.querySelector(".track");
+
   products.forEach(p=>{
     const c=document.createElement("div");
     c.className="card";
@@ -292,28 +289,20 @@ function section(title,products,isOffer=false){
       </div>
       <a class="buy-btn ${p.stock===0?"disabled":""}"
          href="${p.stock?`https://wa.me/51942434659?text=${encodeURIComponent("Hola, quiero comprar: "+p.name)}`:"#"}">
-        <img src="imagenes/whatsapp.png"> Comprar ahora
+        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </a>`;
     track.appendChild(c);
   });
 
-  let idx=0;
-  const max=Math.max(0,products.length-4);
-  s.querySelector(".left").onclick=()=>{idx=Math.max(0,idx-1);track.style.transform=`translateX(${-idx*212}px)`};
-  s.querySelector(".right").onclick=()=>{idx=Math.min(max,idx+1);track.style.transform=`translateX(${-idx*212}px)`};
-
-  if(products.length<=4){
-    s.querySelector(".left").style.display="none";
-    s.querySelector(".right").style.display="none";
-  }
+  s.querySelector(".left").onclick=()=>track.scrollBy({left:-220,behavior:"smooth"});
+  s.querySelector(".right").onclick=()=>track.scrollBy({left:220,behavior:"smooth"});
 
   return s;
 }
 
-/* ===== DETAIL ===== */
 function openDetail(p){
-  document.getElementById("catalog").classList.remove("active");
-  document.getElementById("detail").classList.add("active");
+  catalog.classList.remove("active");
+  detail.classList.add("active");
   dName.innerText=p.name;
   dImage.src=p.image;
   dPrice.innerHTML=p.discount?
@@ -322,24 +311,22 @@ function openDetail(p){
   dStock.innerText="Stock disponible: "+p.stock;
   if(p.stock){
     dBuy.href=`https://wa.me/51942434659?text=${encodeURIComponent("Hola, quiero comprar: "+p.name)}`;
-    dBuy.classList.remove("disabled");
   }else{
     dBuy.removeAttribute("href");
-    dBuy.classList.add("disabled");
   }
 }
 
-/* ===== HOME ===== */
 function goHome(){
-  document.getElementById("detail").classList.remove("active");
-  document.getElementById("catalog").classList.add("active");
+  detail.classList.remove("active");
+  catalog.classList.add("active");
+  render();
 }
 
-/* ===== CATEGORIES ===== */
 function toggleCategories(){
   const c=document.getElementById("categories");
   c.style.display=c.style.display==="block"?"none":"block";
 }
+
 function buildCategories(){
   const c=document.getElementById("categories");
   c.innerHTML=`<div onclick="goHome()">Todos</div>`;
@@ -347,18 +334,17 @@ function buildCategories(){
     const d=document.createElement("div");
     d.innerText=b;
     d.onclick=()=>{
-      document.getElementById("catalog").innerHTML="";
-      document.getElementById("catalog").appendChild(section(b,DATA[b].map(p=>({...p,brand:b}))));
+      catalog.innerHTML="";
+      catalog.appendChild(section(b,DATA[b].map(p=>({...p,brand:b}))));
       c.style.display="none";
     };
     c.appendChild(d);
   });
 }
 
-/* ===== CLOSE CAT ===== */
 document.addEventListener("click",e=>{
   const c=document.getElementById("categories");
-  if(!c.contains(e.target) && !e.target.closest(".search-box")){
+  if(!c.contains(e.target) && !e.target.closest(".cat-btn")){
     c.style.display="none";
   }
 });
