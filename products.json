@@ -1,55 +1,55 @@
 {
   "HOTWHEELS": [
     {
-      "name": "Bugatti 35",
+      "name": "Hot Wheels Premium Car Culture Eurospeed Bugatti Bolide",
       "price": 35,
       "stock": 2,
       "image": "imagenes/BugattiBolide.webp"
     },
     {
-      "name": "Cruiser 35",
+      "name": "Hot Wheels Premium Fast & Furious Toyota FJ Cruiser",
       "price": 35,
       "stock": 2,
       "image": "imagenes/ToyotaCruiser.webp"
     },
     {
-      "name": "Huracan LWK",
+      "name": "Hot Wheels 2024 Premium Car Culture Slide Street 2 - LB-Works Lamborghini Huracan",
       "price": 35,
       "stock": 1,
       "image": "imagenes/HuracanLB.webp"
     },
     {
-      "name": "Mazda 787B",
+      "name": "Hot Wheels Premium Car Culture Hammer Drop Mazda 787B",
       "price": 35,
       "stock": 1,
       "image": "imagenes/Mazda787b.webp"
     },
     {
-      "name": "Mustang FYF",
+      "name": "Hot Wheels Premium Fast & Furious 1969 Ford Mustang Boss 302",
       "price": 35,
       "stock": 2,
       "image": "imagenes/Mustangfyf.webp"
     },
     {
-      "name": "SkyStriker GIJOE",
+      "name": "Hot Wheels Premium Pop Culture G.I. Joe Combat Jet Skystriker",
       "price": 35,
       "stock": 1,
       "image": "imagenes/Skystriker.webp"
     },
     {
-      "name": "Fast & Furious 25th Anniversary Set (Incluye Eclipse Spectraflame)",
+      "name": "Hot Wheels Premium Fast & Furious 25th Anniversary Set (Eclipse Spectraflame)",
       "price": 300,
       "stock": 10,
       "image": "imagenes/FastFuriosSet5autos.webp"
     },
     {
-      "name": "Team Transport 2025 H (AE86 / Duster / Ferrari 250 GTO / Fiat 642)",
+      "name": "Hot Wheels Team Transport 2025 H (AE86 / Duster / Ferrari 250 GTO / Fiat 642)",
       "price": 300,
       "stock": 1,
       "image": "imagenes/TeamTransportH.webp"
     },
     {
-      "name": "W Motors Lykan Hypersport",
+      "name": "Hot Wheels Premium Fast & Furious W Motors Lykan Hypersport",
       "price": 35,
       "stock": 1,
       "image": "imagenes/LykanSport.webp"
@@ -58,7 +58,7 @@
 
   "M2": [
     {
-      "name": "Cheyenne 1970",
+      "name": "M2 Machines 1977 Chevrolet Cheyenne Super 30 “Dia De Los Muertos”",
       "price": 70,
       "stock": 1,
       "image": "imagenes/Cheyenne.webp"
@@ -67,37 +67,38 @@
 
   "MiniGT - Kaido House": [
     {
-      "name": "Grasshopper",
-      "price": 100,
+      "name": "Mini GT Kaido House Nissan Skyline GT-R (R34) Tamiya x Kaido House \"The Grasshopper\" V1",
+      "price": 90,
+      "originalPrice": 100,
       "stock": 1,
       "image": "imagenes/Grasshopper.webp"
     },
     {
-      "name": "Nissan Veilside",
+      "name": "Mini GT Nissan Z VeilSide FFZ400 Gold Chrome",
       "price": 80,
       "stock": 1,
       "image": "imagenes/NissanVeilside.webp"
     },
     {
-      "name": "Toyota GR86 LB",
+      "name": "Mini GT Toyota GR86 LB★Nation White",
       "price": 70,
       "stock": 1,
       "image": "imagenes/ToyotaGR86.webp"
     },
     {
-      "name": "Rexy Porsche 911 GT3 R #77 AO Racing Daytona 2024",
+      "name": "Rexy – Porsche 911 GT3 R #77 AO Racing 2024 IMSA Daytona 24 Hrs GTD Pro 2nd Place",
       "price": 180,
       "stock": 1,
       "image": "imagenes/Rexy.webp"
     },
     {
-      "name": "Lamborghini Huracan LB WORKS Mad Mike NIMBUL",
+      "name": "Lamborghini Huracan LB★WORKS ver. 2 Mad Mike NIMBUL",
       "price": 85,
       "stock": 1,
       "image": "imagenes/Nimbul.webp"
     },
     {
-      "name": "Qube Carz Set Nissan Skyline / R35 / ER34 / S15",
+      "name": "Qube Carz Set Nissan Skyline Kenmeri GT-R / R35 / LB-ER34 / S15",
       "price": 200,
       "stock": 1,
       "image": "imagenes/QubeCarz.webp"
@@ -106,13 +107,13 @@
 
   "POP RACE": [
     {
-      "name": "Pop Race Hakosuka",
+      "name": "Pop Race Skyline GT-R V8 Drift \"Hakosuka\" Enigma Exclusive Edition",
       "price": 80,
       "stock": 1,
       "image": "imagenes/PopRaceHakosuka.webp"
     },
     {
-      "name": "Top Secret GT300 Supra Carbon Hood",
+      "name": "Pop Race PR640277 Top Secret GT300 Supra Chrome Gold",
       "price": 85,
       "stock": 1,
       "image": "imagenes/TopSecretGT300.webp"
@@ -121,8 +122,8 @@
 
   "STAR RACE": [
     {
-      "name": "Star Race Iron Dame",
-      "price": 75,
+      "name": "Star Race SR64041 Porsche 911 GT3 R Iron Dames #85",
+      "price": 80,
       "stock": 1,
       "image": "imagenes/IronDames.webp"
     }
@@ -130,13 +131,13 @@
 
   "TARMAC": [
     {
-      "name": "Porsche 911 GT3 R Driftshop Special Edition",
+      "name": "Tarmac Works x IXO Porsche 911 GT3 R Driftshop Special Edition",
       "price": 230,
       "stock": 1,
       "image": "imagenes/TarmacDriftshop.webp"
     },
     {
-      "name": "Porsche 911 (992) GT3 RS White Limited 999 pcs",
+      "name": "Tarmac Works x Minichamps Porsche 911 (992) GT3 RS White – Limited 999 pcs",
       "price": 170,
       "stock": 1,
       "image": "imagenes/tarmacMinichamps.webp"
