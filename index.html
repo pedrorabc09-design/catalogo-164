@@ -13,23 +13,32 @@
 body{background:#f1f5f9;color:#0f172a}
 
 /* HEADER */
-header{background:#1e293b;padding:28px;color:white;position:relative}
-.header-top{display:flex;align-items:center;gap:20px}
+header{background:#1e293b;padding:28px;color:white}
+.header-top{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .logo{height:180px;cursor:pointer}
-.search-area{flex:1;display:flex;gap:10px}
+.search-area{flex:1;display:flex;gap:10px;min-width:220px}
 .search-area input{flex:1;padding:14px;border-radius:14px;border:none}
 .cat-btn{padding:12px 16px;border:none;border-radius:14px;font-size:22px;background:#334155;color:white}
 .icons{display:flex;gap:14px;align-items:center}
-.icons img{width:32px;cursor:pointer;}
+.icons img{width:32px;height:32px;object-fit:contain;cursor:pointer}
 
 /* CART ICON */
 .cart-icon{position:relative;font-size:22px;cursor:pointer;transition:.3s}
 .cart-icon.bounce{animation:bounce .4s}
-@keyframes bounce{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes bounce{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.25)}
+  100%{transform:scale(1)}
+}
 .cart-count{position:absolute;top:-6px;right:-10px;background:#dc2626;color:white;font-size:12px;padding:2px 6px;border-radius:50%}
 
 /* CATEGORIES */
-#categories{display:none;position:absolute;top:230px;left:50%;transform:translateX(-50%);background:white;width:300px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:10}
+#categories{
+  display:none;position:absolute;top:230px;left:50%;
+  transform:translateX(-50%);
+  background:white;width:300px;border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:10
+}
 #categories div{padding:14px;font-weight:600;cursor:pointer}
 #categories div:hover{background:#e2e8f0}
 
@@ -41,12 +50,28 @@ main{padding:24px}
 /* SLIDER */
 .slider{position:relative}
 .track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
-.arrow{position:absolute;top:45%;width:38px;height:38px;border-radius:50%;border:none;background:#1e293b;color:white;cursor:pointer;display:none;z-index:5;font-size:24px;line-height:36px;text-align:center}
+.arrow{
+  display:none;
+  position:absolute;top:45%;
+  width:38px;height:38px;border-radius:50%;
+  border:none;background:#1e293b;color:white;font-size:22px;
+  cursor:pointer;z-index:5
+}
 .arrow.left{left:-18px}
 .arrow.right{right:-18px}
 
 /* CARD */
-.card{background:white;width:220px;min-width:220px;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+.card{
+  background:white;width:220px;min-width:220px;
+  border-radius:18px;padding:14px;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  opacity:0;transform:translateY(20px);
+  transition:.5s
+}
+.card.show{opacity:1;transform:none}
+.card.disabled{opacity:.45;pointer-events:none}
 .card img{width:100%;height:140px;object-fit:contain;cursor:pointer}
 .card h3{font-size:14px;margin:8px 0;min-height:36px;cursor:pointer}
 .price{font-weight:700;color:#16a34a}
@@ -62,24 +87,35 @@ main{padding:24px}
 .qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white;cursor:pointer}
 
 /* BUTTONS */
-.add-btn,.buy-btn{height:38px;border-radius:12px;border:none;cursor:pointer;transition:.2s;width:100%;margin-top:6px}
+.add-btn,.buy-btn{
+  height:38px;border-radius:12px;
+  border:none;cursor:pointer;
+  transition:.2s;width:100%;margin-top:6px
+}
 .add-btn{background:#0ea5e9;color:white}
 .buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
 .add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
 .add-btn:active,.buy-btn:active{transform:scale(.92)}
-.buy-btn img{width:16px;height:auto}
+.buy-btn img{width:20px;object-fit:contain}
 
 /* DETAIL */
-#detail{display:none}
+#detail{display:none;position:relative}
 .back-btn img{width:36px;cursor:pointer;margin-bottom:16px}
-.detail-box{display:flex;gap:28px;background:white;padding:24px;border-radius:22px;align-items:center;justify-content:center}
+.detail-box{
+  display:flex;gap:28px;background:white;
+  padding:24px;border-radius:22px;
+  align-items:center;justify-content:center
+}
 .detail-box img{width:280px}
-.detail-info{max-width:360px;text-align:center}
+.detail-info{max-width:360px}
 
 /* CART */
-#cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5)}
+#cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:49}
 #cart-overlay.active{display:block}
-#cart{position:fixed;right:-420px;top:0;width:420px;height:100%;background:white;padding:20px;transition:.3s;z-index:50}
+#cart{
+  position:fixed;right:-420px;top:0;width:420px;height:100%;
+  background:white;padding:20px;transition:.3s;z-index:50
+}
 #cart.active{right:0}
 .cart-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:14px}
 .cart-item small{color:#dc2626}
@@ -87,7 +123,6 @@ main{padding:24px}
 
 /* MOBILE */
 @media(max-width:768px){
-  .header-top{flex-direction:column}
   .detail-box{flex-direction:column}
   .detail-box img{width:100%}
 }
@@ -124,17 +159,12 @@ main{padding:24px}
   <h2>Carrito <small id="cartTimer"></small></h2>
   <div id="cartItems"></div>
   <strong>Total: S/ <span id="cartTotal">0</span></strong>
-  <button class="buy-btn" onclick="checkout()"><img src="imagenes/whatsapp-logo.png"> Finalizar por WhatsApp</button>
+  <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
 </div>
 
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
-const RESERVE_TIME=20*60*1000;
-
-const catalog=document.getElementById("catalog");
-const detail=document.getElementById("detail");
-
-function safeId(name){ return 'q_' + name.replace(/\W/g,'_'); }
+const RESERVE_TIME=60*60*1000; // 1 hora
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
@@ -144,60 +174,87 @@ fetch("products.json").then(r=>r.json()).then(d=>{
   setInterval(renderCart,1000);
 });
 
-function available(p){ return p.stock-(CART[p.name]?.qty||0); }
+function available(p){
+  const c=CART[p.name];
+  return p.stock-(c?c.qty:0);
+}
 
 function renderAll(){
-  catalog.innerHTML=""; detail.style.display="none"; catalog.style.display="block";
+  catalog.innerHTML="";
+  detail.style.display="none";
+  catalog.style.display="block";
+
   const q=search.value.toLowerCase();
 
-  Object.entries(DATA).forEach(([category,products])=>{
-    let filtered = products.filter(p=>p.name.toLowerCase().includes(q));
-    if(!filtered.length) return;
+  Object.entries(DATA).forEach(([b,ps])=>{
+    let products=ps.filter(p => p.name.toLowerCase().includes(q));
+    if(!products.length) return;
 
-    // Ordenar: descuento primero, luego precio ascendente
-    filtered.sort((a,b)=>{
+    // Orden: primero descuento, luego precio ascendente
+    products.sort((a,b)=>{
       if(a.discount && !b.discount) return -1;
       if(!a.discount && b.discount) return 1;
-      const priceA = a.discount?a.finalPrice:a.price;
-      const priceB = b.discount?b.finalPrice:b.price;
+      const priceA = a.discount ? a.finalPrice : a.price;
+      const priceB = b.discount ? b.finalPrice : b.price;
       return priceA - priceB;
     });
 
-    const section=document.createElement("div");
-    section.className="section";
-    section.innerHTML=`<h2>${category}</h2><div class="slider"><button class="arrow left">‹</button><div class="track"></div><button class="arrow right">›</button></div>`;
-    const track=section.querySelector(".track");
-
-    filtered.forEach(p=>{
-      const qtyAvailable=available(p);
-      const card=document.createElement("div");
-      card.className="card"+(qtyAvailable<=0?" disabled":"");
-      card.setAttribute("data-name",p.name);
-      card.innerHTML=`
-        ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-        ${qtyAvailable===1?`<div class="last-unit">Última unidad</div>`:qtyAvailable<=0?`<div class="out-stock">Agotado</div>`:""}
-        <img src="${p.image}" onclick="showDetail('${p.name}')">
-        <h3 onclick="showDetail('${p.name}')">${p.name}</h3>
-        <div>${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}<span class="price">S/ ${p.discount?p.finalPrice:p.price}</span></div>
-        <div class="qty">
-          <button onclick="changeQty('${p.name}',-1)">-</button>
-          <span id="${safeId(p.name)}">${p._qty}</span>
-          <button onclick="changeQty('${p.name}',1)">+</button>
-        </div>
-        <button class="add-btn" ${qtyAvailable<=0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
-        <button class="buy-btn" ${qtyAvailable<=0?"disabled":""} onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>
-      `;
-      track.appendChild(card);
-    });
-
-    // Flechas solo si es necesario
-    const trackScroll = track.scrollWidth > track.clientWidth;
-    section.querySelectorAll(".arrow").forEach(a=>a.style.display=trackScroll?"block":"none");
-    section.querySelector(".left").onclick=()=>track.scrollLeft-=240;
-    section.querySelector(".right").onclick=()=>track.scrollLeft+=240;
-
-    catalog.appendChild(section);
+    renderSection(b,products);
   });
+}
+
+function renderSection(title,products){
+  const s=document.createElement("div");
+  s.className="section";
+  s.innerHTML=`<h2>${title}</h2>
+  <div class="slider">
+    <button class="arrow left">‹</button>
+    <div class="track"></div>
+    <button class="arrow right">›</button>
+  </div>`;
+  const track=s.querySelector(".track");
+
+  products.forEach(p=>{
+    const a=available(p);
+    const c=document.createElement("div");
+    c.className="card"+(a<=0?" disabled":"");
+    c.innerHTML=`
+      ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
+      ${a===1?`<div class="last-unit">Última unidad</div>`:a<=0?`<div class="out-stock">Agotado</div>`:""}
+      <img src="${p.image}" onclick="showDetail('${p.name.replace(/'/g,"").replace(/"/g,"")}')">
+      <h3 onclick="showDetail('${p.name.replace(/'/g,"").replace(/"/g,"")}')">${p.name}</h3>
+      <div>
+        ${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}
+        <span class="price">S/ ${p.discount?p.finalPrice:p.price}</span>
+      </div>
+      <div class="qty">
+        <button onclick="changeQty('${p.name}',-1)">-</button>
+        <span id="q-${p.name}">${p._qty}</span>
+        <button onclick="changeQty('${p.name}',1)">+</button>
+      </div>
+      <button class="add-btn" ${a<=0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
+      <button class="buy-btn" ${a<=0?"disabled":""} onclick="buyNow('${p.name}')">
+        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+      </button>`;
+    track.appendChild(c);
+    setTimeout(()=>c.classList.add("show"),50);
+  });
+
+  // Mostrar flechas solo si es necesario
+  const arrowLeft = s.querySelector(".left");
+  const arrowRight = s.querySelector(".right");
+  if(track.scrollWidth>track.clientWidth){
+    arrowLeft.style.display="block";
+    arrowRight.style.display="block";
+  } else {
+    arrowLeft.style.display="none";
+    arrowRight.style.display="none";
+  }
+
+  arrowLeft.onclick=()=>track.scrollLeft-=240;
+  arrowRight.onclick=()=>track.scrollLeft+=240;
+
+  catalog.appendChild(s);
 }
 
 function showDetail(name){
@@ -215,43 +272,25 @@ function showDetail(name){
         <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
         <div class="qty">
           <button onclick="changeQty('${p.name}',-1)">-</button>
-          <span id="${safeId(p.name)}">${p._qty}</span>
+          <span id="q-${p.name}">${p._qty}</span>
           <button onclick="changeQty('${p.name}',1)">+</button>
         </div>
         <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-        <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>
+        <button class="buy-btn" onclick="buyNow('${p.name}')">
+          <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+        </button>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-function changeQty(name,delta){
-  const p = Object.values(DATA).flat().find(x=>x.name===name);
-  if(!p) return;
-  p._qty = Math.max(1, Math.min(p.stock, p._qty+delta));
-  document.querySelectorAll(`#${safeId(name)}`).forEach(e=>e.innerText=p._qty);
-
-  // Actualizar estado en card
-  const card = document.querySelector(`.card[data-name="${name}"]`);
-  if(card){
-    const qtyAvailable = available(p);
-    card.classList.toggle("disabled", qtyAvailable<=0);
-    card.querySelector('.out-stock')?.remove();
-    card.querySelector('.last-unit')?.remove();
-    if(qtyAvailable<=0){
-      const div=document.createElement('div');
-      div.className='out-stock'; div.innerText='Agotado';
-      card.appendChild(div);
-    } else if(qtyAvailable===1){
-      const div=document.createElement('div');
-      div.className='last-unit'; div.innerText='Última unidad';
-      card.appendChild(div);
-    }
-  }
+function changeQty(n,d){
+  const p=Object.values(DATA).flat().find(x=>x.name===n);
+  p._qty=Math.max(1,Math.min(available(p),p._qty+d));
+  document.querySelectorAll(`#q-${n}`).forEach(e=>e.innerText=p._qty);
 }
 
 function addToCart(name){
-  const p = Object.values(DATA).flat().find(x=>x.name===name);
+  const p=Object.values(DATA).flat().find(x=>x.name===name);
   if(available(p)<=0) return;
   if(!CART[name]) CART[name]={...p,qty:0,time:Date.now()};
   CART[name].qty+=p._qty;
@@ -259,46 +298,60 @@ function addToCart(name){
   save();
 }
 
-function buyNow(name){addToCart(name);toggleCart(true);}
-function goHome(){renderAll();}
+function buyNow(n){addToCart(n);toggleCart(true)}
+function goHome(){renderAll()}
 
 function renderCart(){
-  const now = Date.now();
-  let total=0, count=0, maxTime=0;
+  let t=0,c=0,maxTime=0;
   cartItems.innerHTML="";
+  const now = Date.now();
   Object.values(CART).forEach(p=>{
-    const left = RESERVE_TIME-(now-p.time);
-    if(left<=0){ delete CART[p.name]; return; }
+    const left=RESERVE_TIME-(now-p.time);
+    if(left<=0) return;
     maxTime=Math.max(maxTime,left);
-    cartItems.innerHTML+=`<div class="cart-item">${p.name} x${p.qty} <small>${Math.floor(left/60000)}:${String(Math.floor(left%60000/1000)).padStart(2,'0')}</small> <button onclick="delete CART['${p.name}'];save()">❌</button></div>`;
-    total += (p.discount?p.finalPrice:p.price)*p.qty;
-    count += p.qty;
+    cartItems.innerHTML+=`
+      <div class="cart-item">
+        ${p.name} x${p.qty}
+        <small>${Math.floor(left/60000)}:${String(Math.floor(left%60000/1000)).padStart(2,"0")}</small>
+        <button onclick="delete CART['${p.name}'];save()">❌</button>
+      </div>`;
+    t+=(p.discount?p.finalPrice:p.price)*p.qty;
+    c+=p.qty;
   });
-  cartTotal.innerText = total;
-  cartCount.innerText = count;
-  cartTimer.innerText = maxTime ? `(${Math.floor(maxTime/60000)} min)` : '';
+  cartTotal.innerText=t;
+  cartCount.innerText=c;
+  cartTimer.innerText=maxTime?`(${Math.floor(maxTime/60000)} min)`:"";
 }
 
-function save(){localStorage.setItem("cart",JSON.stringify(CART)); renderCart(); renderAll(); }
+function save(){localStorage.setItem("cart",JSON.stringify(CART));renderCart()}
 
-function toggleCart(show){ cart.classList.toggle("active",show); cartOverlay.classList.toggle("active",show); }
+function checkout(){
+  let m="Hola, quiero comprar:%0A";let t=0;
+  Object.values(CART).forEach(p=>{
+    const price=p.discount?p.finalPrice:p.price;
+    m+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;t+=price*p.qty;
+  });
+  m+=`%0ATotal: S/ ${t}`;
+  window.open("https://wa.me/51942434659?text="+m);
+}
+
+function toggleCart(show){
+  cart.classList.toggle("active",show);
+  cartOverlay.classList.toggle("active",show);
+}
 
 function buildCategories(){
   categories.innerHTML="";
-  Object.keys(DATA).forEach(cat=>{
-    const div=document.createElement("div");
-    div.innerText=cat;
-    div.onclick=()=>{search.value=cat; renderAll(); categories.style.display="none"; };
-    categories.appendChild(div);
+  Object.keys(DATA).forEach(b=>{
+    const d=document.createElement("div");
+    d.innerText=b;
+    d.onclick=()=>{search.value=b;renderAll();categories.style.display="none"};
+    categories.appendChild(d);
   });
 }
 
-function toggleCategories(){ categories.style.display=categories.style.display==="block"?"none":"block"; }
-
-function checkout(){
-  let msg = Object.values(CART).map(p=>`• ${p.name} x${p.qty} = S/ ${p.discount?p.finalPrice:p.price*p.qty}`).join('\n');
-  let total = Object.values(CART).reduce((a,p)=>a+(p.discount?p.finalPrice:p.price)*p.qty,0);
-  window.open("https://wa.me/51942434659?text="+encodeURIComponent(`Hola, quiero comprar:\n${msg}\nTotal: S/ ${total}`));
+function toggleCategories(){
+  categories.style.display=categories.style.display==="block"?"none":"block";
 }
 </script>
 
