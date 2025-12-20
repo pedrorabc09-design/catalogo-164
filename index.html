@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* ===== RESET ===== */
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
 body{background:#f1f5f9;color:#0f172a}
 
@@ -86,6 +87,11 @@ main{padding:22px}
   background:#f59e0b;color:white;
   font-size:12px;padding:5px 9px;border-radius:10px
 }
+.out-stock{
+  position:absolute;top:10px;right:10px;
+  background:#6b7280;color:white;
+  font-size:12px;padding:5px 9px;border-radius:10px
+}
 
 /* ===== QTY ===== */
 .qty{
@@ -104,7 +110,12 @@ main{padding:22px}
   margin-top:10px;height:36px;
   border-radius:12px;
   background:#0ea5e9;color:white;
-  border:none;cursor:pointer
+  border:none;cursor:pointer;
+  transition:transform .15s ease,background .15s ease
+}
+.add-btn:active{
+  transform:scale(.92);
+  background:#0284c7
 }
 .buy-btn{
   margin-top:8px;height:40px;
@@ -177,7 +188,6 @@ main{padding:22px}
 
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
-const RESERVE_TIME = 20*60*1000;
 
 const catalog=document.getElementById("catalog");
 const search=document.getElementById("search");
@@ -185,25 +195,6 @@ const categoriesDiv=document.getElementById("categories");
 const cartCount=document.getElementById("cartCount");
 const cartItems=document.getElementById("cartItems");
 const cartTotal=document.getElementById("cartTotal");
-
-function cleanExpiredCart(){
-  const now=Date.now();
-  let changed=false;
-  Object.keys(CART).forEach(k=>{
-    if(CART[k].reservedAt && now-CART[k].reservedAt>RESERVE_TIME){
-      delete CART[k]; changed=true;
-    }
-  });
-  if(changed) localStorage.setItem("cart",JSON.stringify(CART));
-}
-
-function reservedQty(name){
-  cleanExpiredCart();
-  return CART[name]?.qty||0;
-}
-function availableStock(p){
-  return Math.max(0,p.stock-reservedQty(p.name));
-}
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
@@ -215,14 +206,21 @@ fetch("products.json").then(r=>r.json()).then(d=>{
 
 search.addEventListener("input",e=>render(e.target.value.toLowerCase()));
 
+function availableStock(p){
+  return p.stock-(CART[p.name]?.qty||0);
+}
+
 function render(filter){
-  cleanExpiredCart();
   catalog.innerHTML="";
   let offers=[];
   Object.values(DATA).flat().forEach(p=>{if(p.discount) offers.push(p)});
-  if(offers.length&&!filter) catalog.appendChild(section("🔥 Ofertas",offers));
+  if(offers.length && !filter){
+    catalog.appendChild(section("🔥 Ofertas",offers));
+  }
   Object.entries(DATA).forEach(([b,ps])=>{
-    const m=b.toLowerCase().includes(filter)?ps:ps.filter(p=>p.name.toLowerCase().includes(filter));
+    const m=b.toLowerCase().includes(filter)
+      ? ps
+      : ps.filter(p=>p.name.toLowerCase().includes(filter));
     if(m.length) catalog.appendChild(section(b,m));
   });
 }
@@ -240,12 +238,12 @@ function section(title,products){
   const track=s.querySelector(".track");
 
   products.forEach(p=>{
+    const stock=availableStock(p);
     const c=document.createElement("div");
     c.className="card";
     c.innerHTML=`
       ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-      ${availableStock(p)===0?`<div class="last-unit" style="background:#dc2626">Agotado</div>`:""}
-      ${availableStock(p)===1?`<div class="last-unit">Última unidad</div>`:""}
+      ${stock===0?`<div class="out-stock">Agotado</div>`:stock===1?`<div class="last-unit">Última unidad</div>`:""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
       <div>
@@ -257,28 +255,18 @@ function section(title,products){
         <span id="q-${p.name}">${p._qty}</span>
         <button onclick="changeQty('${p.name}',1)">+</button>
       </div>
-      <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-      <button class="buy-btn" onclick="buyNow('${p.name}')">
+      <button class="add-btn" ${stock===0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
+      <button class="buy-btn" ${stock===0?"disabled":""} onclick="buyNow('${p.name}')">
         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </button>`;
     track.appendChild(c);
   });
-
-  setTimeout(()=>updateArrows(s),0);
   return s;
-}
-
-function updateArrows(slider){
-  const track=slider.querySelector(".track");
-  const arrows=slider.querySelectorAll(".arrow");
-  const need=track.scrollWidth>track.clientWidth;
-  arrows.forEach(a=>a.style.display=need?"block":"none");
 }
 
 function changeQty(name,d){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  const max=availableStock(p);
-  p._qty=Math.max(1,Math.min(max,p._qty+d));
+  p._qty=Math.max(1,Math.min(availableStock(p),p._qty+d));
   document.getElementById(`q-${name}`).innerText=p._qty;
 }
 
@@ -286,22 +274,25 @@ function addToCart(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
   const max=availableStock(p);
   if(max<=0) return;
-  if(!CART[name]) CART[name]={...p,qty:0,reservedAt:Date.now()};
+  if(!CART[name]) CART[name]={...p,qty:0};
   CART[name].qty=Math.min(p.stock,CART[name].qty+p._qty);
-  CART[name].reservedAt=Date.now();
   saveCart();
+  render(search.value.toLowerCase());
 }
+
 function buyNow(name){addToCart(name);toggleCart(true)}
 
 function saveCart(){
   localStorage.setItem("cart",JSON.stringify(CART));
   renderCart();
 }
+
 function renderCart(){
   cartItems.innerHTML="";
   let total=0,count=0;
   Object.values(CART).forEach(p=>{
-    total+=p.qty*(p.discount?p.finalPrice:p.price);
+    const price=p.discount?p.finalPrice:p.price;
+    total+=p.qty*price;
     count+=p.qty;
     cartItems.innerHTML+=`
       <div class="cart-item">
@@ -312,16 +303,26 @@ function renderCart(){
   cartTotal.innerText=total;
   cartCount.innerText=count;
 }
-function removeItem(n){delete CART[n];saveCart()}
+
+function removeItem(n){delete CART[n];saveCart();render(search.value.toLowerCase())}
+
 function checkout(){
-  let msg="Hola, quiero comprar:%0A";
-  Object.values(CART).forEach(p=>msg+=`- ${p.name} x${p.qty}%0A`);
+  let msg="Hola, quiero comprar:%0A%0A";
+  let total=0;
+  Object.values(CART).forEach(p=>{
+    const price=p.discount?p.finalPrice:p.price;
+    msg+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;
+    total+=price*p.qty;
+  });
+  msg+=`%0ATotal: S/ ${total}`;
   window.open("https://wa.me/51942434659?text="+msg);
 }
+
 function toggleCart(o){
   document.getElementById("cart").classList.toggle("active",o);
   document.getElementById("cart-overlay").classList.toggle("active",o);
 }
+
 function buildCategories(){
   categoriesDiv.innerHTML="";
   Object.keys(DATA).forEach(b=>{
