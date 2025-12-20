@@ -55,10 +55,8 @@ header{
 }
 .icons img{width:34px;cursor:pointer}
 
-/* ===== CART ICON ===== */
-.cart-icon{
-  position:relative;
-}
+/* ===== CART ===== */
+.cart-icon{position:relative;cursor:pointer}
 .cart-count{
   position:absolute;
   top:-6px;
@@ -123,7 +121,6 @@ main{padding:22px}
 }
 .arrow.left{left:-22px}
 .arrow.right{right:-22px}
-.arrow.hidden{display:none}
 
 /* ===== CARD ===== */
 .card{
@@ -155,13 +152,8 @@ main{padding:22px}
   gap:6px;
   margin-top:8px;
 }
-.qty button{
-  width:30px;
-}
-.qty input{
-  width:40px;
-  text-align:center;
-}
+.qty button{width:30px}
+.qty input{width:40px;text-align:center}
 
 .buy-btn{
   margin-top:8px;
@@ -190,36 +182,6 @@ main{padding:22px}
   border-radius:10px;
 }
 
-/* ===== DETAIL ===== */
-#detail{display:none;padding:20px}
-#detail.active{display:block}
-#catalog.active{display:block}
-#catalog{display:none}
-
-.detail-box{
-  background:white;
-  border-radius:18px;
-  padding:22px;
-  max-width:1000px;
-  margin:auto;
-}
-.detail-content{
-  display:flex;
-  gap:32px;
-}
-.detail-img{width:420px;object-fit:contain}
-.detail-info{flex:1}
-.detail-buy{
-  margin-top:16px;
-  background:#25d366;
-  color:white;
-  padding:12px 18px;
-  border-radius:14px;
-  display:inline-flex;
-  gap:10px;
-  text-decoration:none;
-}
-
 /* ===== CART ===== */
 #cart-overlay{
   display:none;
@@ -228,7 +190,6 @@ main{padding:22px}
   background:rgba(0,0,0,.5);
 }
 #cart-overlay.active{display:block}
-
 #cart{
   position:fixed;
   right:-420px;
@@ -260,29 +221,31 @@ main{padding:22px}
 
 <header>
   <div class="header-top">
-    <img src="imagenes/logo.png" class="logo" onclick="goHome()">
+    <img src="imagenes/logo.png" class="logo" onclick="render('')">
 
     <div class="search-area">
-      <input id="search" placeholder="Buscar modelos o marcas...">
+      <input id="search" placeholder="Buscar modelos o marcas..." oninput="render(this.value)">
       <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
 
     <div class="icons">
-      <a href="https://www.facebook.com/profile.php?id=100064895565079&sk=about" target="_blank">
+      <a href="https://wa.me/51942434659" target="_blank">
+        <img src="imagenes/whatsapp-logo.png">
+      </a>
+      <a href="https://www.facebook.com/profile.php?id=100064895565079" target="_blank">
         <img src="imagenes/facebook.png">
       </a>
-
       <div class="cart-icon" onclick="toggleCart(true)">
-        🛒
-        <span class="cart-count" id="cartCount">0</span>
+        🛒<span class="cart-count" id="cartCount">0</span>
       </div>
     </div>
   </div>
+
   <div id="categories"></div>
 </header>
 
 <main>
-  <div id="catalog" class="active"></div>
+  <div id="catalog"></div>
 </main>
 
 <div id="cart-overlay" onclick="toggleCart(false)"></div>
@@ -296,22 +259,86 @@ main{padding:22px}
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
 
+const catalog=document.getElementById("catalog");
+const categoriesDiv=document.getElementById("categories");
 const cartCount=document.getElementById("cartCount");
 const cartItems=document.getElementById("cartItems");
 const cartTotal=document.getElementById("cartTotal");
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
+  buildCategories();
   render("");
   renderCart();
 });
 
-function addToCart(p,qty){
-  if(!CART[p.name]) CART[p.name]={...p,qty:0};
-  CART[p.name].qty=Math.min(p.stock,CART[p.name].qty+qty);
-  saveCart();
+/* ===== RENDER ===== */
+function render(filter){
+  catalog.innerHTML="";
+  Object.keys(DATA).forEach(cat=>{
+    const items=DATA[cat].filter(p=>
+      p.name.toLowerCase().includes(filter.toLowerCase()) ||
+      cat.toLowerCase().includes(filter.toLowerCase())
+    );
+    if(!items.length) return;
+
+    catalog.innerHTML+=`
+      <div class="section">
+        <h2>${cat}</h2>
+        <div class="slider">
+          <button class="arrow left" onclick="slide(this,-1)">‹</button>
+          <div class="track">
+            ${items.map(p=>cardHTML(p)).join("")}
+          </div>
+          <button class="arrow right" onclick="slide(this,1)">›</button>
+        </div>
+      </div>`;
+  });
 }
 
+/* ===== CARD ===== */
+function cardHTML(p){
+  return `
+  <div class="card">
+    ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
+    <img src="${p.image}">
+    <h3>${p.name}</h3>
+    <div>
+      ${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}
+      <span class="price">S/ ${p.discount?p.finalPrice:p.price}</span>
+    </div>
+    <div class="qty">
+      <input type="number" min="1" max="${p.stock}" value="1" id="q_${p.name}">
+    </div>
+    <button class="buy-btn" onclick="addToCart(${JSON.stringify(p)},+document.getElementById('q_${p.name}').value)">
+      <img src="imagenes/whatsapp-logo.png"> Comprar
+    </button>
+  </div>`;
+}
+
+/* ===== SLIDE ===== */
+function slide(btn,dir){
+  const track=btn.parentElement.querySelector(".track");
+  track.scrollLeft+=dir*240;
+}
+
+/* ===== CATEGORIES ===== */
+function buildCategories(){
+  categoriesDiv.innerHTML=`<div onclick="render('')">Todos</div>`;
+  Object.keys(DATA).forEach(c=>{
+    categoriesDiv.innerHTML+=`<div onclick="render('${c}')">${c}</div>`;
+  });
+}
+function toggleCategories(){
+  categoriesDiv.style.display=categoriesDiv.style.display==="block"?"none":"block";
+}
+
+/* ===== CART ===== */
+function addToCart(p,q){
+  if(!CART[p.name]) CART[p.name]={...p,qty:0};
+  CART[p.name].qty=Math.min(p.stock,CART[p.name].qty+q);
+  saveCart();
+}
 function renderCart(){
   cartItems.innerHTML="";
   let total=0,count=0;
@@ -327,17 +354,14 @@ function renderCart(){
   cartTotal.innerText=total;
   cartCount.innerText=count;
 }
-
 function saveCart(){
   localStorage.setItem("cart",JSON.stringify(CART));
   renderCart();
 }
-
 function removeItem(n){
   delete CART[n];
   saveCart();
 }
-
 function checkout(){
   let msg="Hola, quiero comprar:%0A";
   Object.values(CART).forEach(p=>{
@@ -345,7 +369,6 @@ function checkout(){
   });
   window.open("https://wa.me/51942434659?text="+msg);
 }
-
 function toggleCart(o){
   document.getElementById("cart").classList.toggle("active",o);
   document.getElementById("cart-overlay").classList.toggle("active",o);
