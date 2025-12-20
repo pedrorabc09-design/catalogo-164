@@ -330,4 +330,27 @@ function toggleCategories(){
 
 /* === SLIDER === */
 function enableSlider(sec){
-  const tra
+  const track=sec.querySelector(".track");
+  const l=sec.querySelector(".left");
+  const r=sec.querySelector(".right");
+  if(track.scrollWidth>track.clientWidth){
+    l.style.display=r.style.display="block";
+    l.onclick=()=>track.scrollLeft-=240;
+    r.onclick=()=>track.scrollLeft+=240;
+  }
+}
+
+/* === ANIMATION === */
+function observe(el){
+  const o=new IntersectionObserver(e=>{
+    if(e[0].isIntersecting){
+      el.classList.add("show");
+      o.disconnect();
+    }
+  },{threshold:.2});
+  o.observe(el);
+}
+</script>
+
+</body>
+</html>
