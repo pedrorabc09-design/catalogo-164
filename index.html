@@ -8,111 +8,132 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* ===== RESET ===== */
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
 body{background:#f1f5f9;color:#0f172a}
 
-/* HEADER */
-header{background:#1e293b;padding:28px;color:white}
-.header-top{display:flex;align-items:center;gap:20px}
-.logo{height:180px;cursor:pointer}
-.search-area{flex:1;display:flex;gap:10px}
-.search-area input{flex:1;padding:14px;border-radius:14px;border:none}
-.cat-btn{padding:12px 16px;border:none;border-radius:14px;font-size:22px;background:#334155;color:white}
-.icons{display:flex;gap:14px;align-items:center}
-.icons img{width:32px}
+/* ===== HEADER ===== */
+header{background:#1e293b;padding:32px 28px;color:white}
+.header-top{display:flex;align-items:center;gap:24px}
+.logo{height:200px;cursor:pointer}
+.search-area{flex:1;display:flex;justify-content:center;gap:12px}
+.search-area input{width:70%;max-width:620px;padding:14px 18px;border-radius:14px;border:none}
+.cat-btn{background:#334155;color:white;border:none;padding:12px 16px;border-radius:14px;font-size:26px;cursor:pointer}
+.icons{display:flex;gap:16px;align-items:center}
+.icons img{width:34px;cursor:pointer}
 
-/* CART ICON */
-.cart-icon{position:relative;font-size:22px;cursor:pointer;transition:.3s}
-.cart-icon.bounce{animation:bounce .4s}
-@keyframes bounce{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.25)}
-  100%{transform:scale(1)}
-}
+/* ===== CART ICON ===== */
+.cart-icon{position:relative;font-size:22px;cursor:pointer}
 .cart-count{
   position:absolute;top:-6px;right:-10px;
   background:#dc2626;color:white;
   font-size:12px;padding:2px 6px;border-radius:50%
 }
 
-/* CATEGORIES */
+/* ===== CATEGORIES ===== */
 #categories{
-  display:none;position:absolute;top:230px;left:50%;
+  display:none;position:absolute;top:240px;left:50%;
   transform:translateX(-50%);
-  background:white;width:300px;border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:10
+  background:white;width:320px;border-radius:16px;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);z-index:50
 }
-#categories div{padding:14px;font-weight:600;cursor:pointer}
+#categories div{
+  padding:16px;cursor:pointer;
+  font-weight:600;color:#0f172a
+}
 #categories div:hover{background:#e2e8f0}
 
-/* MAIN */
-main{padding:24px}
-.section{margin-bottom:40px}
-.section h2{margin-bottom:14px}
+/* ===== MAIN ===== */
+main{padding:22px}
+.section{margin-bottom:36px}
+.section h2{margin-bottom:14px;color:#1e293b}
 
-/* SLIDER */
+/* ===== SLIDER ===== */
 .slider{position:relative}
-.track{display:flex;gap:16px;overflow:hidden}
+.track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
+@media(max-width:768px){
+  .track{overflow-x:auto}
+  .track::-webkit-scrollbar{display:none}
+}
 .arrow{
   position:absolute;top:45%;
-  width:40px;height:40px;border-radius:50%;
-  border:none;background:#1e293b;color:white;font-size:20px
+  width:42px;height:42px;border-radius:50%;
+  border:none;background:#1e293b;
+  color:white;font-size:22px;cursor:pointer
 }
-.arrow.left{left:-20px}
-.arrow.right{right:-20px}
+.arrow.left{left:-22px}
+.arrow.right{right:-22px}
 
-/* CARD */
+/* ===== CARD ===== */
 .card{
   background:white;width:220px;min-width:220px;
   border-radius:18px;padding:14px;
   display:flex;flex-direction:column;
-  justify-content:space-between;
   position:relative
 }
-.card img{width:100%;height:140px;object-fit:contain;cursor:pointer}
-.card h3{font-size:14px;margin:8px 0;cursor:pointer}
+.card img{width:100%;height:140px;object-fit:contain}
+.card h3{font-size:14px;margin:10px 0}
 .price{font-weight:700;color:#16a34a}
 .old-price{text-decoration:line-through;color:#64748b;margin-right:6px}
 
-/* BADGES */
-.discount-badge{position:absolute;top:10px;left:10px;background:#dc2626;color:white;font-size:12px;padding:4px 8px;border-radius:10px}
-.last-unit{position:absolute;top:10px;right:10px;background:#f59e0b;color:white;font-size:12px;padding:4px 8px;border-radius:10px}
-.out-stock{position:absolute;top:10px;right:10px;background:#6b7280;color:white;font-size:12px;padding:4px 8px;border-radius:10px}
-
-/* QTY */
-.qty{display:flex;justify-content:center;gap:8px}
-.qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white}
-
-/* BUTTONS */
-.add-btn,.buy-btn{
-  margin-top:8px;height:38px;border-radius:12px;
-  border:none;cursor:pointer;transition:.2s
+/* ===== BADGES ===== */
+.discount-badge{
+  position:absolute;top:10px;left:10px;
+  background:#dc2626;color:white;
+  font-size:12px;padding:5px 9px;border-radius:10px
 }
-.add-btn{background:#0ea5e9;color:white}
-.buy-btn{background:#25d366;color:white;display:flex;justify-content:center;gap:6px;align-items:center}
-.add-btn:active,.buy-btn:active{transform:scale(.92)}
+.last-unit{
+  position:absolute;top:10px;right:10px;
+  background:#f59e0b;color:white;
+  font-size:12px;padding:5px 9px;border-radius:10px
+}
+
+/* ===== QTY ===== */
+.qty{
+  display:flex;justify-content:center;
+  align-items:center;gap:8px;margin-top:8px
+}
+.qty button{
+  width:28px;height:28px;border:none;
+  background:#334155;color:white;
+  border-radius:6px;cursor:pointer
+}
+.qty span{min-width:24px;text-align:center;font-weight:600}
+
+/* ===== BUTTONS ===== */
+.add-btn{
+  margin-top:10px;height:36px;
+  border-radius:12px;
+  background:#0ea5e9;color:white;
+  border:none;cursor:pointer
+}
+.buy-btn{
+  margin-top:8px;height:40px;
+  background:#25d366;color:white;
+  border-radius:12px;border:none;
+  display:flex;align-items:center;
+  justify-content:center;gap:6px
+}
 .buy-btn img{width:18px}
 
-/* DETAIL PAGE */
-#detail{display:none}
-.detail-box{display:flex;gap:30px}
-.detail-box img{width:320px;object-fit:contain}
-.back-btn{margin-bottom:20px}
-
-/* CART */
+/* ===== CART ===== */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5)}
 #cart-overlay.active{display:block}
 #cart{
   position:fixed;right:-420px;top:0;width:420px;height:100%;
-  background:white;padding:20px;transition:.3s;z-index:50
+  background:white;padding:20px;transition:.3s;z-index:100
 }
 #cart.active{right:0}
-.cart-item{display:flex;justify-content:space-between;margin-bottom:8px}
+.cart-item{
+  display:flex;justify-content:space-between;
+  align-items:center;margin-bottom:10px
+}
+.cart-item button{padding:4px 8px}
 
-/* MOBILE */
+/* ===== MOBILE ===== */
 @media(max-width:768px){
   .header-top{flex-direction:column}
-  .detail-box{flex-direction:column}
+  .logo{height:140px}
 }
 </style>
 </head>
@@ -122,14 +143,20 @@ main{padding:24px}
 <header>
   <div class="header-top">
     <img src="imagenes/logo.png" class="logo" onclick="goHome()">
+
     <div class="search-area">
-      <input id="search" placeholder="Buscar modelos...">
+      <input id="search" placeholder="Buscar modelos o marcas...">
       <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
+
     <div class="icons">
-      <a href="https://wa.me/51942434659" target="_blank"><img src="imagenes/whatsapp-logo.png"></a>
-      <a href="#" target="_blank"><img src="imagenes/facebook.png"></a>
-      <div class="cart-icon" id="cartIcon" onclick="toggleCart(true)">
+      <a href="https://wa.me/51942434659" target="_blank">
+        <img src="imagenes/whatsapp-logo.png">
+      </a>
+      <a href="https://www.facebook.com/profile.php?id=100064895565079" target="_blank">
+        <img src="imagenes/facebook.png">
+      </a>
+      <div class="cart-icon" onclick="toggleCart(true)">
         🛒 <span class="cart-count" id="cartCount">0</span>
       </div>
     </div>
@@ -138,156 +165,149 @@ main{padding:24px}
 </header>
 
 <main>
-  <div id="catalog"></div>
-  <div id="detail"></div>
+  <div id="catalog" class="active"></div>
 </main>
 
 <div id="cart-overlay" onclick="toggleCart(false)"></div>
 <div id="cart">
   <h2>Carrito</h2>
   <div id="cartItems"></div>
-  <strong>Total: S/ <span id="cartTotal">0</span></strong>
+  <p><strong>Total: S/ <span id="cartTotal">0</span></strong></p>
   <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
 </div>
 
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
-const RESERVE_TIME=20*60*1000;
 
 const catalog=document.getElementById("catalog");
-const detail=document.getElementById("detail");
-const cartIcon=document.getElementById("cartIcon");
+const search=document.getElementById("search");
+const categoriesDiv=document.getElementById("categories");
+const cartCount=document.getElementById("cartCount");
+const cartItems=document.getElementById("cartItems");
+const cartTotal=document.getElementById("cartTotal");
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
   Object.values(DATA).flat().forEach(p=>p._qty=1);
   buildCategories();
-  releaseExpired();
   render("");
   renderCart();
 });
 
-function available(p){
-  const c=CART[p.name];
-  return p.stock-(c?c.qty:0);
-}
+search.addEventListener("input",e=>render(e.target.value.toLowerCase()));
 
 function render(filter){
-  catalog.innerHTML="";detail.style.display="none";catalog.style.display="block";
+  catalog.innerHTML="";
+  let offers=[];
+  Object.values(DATA).flat().forEach(p=>{if(p.discount) offers.push(p)});
+  if(offers.length && !filter){
+    catalog.appendChild(section("🔥 Ofertas",offers));
+  }
   Object.entries(DATA).forEach(([b,ps])=>{
-    const m=b.toLowerCase().includes(filter)?ps:ps.filter(p=>p.name.toLowerCase().includes(filter));
-    if(!m.length)return;
-    const s=document.createElement("div");
-    s.className="section";
-    s.innerHTML=`<h2>${b}</h2><div class="slider"><div class="track"></div></div>`;
-    const t=s.querySelector(".track");
-    m.forEach(p=>{
-      const a=available(p);
-      const c=document.createElement("div");
-      c.className="card";
-      c.innerHTML=`
-        ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-        ${a===0?`<div class="out-stock">Agotado</div>`:a===1?`<div class="last-unit">Última unidad</div>`:""}
-        <img src="${p.image}" onclick="showDetail('${p.name}')">
-        <h3 onclick="showDetail('${p.name}')">${p.name}</h3>
-        <div>${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}<span class="price">S/ ${p.discount?p.finalPrice:p.price}</span></div>
-        <div class="qty">
-          <button onclick="changeQty('${p.name}',-1)">-</button>
-          <span id="q-${p.name}">${p._qty}</span>
-          <button onclick="changeQty('${p.name}',1)">+</button>
-        </div>
-        <button class="add-btn" ${a===0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
-        <button class="buy-btn" ${a===0?"disabled":""} onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>`;
-      t.appendChild(c);
-    });
-    catalog.appendChild(s);
+    const m=b.toLowerCase().includes(filter)
+      ? ps
+      : ps.filter(p=>p.name.toLowerCase().includes(filter));
+    if(m.length) catalog.appendChild(section(b,m));
   });
 }
 
-function showDetail(name){
-  const p=Object.values(DATA).flat().find(x=>x.name===name);
-  catalog.style.display="none";
-  detail.style.display="block";
-  detail.innerHTML=`
-    <button class="back-btn" onclick="goHome()">⬅ Volver</button>
-    <div class="detail-box">
-      <img src="${p.image}">
-      <div>
-        <h2>${p.name}</h2>
-        <p>Precio: S/ ${p.discount?p.finalPrice:p.price}</p>
-        <p>Stock: ${available(p)}</p>
-        <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-        <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>
-      </div>
+function section(title,products){
+  const s=document.createElement("div");
+  s.className="section";
+  s.innerHTML=`
+    <h2>${title}</h2>
+    <div class="slider">
+      <button class="arrow left" onclick="slide(this,-1)">‹</button>
+      <div class="track"></div>
+      <button class="arrow right" onclick="slide(this,1)">›</button>
     </div>`;
+  const track=s.querySelector(".track");
+
+  products.forEach(p=>{
+    const c=document.createElement("div");
+    c.className="card";
+    c.innerHTML=`
+      ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
+      ${p.stock===1?`<div class="last-unit">Última unidad</div>`:""}
+      <img src="${p.image}">
+      <h3>${p.name}</h3>
+      <div>
+        ${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}
+        <span class="price">S/ ${p.discount?p.finalPrice:p.price}</span>
+      </div>
+      <div class="qty">
+        <button onclick="changeQty('${p.name}',-1)">-</button>
+        <span id="q-${p.name}">${p._qty}</span>
+        <button onclick="changeQty('${p.name}',1)">+</button>
+      </div>
+      <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
+      <button class="buy-btn" onclick="buyNow('${p.name}')">
+        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+      </button>`;
+    track.appendChild(c);
+  });
+  return s;
+}
+
+function changeQty(name,d){
+  const p=Object.values(DATA).flat().find(x=>x.name===name);
+  p._qty=Math.max(1,Math.min(p.stock,p._qty+d));
+  document.getElementById(`q-${name}`).innerText=p._qty;
 }
 
 function addToCart(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  if(available(p)<=0)return;
-  if(!CART[name]) CART[name]={...p,qty:0,time:Date.now()};
-  CART[name].qty++;
-  CART[name].time=Date.now();
-  cartIcon.classList.add("bounce");
-  setTimeout(()=>cartIcon.classList.remove("bounce"),300);
-  save();
+  if(!CART[name]) CART[name]={...p,qty:0};
+  CART[name].qty=Math.min(p.stock,CART[name].qty+p._qty);
+  saveCart();
 }
+function buyNow(name){addToCart(name);toggleCart(true)}
 
-function releaseExpired(){
-  const now=Date.now();
-  Object.keys(CART).forEach(k=>{
-    if(now-CART[k].time>RESERVE_TIME) delete CART[k];
-  });
-}
-
-function save(){
+function saveCart(){
   localStorage.setItem("cart",JSON.stringify(CART));
-  renderCart();render(search.value||"");
+  renderCart();
 }
-
 function renderCart(){
-  let t=0,c=0;
   cartItems.innerHTML="";
+  let total=0,count=0;
   Object.values(CART).forEach(p=>{
-    const price=p.discount?p.finalPrice:p.price;
-    t+=price*p.qty;c+=p.qty;
-    cartItems.innerHTML+=`<div class="cart-item">${p.name} x${p.qty}</div>`;
+    total+=p.qty*(p.discount?p.finalPrice:p.price);
+    count+=p.qty;
+    cartItems.innerHTML+=`
+      <div class="cart-item">
+        ${p.name} x${p.qty}
+        <button onclick="removeItem('${p.name}')">✖</button>
+      </div>`;
   });
-  cartTotal.innerText=t;
-  cartCount.innerText=c;
+  cartTotal.innerText=total;
+  cartCount.innerText=count;
 }
-
+function removeItem(n){delete CART[n];saveCart()}
 function checkout(){
-  let m="Hola, quiero comprar:%0A";let t=0;
+  let msg="Hola, quiero comprar:%0A";
   Object.values(CART).forEach(p=>{
-    const price=p.discount?p.finalPrice:p.price;
-    m+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;t+=price*p.qty;
+    msg+=`- ${p.name} x${p.qty}%0A`;
   });
-  m+=`%0ATotal: S/ ${t}`;
-  window.open("https://wa.me/51942434659?text="+m);
+  window.open("https://wa.me/51942434659?text="+msg);
 }
-
 function toggleCart(o){
   document.getElementById("cart").classList.toggle("active",o);
   document.getElementById("cart-overlay").classList.toggle("active",o);
 }
 function buildCategories(){
-  categories.innerHTML="";
+  categoriesDiv.innerHTML="";
   Object.keys(DATA).forEach(b=>{
     const d=document.createElement("div");
     d.innerText=b;
-    d.onclick=()=>{render(b.toLowerCase());categories.style.display="none"};
-    categories.appendChild(d);
+    d.onclick=()=>{categoriesDiv.style.display="none";catalog.innerHTML="";catalog.appendChild(section(b,DATA[b]))};
+    categoriesDiv.appendChild(d);
   });
 }
-function toggleCategories(){categories.style.display=categories.style.display==="block"?"none":"block"}
-function changeQty(n,d){
-  const p=Object.values(DATA).flat().find(x=>x.name===n);
-  p._qty=Math.max(1,Math.min(available(p),p._qty+d));
-  document.getElementById(`q-${n}`).innerText=p._qty;
+function toggleCategories(){
+  categoriesDiv.style.display=categoriesDiv.style.display==="block"?"none":"block";
 }
-function buyNow(n){addToCart(n);toggleCart(true)}
-function goHome(){render("")}
+function slide(btn,d){btn.parentElement.querySelector(".track").scrollLeft+=d*240}
+function goHome(){render("");}
 </script>
 
 </body>
