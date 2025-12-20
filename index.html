@@ -96,13 +96,13 @@ main{padding:24px}
 /* DETAIL */
 #detail{display:none}
 .detail-wrapper{display:flex;justify-content:center}
-.back-btn img{width:110px;cursor:pointer;margin-bottom:20px}
+.back-btn img{width:70px;cursor:pointer;margin-bottom:14px}
 .detail-box{
   display:flex;gap:40px;
   background:white;padding:24px;
   border-radius:18px;max-width:900px;width:100%
 }
-.detail-box img{width:380px;object-fit:contain}
+.detail-box img{width:360px;object-fit:contain}
 .detail-info{max-width:420px}
 .detail-info h2{margin-bottom:10px}
 
@@ -119,7 +119,6 @@ main{padding:24px}
 .cart-item button{border:none;background:none;cursor:pointer}
 .cart-timer{color:#dc2626;font-weight:600;margin:10px 0}
 
-/* MOBILE */
 @media(max-width:768px){
   .detail-box{flex-direction:column}
   .detail-box img{width:100%}
@@ -169,7 +168,6 @@ let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
 const RESERVE_TIME=20*60*1000;
 let CART_TIME=localStorage.getItem("cartTime")||Date.now();
 
-/* CARGA */
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
   Object.values(DATA).flat().forEach(p=>p._qty=1);
@@ -183,7 +181,6 @@ function available(p){
   return p.stock-(CART[p.name]?.qty||0);
 }
 
-/* RENDER */
 function render(filter){
   catalog.innerHTML="";
   detail.style.display="none";
@@ -201,7 +198,6 @@ function render(filter){
   });
 }
 
-/* SECTION */
 function buildSection(title,products){
   const sec=document.createElement("div");
   sec.className="section";
@@ -216,6 +212,7 @@ function buildSection(title,products){
 
   products.forEach(p=>{
     const a=available(p);
+    if(p._qty>a) p._qty=a||1;
     const c=document.createElement("div");
     c.className="card"+(a<=0?" out":"");
     c.innerHTML=`
@@ -229,8 +226,8 @@ function buildSection(title,products){
         <span id="q-${p.name}">${p._qty}</span>
         <button onclick="changeQty('${p.name}',1)">+</button>
       </div>
-      <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-      <button class="buy-btn" onclick="buyNow('${p.name}')">
+      <button class="add-btn" ${a<=0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
+      <button class="buy-btn" ${a<=0?"disabled":""} onclick="buyNow('${p.name}')">
         <img src="imagenes/whatsapp-logo.png"> Comprar ahora
       </button>`;
     track.appendChild(c);
@@ -241,7 +238,6 @@ function buildSection(title,products){
   catalog.appendChild(sec);
 }
 
-/* SLIDER */
 function enableSlider(sec){
   const track=sec.querySelector(".track");
   const l=sec.querySelector(".left");
@@ -253,11 +249,9 @@ function enableSlider(sec){
   }
 }
 
-/* DETAIL */
 function showDetail(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  catalog.style.display="none";
-  detail.style.display="block";
+  const a=available(p);
   detail.innerHTML=`
     <div class="detail-wrapper">
       <div>
@@ -266,33 +260,39 @@ function showDetail(name){
           <img src="${p.image}">
           <div class="detail-info">
             <h2>${p.name}</h2>
-            <p>Stock: ${available(p)}</p>
+            <p>Stock disponible: ${a}</p>
             <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
-            <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-            <button class="buy-btn" onclick="buyNow('${p.name}')">
+            <button class="add-btn" ${a<=0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
+            <button class="buy-btn" ${a<=0?"disabled":""} onclick="buyNow('${p.name}')">
               <img src="imagenes/whatsapp-logo.png"> Comprar ahora
             </button>
           </div>
         </div>
       </div>
     </div>`;
+  catalog.style.display="none";
+  detail.style.display="block";
 }
 
-/* CART */
 function addToCart(n){
   const p=Object.values(DATA).flat().find(x=>x.name===n);
+  if(available(p)<=0) return;
   if(!CART[n]) CART[n]={...p,qty:0};
   CART[n].qty+=p._qty;
   CART_TIME=Date.now();
   localStorage.setItem("cartTime",CART_TIME);
   localStorage.setItem("cart",JSON.stringify(CART));
   renderCart();
+  render(search.value.toLowerCase());
 }
+
 function removeItem(n){
   delete CART[n];
   localStorage.setItem("cart",JSON.stringify(CART));
   renderCart();
+  render(search.value.toLowerCase());
 }
+
 function renderCart(){
   let t=0,c=0;
   cartItems.innerHTML="";
@@ -308,12 +308,14 @@ function renderCart(){
   cartTotal.innerText=t;
   cartCount.innerText=c;
 }
+
 function updateCartTimer(){
   const left=RESERVE_TIME-(Date.now()-CART_TIME);
   if(left<=0){
     CART={};
     localStorage.clear();
     renderCart();
+    render("");
     cartTimer.innerText="Reserva expirada";
     return;
   }
@@ -321,12 +323,12 @@ function updateCartTimer(){
   const s=Math.floor((left%60000)/1000);
   cartTimer.innerText=`Reserva válida: ${m}:${s.toString().padStart(2,"0")}`;
 }
+
 function toggleCart(o){
   cart.classList.toggle("active",o);
   cartOverlay.classList.toggle("active",o);
 }
 
-/* MISC */
 function buildCategories(){
   categories.innerHTML="";
   Object.keys(DATA).forEach(b=>{
@@ -336,20 +338,25 @@ function buildCategories(){
     categories.appendChild(d);
   });
 }
+
 function toggleCategories(){
   categories.style.display=categories.style.display==="block"?"none":"block";
 }
+
 function changeQty(n,d){
   const p=Object.values(DATA).flat().find(x=>x.name===n);
   const max=available(p);
   p._qty=Math.min(Math.max(1,p._qty+d),max);
   document.getElementById(`q-${n}`).innerText=p._qty;
 }
+
 function buyNow(n){
   addToCart(n);
   toggleCart(true);
 }
+
 function goHome(){render("")}
+
 function observe(el){
   const o=new IntersectionObserver(e=>{
     if(e[0].isIntersecting){
