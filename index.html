@@ -66,14 +66,15 @@ main{padding:24px}
 .buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
 .add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
 .add-btn:active,.buy-btn:active{transform:scale(.92)}
-.buy-btn img{width:20px;object-fit:contain}
+.buy-btn img{width:22px;object-fit:contain}
 
 /* DETAIL OVERLAY */
 #detail{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;justify-content:center;align-items:center}
 .detail-box{display:flex;gap:20px;background:white;padding:20px;border-radius:22px;max-width:90%;max-height:90%;overflow:auto;position:relative}
 .detail-box img{width:280px;object-fit:contain}
 .detail-info{max-width:400px;display:flex;flex-direction:column;gap:10px}
-.back-btn{position:absolute;top:10px;right:10px;cursor:pointer;width:36px;height:36px}
+.back-btn{position:absolute;top:10px;right:10px;cursor:pointer;width:32px;height:32px}
+.detail-info .buy-btn img{width:20px}
 
 /* CART */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50}
@@ -304,7 +305,6 @@ function updateCartTimer(){
   cartTimer.innerText = remaining>0?`(${mins}m ${secs}s)`:"";
 }
 
-// Cerrar carrito al hacer clic fuera
 cartOverlay.addEventListener("click",()=>toggleCart(false));
 
 </script>
