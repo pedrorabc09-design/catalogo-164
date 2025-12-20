@@ -22,17 +22,10 @@ header{background:#1e293b;padding:28px;color:white}
 .icons img{width:32px}
 
 /* CART ICON */
-.cart-icon{position:relative;font-size:22px;cursor:pointer;transition:.3s}
-.cart-icon.bounce{animation:bounce .4s}
-@keyframes bounce{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.25)}
-  100%{transform:scale(1)}
-}
+.cart-icon{position:relative;font-size:22px;cursor:pointer}
 .cart-count{
   position:absolute;top:-6px;right:-10px;
-  background:#dc2626;color:white;
-  font-size:12px;padding:2px 6px;border-radius:50%
+  background:#dc2626;color:white;font-size:12px;padding:2px 6px;border-radius:50%
 }
 
 /* CATEGORIES */
@@ -52,7 +45,16 @@ main{padding:24px}
 
 /* SLIDER */
 .slider{position:relative}
-.track{display:flex;gap:16px;overflow:hidden;align-items:stretch}
+.track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
+.arrow{
+  position:absolute;top:45%;
+  width:38px;height:38px;
+  border-radius:50%;border:none;
+  background:#1e293b;color:white;
+  cursor:pointer;z-index:5
+}
+.arrow.left{left:-18px}
+.arrow.right{right:-18px}
 
 /* CARD */
 .card{
@@ -60,10 +62,13 @@ main{padding:24px}
   border-radius:18px;padding:14px;
   display:flex;flex-direction:column;
   justify-content:space-between;
-  position:relative
+  position:relative;
+  opacity:0;transform:translateY(20px);
+  transition:.5s
 }
+.card.show{opacity:1;transform:none}
 .card img{width:100%;height:140px;object-fit:contain;cursor:pointer}
-.card h3{font-size:14px;margin:8px 0;cursor:pointer;min-height:36px}
+.card h3{font-size:14px;margin:8px 0;min-height:36px}
 .price{font-weight:700;color:#16a34a}
 .old-price{text-decoration:line-through;color:#64748b;margin-right:6px}
 
@@ -78,25 +83,22 @@ main{padding:24px}
 
 /* BUTTONS */
 .add-btn,.buy-btn{
-  margin-top:6px;height:38px;border-radius:12px;
+  height:38px;border-radius:12px;
   border:none;cursor:pointer;
-  transition:.25s;
-  width:100%
+  transition:.2s;width:100%;margin-top:6px
 }
 .add-btn{background:#0ea5e9;color:white}
-.buy-btn{
-  background:#25d366;color:white;
-  display:flex;justify-content:center;gap:6px;align-items:center
-}
+.buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
 .add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
 .add-btn:active,.buy-btn:active{transform:scale(.92)}
 .buy-btn img{width:18px}
 
-/* DETAIL PAGE */
+/* DETAIL */
 #detail{display:none}
-.detail-box{display:flex;gap:30px}
-.detail-box img{width:320px;object-fit:contain}
-.back-btn{margin-bottom:20px}
+.back-btn img{width:120px;cursor:pointer;margin-bottom:20px}
+.detail-box{display:flex;gap:40px;align-items:flex-start}
+.detail-box img{width:420px;object-fit:contain}
+.detail-info{max-width:400px}
 
 /* CART */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5)}
@@ -106,12 +108,14 @@ main{padding:24px}
   background:white;padding:20px;transition:.3s;z-index:50
 }
 #cart.active{right:0}
-.cart-item{display:flex;justify-content:space-between;margin-bottom:8px}
+.cart-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:14px}
+.cart-item small{color:#dc2626}
+.cart-item button{border:none;background:none;cursor:pointer}
 
 /* MOBILE */
 @media(max-width:768px){
-  .header-top{flex-direction:column}
   .detail-box{flex-direction:column}
+  .detail-box img{width:100%}
 }
 </style>
 </head>
@@ -126,9 +130,7 @@ main{padding:24px}
       <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
     <div class="icons">
-      <a href="https://wa.me/51942434659" target="_blank"><img src="imagenes/whatsapp-logo.png"></a>
-      <a href="#"><img src="imagenes/facebook.png"></a>
-      <div class="cart-icon" id="cartIcon" onclick="toggleCart(true)">
+      <div class="cart-icon" onclick="toggleCart(true)">
         🛒 <span class="cart-count" id="cartCount">0</span>
       </div>
     </div>
@@ -152,10 +154,7 @@ main{padding:24px}
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
 const RESERVE_TIME=20*60*1000;
-
-const catalog=document.getElementById("catalog");
-const detail=document.getElementById("detail");
-const cartIcon=document.getElementById("cartIcon");
+let observers=[];
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
@@ -164,6 +163,7 @@ fetch("products.json").then(r=>r.json()).then(d=>{
   releaseExpired();
   render("");
   renderCart();
+  setInterval(renderCart,1000);
 });
 
 function available(p){
@@ -183,30 +183,36 @@ function render(filter){
 
     const s=document.createElement("div");
     s.className="section";
-    s.innerHTML=`<h2>${b}</h2><div class="slider"><div class="track"></div></div>`;
+    s.innerHTML=`
+      <h2>${b}</h2>
+      <div class="slider">
+        <button class="arrow left">‹</button>
+        <div class="track"></div>
+        <button class="arrow right">›</button>
+      </div>`;
     const t=s.querySelector(".track");
 
     m.forEach(p=>{
-      const a=available(p);
       const c=document.createElement("div");
       c.className="card";
       c.innerHTML=`
-        ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-        ${a===0?`<div class="out-stock">Agotado</div>`:a===1?`<div class="last-unit">Última unidad</div>`:""}
         <img src="${p.image}" onclick="showDetail('${p.name}')">
-        <h3 onclick="showDetail('${p.name}')">${p.name}</h3>
-        <div>${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}<span class="price">S/ ${p.discount?p.finalPrice:p.price}</span></div>
+        <h3>${p.name}</h3>
+        <span class="price">S/ ${p.discount?p.finalPrice:p.price}</span>
         <div class="qty">
           <button onclick="changeQty('${p.name}',-1)">-</button>
           <span id="q-${p.name}">${p._qty}</span>
           <button onclick="changeQty('${p.name}',1)">+</button>
         </div>
-        <button class="add-btn" ${a===0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
-        <button class="buy-btn" ${a===0?"disabled":""} onclick="buyNow('${p.name}')">
+        <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
+        <button class="buy-btn" onclick="buyNow('${p.name}')">
           <img src="imagenes/whatsapp-logo.png"> Comprar ahora
         </button>`;
       t.appendChild(c);
+      observe(c);
     });
+
+    autoplaySlider(s);
     catalog.appendChild(s);
   });
 }
@@ -215,15 +221,14 @@ function showDetail(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
   catalog.style.display="none";
   detail.style.display="block";
-
   detail.innerHTML=`
-    <button class="back-btn" onclick="goHome()">⬅ Volver</button>
+    <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png"></div>
     <div class="detail-box">
       <img src="${p.image}">
-      <div>
+      <div class="detail-info">
         <h2>${p.name}</h2>
-        <p><strong>Precio:</strong> S/ ${p.discount?p.finalPrice:p.price}</p>
-        <p><strong>Stock disponible:</strong> ${available(p)}</p>
+        <p>Stock: ${available(p)}</p>
+        <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
         <div class="qty">
           <button onclick="changeQty('${p.name}',-1)">-</button>
           <span id="q-${p.name}">${p._qty}</span>
@@ -239,14 +244,9 @@ function showDetail(name){
 
 function addToCart(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  if(available(p)<=0)return;
-
   if(!CART[name]) CART[name]={...p,qty:0,time:Date.now()};
   CART[name].qty+=p._qty;
   CART[name].time=Date.now();
-
-  cartIcon.classList.add("bounce");
-  setTimeout(()=>cartIcon.classList.remove("bounce"),300);
   save();
 }
 
@@ -257,39 +257,41 @@ function releaseExpired(){
   });
 }
 
-function save(){
-  localStorage.setItem("cart",JSON.stringify(CART));
-  renderCart();
-}
-
 function renderCart(){
   let t=0,c=0;
   cartItems.innerHTML="";
   Object.values(CART).forEach(p=>{
     const price=p.discount?p.finalPrice:p.price;
-    t+=price*p.qty;
-    c+=p.qty;
-    cartItems.innerHTML+=`<div class="cart-item">${p.name} x${p.qty}</div>`;
+    const left=Math.max(0,RESERVE_TIME-(Date.now()-p.time));
+    const min=Math.floor(left/60000);
+    const sec=Math.floor((left%60000)/1000);
+    cartItems.innerHTML+=`
+      <div class="cart-item">
+        ${p.name} x${p.qty}
+        <small>${min}:${sec.toString().padStart(2,"0")}</small>
+        <button onclick="removeItem('${p.name}')">❌</button>
+      </div>`;
+    t+=price*p.qty;c+=p.qty;
   });
   cartTotal.innerText=t;
   cartCount.innerText=c;
 }
 
-function checkout(){
-  let m="Hola, quiero comprar:%0A",t=0;
-  Object.values(CART).forEach(p=>{
-    const price=p.discount?p.finalPrice:p.price;
-    m+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;
-    t+=price*p.qty;
-  });
-  m+=`%0ATotal: S/ ${t}`;
-  window.open("https://wa.me/51942434659?text="+m);
+function removeItem(n){
+  delete CART[n];
+  save();
+}
+
+function save(){
+  localStorage.setItem("cart",JSON.stringify(CART));
+  renderCart();
 }
 
 function toggleCart(o){
   cart.classList.toggle("active",o);
-  document.getElementById("cart-overlay").classList.toggle("active",o);
+  cartOverlay.classList.toggle("active",o);
 }
+
 function buildCategories(){
   categories.innerHTML="";
   Object.keys(DATA).forEach(b=>{
@@ -304,15 +306,37 @@ function toggleCategories(){
 }
 function changeQty(n,d){
   const p=Object.values(DATA).flat().find(x=>x.name===n);
-  p._qty=Math.max(1,Math.min(available(p),p._qty+d));
+  p._qty=Math.max(1,p._qty+d);
   document.getElementById(`q-${n}`).innerText=p._qty;
 }
 function buyNow(n){
   addToCart(n);
   toggleCart(true);
 }
-function goHome(){
-  render("");
+function goHome(){render("")}
+
+/* AUTOPLAY */
+function autoplaySlider(section){
+  const track=section.querySelector(".track");
+  const left=section.querySelector(".left");
+  const right=section.querySelector(".right");
+  let i=setInterval(()=>track.scrollLeft+=240,3000);
+
+  left.onclick=()=>track.scrollLeft-=240;
+  right.onclick=()=>track.scrollLeft+=240;
+  section.onmouseenter=()=>clearInterval(i);
+  section.onmouseleave=()=>i=setInterval(()=>track.scrollLeft+=240,3000);
+}
+
+/* SCROLL ANIMATION */
+function observe(el){
+  const o=new IntersectionObserver(e=>{
+    if(e[0].isIntersecting){
+      el.classList.add("show");
+      o.disconnect();
+    }
+  },{threshold:.2});
+  o.observe(el);
 }
 </script>
 
