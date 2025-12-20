@@ -72,8 +72,8 @@ main{padding:24px}
 .buy-btn img{width:18px}
 
 /* DETAIL PAGE */
-#detail{display:none}
-.detail-box{display:flex;gap:30px;align-items:center}
+#detail{display:none;justify-content:center;align-items:center;text-align:center;padding:20px}
+.detail-box{display:flex;gap:30px;align-items:center;justify-content:center}
 .detail-box img{width:320px;object-fit:contain}
 .detail-box .buy-btn img{width:18px}
 .back-btn img{width:36px;cursor:pointer;display:block;margin-bottom:16px}
@@ -203,8 +203,9 @@ function renderSection(title, products){
 
 function showDetail(name){
   const p = Object.values(DATA).flat().find(x=>x.name===name);
+  if(!p) return;
   catalog.style.display="none";
-  detail.style.display="block";
+  detail.style.display="flex";
   detail.innerHTML=`
     <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png"></div>
     <div class="detail-box">
@@ -213,6 +214,7 @@ function showDetail(name){
         <h2>${p.name}</h2>
         <p>Precio: S/ ${p.discount?p.finalPrice:p.price}</p>
         <p>Stock: ${available(p)}</p>
+        <p>Categoria: ${Object.entries(DATA).find(([b,ps])=>ps.some(x=>x.name===name))[0]}</p>
         <button class="add-btn" ${available(p)<=0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
         <button class="buy-btn" ${available(p)<=0?"disabled":""} onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>
       </div>
