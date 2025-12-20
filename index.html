@@ -105,6 +105,7 @@ main{padding:24px}
 }
 .add-btn{background:#0ea5e9;color:white}
 .buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
+.add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
 .add-btn:active,.buy-btn:active{transform:scale(.92)}
 .buy-btn img{width:18px}
 
@@ -114,7 +115,7 @@ main{padding:24px}
 .detail-box{display:flex;gap:30px;background:white;padding:20px;border-radius:20px}
 .detail-box img{width:280px}
 .detail-info{max-width:320px}
-.back-btn img{width:36px;cursor:pointer}
+.back-btn img{width:32px;cursor:pointer}
 .detail-info .qty{justify-content:flex-start}
 
 /* CART */
@@ -125,10 +126,6 @@ main{padding:24px}
 .cart-item{display:flex;justify-content:space-between;margin-bottom:10px}
 .cart-x{position:absolute;top:10px;right:10px;cursor:pointer}
 .timer{margin:10px 0;font-weight:600;color:#dc2626}
-
-@media(max-width:768px){
-  .detail-box{flex-direction:column;align-items:center}
-}
 </style>
 </head>
 
@@ -167,78 +164,87 @@ main{padding:24px}
 </div>
 
 <script>
-/* ===================== DATA ===================== */
+/* ===== DOM ===== */
+const catalog=document.getElementById("catalog")
+const detail=document.getElementById("detail")
+const categories=document.getElementById("categories")
+const search=document.getElementById("search")
+const cart=document.getElementById("cart")
+const cartOverlay=document.getElementById("cart-overlay")
+const cartItems=document.getElementById("cartItems")
+const cartTotal=document.getElementById("cartTotal")
+const cartCount=document.getElementById("cartCount")
+const timer=document.getElementById("timer")
+
+/* ===== DATA ===== */
 const DATA={
   "Ofertas":[
-    {name:"MiniGT Nissan GT-R",category:"MiniGT",price:80,final:65,discount:true,stock:2,image:"imagenes/TarmacDriftshop.webp"}
+    {id:0,name:"MiniGT Nissan GT-R",category:"MiniGT",price:80,final:65,discount:true,stock:2,image:"imagenes/TarmacDriftshop.webp",qty:1}
   ],
   "MiniGT":[
-    {name:"MiniGT Skyline",category:"MiniGT",price:75,stock:5,image:"imagenes/TopSecretGT300.webp"}
+    {id:1,name:"MiniGT Skyline",category:"MiniGT",price:75,discount:false,stock:5,image:"imagenes/TopSecretGT300.webp",qty:1}
   ]
-};
+}
 
-/* ===================== STATE ===================== */
 let CART={}
-let MAP=new Map(),ID=0
-Object.values(DATA).flat().forEach(p=>{
-  p.id=ID++;p.qty=1;MAP.set(p.id,p)
-})
-
 let cartExpire=Date.now()+20*60000
 
-/* ===================== FUNCTIONS ===================== */
+/* ===== CORE ===== */
 function toggleCategories(){
   categories.style.display=categories.style.display==="block"?"none":"block"
 }
-function toggleCart(open){
-  cart.classList.toggle("active",open)
-  cartOverlay.classList.toggle("active",open)
+function toggleCart(o){
+  cart.classList.toggle("active",o)
+  cartOverlay.classList.toggle("active",o)
 }
 function goHome(){
   detail.style.display="none"
   catalog.style.display="block"
 }
+
 function showDetail(id){
-  const p=MAP.get(id)
-  if(!p)return
+  const p=Object.values(DATA).flat().find(x=>x.id===id)
   catalog.style.display="none"
   detail.style.display="block"
   detail.innerHTML=`
-  <div class="detail-wrapper">
-    <div>
-      <div class="back-btn" onclick="goHome()">
-        <img src="imagenes/Volver.png">
-      </div>
-      <div class="detail-box">
-        <img src="${p.image}">
-        <div class="detail-info">
-          <h2>${p.name}</h2>
-          <p class="price">S/ ${p.discount?p.final:p.price}</p>
-          <div class="qty">
-            <button onclick="changeQty(${id},-1)">-</button>
-            <span id="q-${id}">${p.qty}</span>
-            <button onclick="changeQty(${id},1)">+</button>
+    <div class="detail-wrapper">
+      <div>
+        <div class="back-btn" onclick="goHome()">
+          <img src="imagenes/Volver.png">
+        </div>
+        <div class="detail-box">
+          <img src="${p.image}">
+          <div class="detail-info">
+            <h2>${p.name}</h2>
+            <p class="price">S/ ${p.discount?p.final:p.price}</p>
+            <div class="qty">
+              <button onclick="changeQty(${id},-1)">-</button>
+              <span id="q-${id}">${p.qty}</span>
+              <button onclick="changeQty(${id},1)">+</button>
+            </div>
+            <button class="add-btn" onclick="addCart(${id})">Añadir al carrito</button>
+            <button class="buy-btn" onclick="addCart(${id})">
+              <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+            </button>
           </div>
-          <button class="add-btn" onclick="addCart(${id})">Añadir al carrito</button>
-          <button class="buy-btn" onclick="addCart(${id})">
-            <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-          </button>
         </div>
       </div>
-    </div>
-  </div>`
+    </div>`
 }
+
 function changeQty(id,d){
-  const p=MAP.get(id)
+  const p=Object.values(DATA).flat().find(x=>x.id===id)
   p.qty=Math.min(p.stock,Math.max(1,p.qty+d))
   document.getElementById(`q-${id}`).innerText=p.qty
 }
+
 function addCart(id){
-  const p=MAP.get(id)
+  const p=Object.values(DATA).flat().find(x=>x.id===id)
   if(!CART[id])CART[id]={...p,cart:0}
   CART[id].cart=Math.min(p.stock,CART[id].cart+p.qty)
   renderCart()
 }
+
 function renderCart(){
   cartItems.innerHTML=""
   let total=0,count=0
@@ -254,23 +260,28 @@ function renderCart(){
   cartTotal.innerText=total
   cartCount.innerText=count
 }
+
 function renderAll(){
   catalog.innerHTML=""
   const q=search.value.toLowerCase()
+
   Object.keys(DATA).forEach(cat=>{
     const list=DATA[cat].filter(p=>
       p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)
     )
     if(!list.length)return
+
     const sec=document.createElement("div")
     sec.className="section"
-    sec.innerHTML=`<h2>${cat}</h2>
+    sec.innerHTML=`
+      <h2>${cat}</h2>
       <div class="slider">
         <button class="arrow left">‹</button>
         <div class="track"></div>
         <button class="arrow right">›</button>
       </div>`
     const track=sec.querySelector(".track")
+
     list.forEach(p=>{
       const c=document.createElement("div")
       c.className="card"+(p.stock===0?" disabled":"")
@@ -295,12 +306,14 @@ function renderAll(){
       track.appendChild(c)
       setTimeout(()=>c.classList.add("show"),50)
     })
+
     catalog.appendChild(sec)
     if(track.scrollWidth>track.clientWidth){
       sec.querySelectorAll(".arrow").forEach(a=>a.style.display="block")
     }
   })
 }
+
 setInterval(()=>{
   const t=Math.max(0,cartExpire-Date.now())
   timer.innerText="Tiempo restante: "+Math.floor(t/60000)+":"+String(Math.floor(t/1000)%60).padStart(2,"0")
