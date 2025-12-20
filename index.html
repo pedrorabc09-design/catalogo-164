@@ -7,146 +7,110 @@
 
 <style>
 *{box-sizing:border-box;font-family:Arial}
-body{margin:0;background:#f5f5f5}
+body{margin:0;background:#f4f4f4}
 
 /* HEADER */
 header{
-  display:flex;
-  align-items:center;
-  padding:15px;
   background:#111;
   color:#fff;
-  gap:15px
+  padding:15px;
+  display:flex;
+  align-items:center;
+  gap:15px;
 }
 .logo img{
-  height:80px;
-  cursor:pointer
+  height:90px;
+  cursor:pointer;
 }
-.search-wrap{
+.search-box{
   flex:1;
   display:flex;
   justify-content:center;
+  position:relative;
 }
-.search{
+.search-box input{
   width:60%;
-  display:flex;
-}
-.search input{
-  flex:1;
   padding:10px;
-  font-size:16px
+  font-size:16px;
 }
-.search button{
-  padding:10px 14px;
-  cursor:pointer
+.menu-btn{
+  margin-left:8px;
+  font-size:22px;
+  cursor:pointer;
 }
 .icons img{
-  height:36px;
+  height:34px;
   margin-left:10px;
-}
-.cart-icon{
-  position:relative;
   cursor:pointer;
-  font-size:26px
-}
-.cart-count{
-  position:absolute;
-  top:-6px;
-  right:-10px;
-  background:red;
-  color:#fff;
-  font-size:12px;
-  border-radius:50%;
-  padding:2px 6px
 }
 
-/* SLIDER */
+/* CATEGORIES */
+#categories{
+  position:absolute;
+  top:60px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  color:#000;
+  border:1px solid #ccc;
+  display:none;
+  z-index:10;
+}
+#categories div{
+  padding:10px;
+  cursor:pointer;
+}
+#categories div:hover{
+  background:#eee;
+}
+
+/* SECTIONS */
 .section{padding:15px}
-.section h2{margin:5px 0}
-.slider-wrap{position:relative}
+.section h2{margin:10px 0}
+
+/* SLIDER */
 .slider{
   display:flex;
-  overflow:hidden;
+  gap:12px;
+  overflow-x:auto;
+  scrollbar-width:none;
 }
+.slider::-webkit-scrollbar{display:none}
+
 .card{
   min-width:220px;
   background:#fff;
-  margin-right:12px;
   padding:10px;
   border-radius:6px;
   cursor:pointer;
-  position:relative
+  position:relative;
 }
-.card img{width:100%;height:140px;object-fit:contain}
-.price{text-decoration:line-through;color:#999}
-.final{font-weight:bold}
-.discount-badge{
-  position:absolute;
-  top:5px;left:5px;
-  background:red;color:#fff;
-  padding:3px 6px;
-  font-size:12px
-}
-.qty{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin-top:5px
-}
-.qty button{width:30px;height:30px}
-.qty span{margin:0 8px}
-
-.add-btn,.buy-btn{
+.card img{
   width:100%;
-  margin-top:6px;
-  padding:6px;
-  cursor:pointer
+  height:140px;
+  object-fit:contain;
 }
-.add-btn:disabled,.buy-btn:disabled{opacity:.5}
-
-/* FLECHAS */
-.arrow{
+.price{text-decoration:line-through;color:#888}
+.final{font-weight:bold}
+.badge{
   position:absolute;
-  top:40%;
-  background:#000;
+  top:5px;
+  left:5px;
+  background:red;
   color:#fff;
-  padding:6px;
-  cursor:pointer
+  font-size:12px;
+  padding:3px 6px;
 }
-.arrow.left{left:0}
-.arrow.right{right:0}
+.badge.orange{background:orange}
+.badge.gray{background:#666}
 
-/* DETAIL */
-#detail{
-  display:none;
-  padding:20px
-}
-.detail-wrap{
-  display:flex;
-  flex-wrap:wrap;
-  gap:20px
-}
-.detail-wrap img{max-width:300px}
-.detail-info{max-width:400px}
-.detail-info button{margin-top:10px}
+/* MAIN */
+#home{}
+#detail{display:none;padding:20px}
 
-/* CART */
-#cart{
-  display:none;
-  padding:20px
-}
-.cart-item{
-  background:#fff;
-  padding:10px;
-  margin-bottom:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center
-}
-.cart-item button{margin:0 4px}
-
+/* RESPONSIVE */
 @media(max-width:768px){
-.search{width:90%}
+.search-box input{width:90%}
 header{flex-wrap:wrap}
 }
 </style>
@@ -159,172 +123,182 @@ header{flex-wrap:wrap}
     <img src="logo.png">
   </div>
 
-  <div class="search-wrap">
-    <div class="search">
-      <input id="search" placeholder="Buscar">
-      <button onclick="doSearch()">☰</button>
-    </div>
+  <div class="search-box">
+    <input id="search" placeholder="Buscar..." oninput="searchAll()">
+    <div class="menu-btn" onclick="toggleCategories()">☰</div>
+
+    <div id="categories"></div>
   </div>
 
   <div class="icons">
     <img src="whatsapp-logo.png">
     <img src="facebook.png">
-    <span class="cart-icon" onclick="openCart()">🛒
-      <span class="cart-count" id="cartCount">0</span>
-    </span>
   </div>
 </header>
 
 <div id="home"></div>
 <div id="detail"></div>
-<div id="cart"></div>
 
 <script>
-let DATA = {
+/* ================= DATA ================= */
+const DATA = {
  "MiniGT - Kaido House":[
-  {name:"Grasshopper",price:100,discount:10,finalPrice:90,stock:1,image:"imagenes/Grasshopper.webp"}
+  {
+    name:"Mini GT Kaido House Nissan Skyline GT-R (R34) The Grasshopper",
+    price:100,
+    discount:10,
+    finalPrice:90,
+    stock:1,
+    image:"imagenes/Grasshopper.webp"
+  }
  ]
 };
 
-let CART = JSON.parse(localStorage.getItem("cart")||"{}");
+/* ================= RENDER ================= */
+function renderAll(){
+  const home=document.getElementById("home");
+  home.innerHTML="";
 
-/* HOME */
-function renderHome(){
- document.getElementById("detail").style.display="none";
- document.getElementById("cart").style.display="none";
- const home=document.getElementById("home");
- home.innerHTML="";
- Object.keys(DATA).forEach(cat=>{
-  const products=DATA[cat];
-  const sec=document.createElement("div");
-  sec.className="section";
-  sec.innerHTML=`<h2>${cat}</h2>`;
-  const wrap=document.createElement("div");
-  wrap.className="slider-wrap";
-  const slider=document.createElement("div");
-  slider.className="slider";
+  /* OFERTAS */
+  const offers=[];
+  Object.values(DATA).forEach(cat=>{
+    cat.forEach(p=>{ if(p.discount) offers.push(p); });
+  });
 
-  products.forEach(p=>{
-    const reserved=CART[p.name]?.qty||0;
-    const available=p.stock-reserved;
-    p._qty=p._qty||1;
+  if(offers.length){
+    home.innerHTML+=`<div class="section"><h2>🔥 Ofertas</h2>
+      <div class="slider">
+        ${offers.map(p=>cardHTML(p)).join("")}
+      </div></div>`;
+  }
 
-    slider.innerHTML+=`
-    <div class="card" onclick="openDetail('${cat}','${p.name}')">
-      ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-      ${available===1?`<div class="discount-badge" style="top:28px;background:orange">ÚLTIMA</div>`:""}
-      ${available<=0?`<div class="discount-badge" style="background:#666">SIN STOCK</div>`:""}
-      <img src="${p.image}">
-      <div>${p.name}</div>
-      <div class="price">S/ ${p.price}</div>
-      <div class="final">S/ ${p.finalPrice}</div>
-
-      <div class="qty">
-        <button onclick="event.stopPropagation();changeQty(p,-1,${available})">-</button>
-        <span data-qty="${p.name}">${p._qty}</span>
-        <button onclick="event.stopPropagation();changeQty(p,1,${available})">+</button>
+  /* CATEGORÍAS */
+  Object.keys(DATA).forEach(cat=>{
+    home.innerHTML+=`
+    <div class="section">
+      <h2>${cat}</h2>
+      <div class="slider">
+        ${DATA[cat].map(p=>cardHTML(p)).join("")}
       </div>
-
-      <button class="add-btn" ${available<=0?"disabled":""}
-        onclick="event.stopPropagation();addToCart('${cat}','${p.name}')">Añadir</button>
     </div>`;
   });
 
-  wrap.appendChild(slider);
-  sec.appendChild(wrap);
-  home.appendChild(sec);
- });
- updateCartCount();
+  renderCategories();
 }
 
-/* QTY */
-function changeQty(p,d,stock){
- p._qty=Math.max(1,Math.min(stock,p._qty+d));
- const s=document.querySelector(`[data-qty="${p.name}"]`);
- if(s) s.innerText=p._qty;
+function cardHTML(p){
+  let badge="";
+  if(p.stock<=0) badge=`<div class="badge gray">SIN STOCK</div>`;
+  else if(p.stock===1) badge=`<div class="badge orange">ÚLTIMA</div>`;
+  else if(p.discount) badge=`<div class="badge">-${p.discount}%</div>`;
+
+  return `
+  <div class="card" onclick="openDetail('${p.name}')">
+    ${badge}
+    <img src="${p.image}">
+    <div>${p.name}</div>
+    ${p.discount?`<div class="price">S/ ${p.price}</div>`:""}
+    <div class="final">S/ ${p.finalPrice}</div>
+  </div>`;
 }
 
-/* CART */
-function addToCart(cat,name){
- const p=DATA[cat].find(x=>x.name===name);
- CART[name]=CART[name]||{...p,qty:0};
- CART[name].qty+=p._qty;
- localStorage.setItem("cart",JSON.stringify(CART));
- renderHome();
+/* ================= DETAIL ================= */
+function openDetail(name){
+  const p=findProduct(name);
+  document.getElementById("home").innerHTML="";
+  const d=document.getElementById("detail");
+  d.style.display="block";
+  d.innerHTML=`
+    <button onclick="goHome()">⬅ Volver</button>
+    <h2>${p.name}</h2>
+    <img src="${p.image}" style="max-width:300px">
+    <div>Precio: S/ ${p.finalPrice}</div>
+    <div>Stock: ${p.stock}</div>
+    <button onclick="buy('${p.name}')">Comprar por WhatsApp</button>
+  `;
 }
 
-function openCart(){
- const c=document.getElementById("cart");
- c.style.display="block";
- document.getElementById("home").innerHTML="";
- c.innerHTML="<h2>Carrito</h2>";
- Object.values(CART).forEach(p=>{
-  c.innerHTML+=`
-  <div class="cart-item">
-    ${p.name}
-    <div>
-      <button onclick="editCart('${p.name}',-1)">-</button>
-      ${p.qty}
-      <button onclick="editCart('${p.name}',1)">+</button>
-      <button onclick="removeCart('${p.name}')">✕</button>
+function buy(name){
+  window.open(`https://wa.me/?text=${encodeURIComponent("Hola quiero comprar "+name)}`);
+}
+
+/* ================= SEARCH ================= */
+function searchAll(){
+  const q=document.getElementById("search").value.toLowerCase();
+  if(!q){ goHome(); return; }
+
+  const home=document.getElementById("home");
+  home.innerHTML="";
+
+  Object.keys(DATA).forEach(cat=>{
+    if(cat.toLowerCase().includes(q)){
+      home.innerHTML+=`
+      <div class="section">
+        <h2>${cat}</h2>
+        <div class="slider">
+          ${DATA[cat].map(p=>cardHTML(p)).join("")}
+        </div>
+      </div>`;
+    }else{
+      const matches=DATA[cat].filter(p=>p.name.toLowerCase().includes(q));
+      if(matches.length){
+        home.innerHTML+=`
+        <div class="section">
+          <h2>${cat}</h2>
+          <div class="slider">
+            ${matches.map(p=>cardHTML(p)).join("")}
+          </div>
+        </div>`;
+      }
+    }
+  });
+}
+
+/* ================= CATEGORIES ================= */
+function renderCategories(){
+  const c=document.getElementById("categories");
+  c.innerHTML=Object.keys(DATA).map(cat=>
+    `<div onclick="filterCat('${cat}')">${cat}</div>`
+  ).join("");
+}
+
+function toggleCategories(){
+  const c=document.getElementById("categories");
+  c.style.display=c.style.display==="block"?"none":"block";
+}
+
+document.body.onclick=e=>{
+  if(!e.target.classList.contains("menu-btn")){
+    document.getElementById("categories").style.display="none";
+  }
+};
+
+function filterCat(cat){
+  const home=document.getElementById("home");
+  home.innerHTML=`
+  <div class="section">
+    <h2>${cat}</h2>
+    <div class="slider">
+      ${DATA[cat].map(p=>cardHTML(p)).join("")}
     </div>
   </div>`;
- });
 }
 
-function editCart(name,d){
- CART[name].qty+=d;
- if(CART[name].qty<=0) delete CART[name];
- localStorage.setItem("cart",JSON.stringify(CART));
- openCart();
-}
-
-function removeCart(name){
- delete CART[name];
- localStorage.setItem("cart",JSON.stringify(CART));
- openCart();
-}
-
-function updateCartCount(){
- document.getElementById("cartCount").innerText=
- Object.values(CART).reduce((a,b)=>a+b.qty,0);
-}
-
-/* DETAIL */
-function openDetail(cat,name){
- const p=DATA[cat].find(x=>x.name===name);
- document.getElementById("home").innerHTML="";
- const d=document.getElementById("detail");
- d.style.display="block";
- d.innerHTML=`
- <img src="Volver.png" onclick="renderHome()" style="height:40px;cursor:pointer">
- <div class="detail-wrap">
-  <img src="${p.image}">
-  <div class="detail-info">
-    <h2>${p.name}</h2>
-    <div>S/ ${p.finalPrice}</div>
-    <div>Stock: ${p.stock-(CART[p.name]?.qty||0)}</div>
-    <button onclick="window.open('https://wa.me/?text=${encodeURIComponent(p.name)}')">Comprar</button>
-  </div>
- </div>`;
-}
-
-/* SEARCH */
-function doSearch(){
- const q=document.getElementById("search").value.toLowerCase();
- if(!q) return renderHome();
- document.getElementById("home").innerHTML="";
- Object.keys(DATA).forEach(cat=>{
-  if(cat.toLowerCase().includes(q)){
-    DATA[cat].forEach(p=>openDetail(cat,p.name));
+/* ================= HELPERS ================= */
+function findProduct(name){
+  for(const cat in DATA){
+    const p=DATA[cat].find(x=>x.name===name);
+    if(p) return p;
   }
- });
+}
+function goHome(){
+  document.getElementById("detail").style.display="none";
+  renderAll();
 }
 
-/* HOME */
-function goHome(){renderHome()}
-
-renderHome();
+/* INIT */
+renderAll();
 </script>
+
 </body>
 </html>
