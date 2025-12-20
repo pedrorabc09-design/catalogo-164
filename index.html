@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>IGNICAR TOYS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="imagenes/Volver.png" type="image/png">
+<title>IGNICAR TOYS</title>
 
+<link rel="icon" href="imagenes/Volver.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -14,7 +14,7 @@ body{background:#f1f5f9;color:#0f172a}
 
 /* HEADER */
 header{background:#1e293b;padding:26px;color:white;position:relative}
-.header-top{display:flex;gap:20px;align-items:center}
+.header-top{display:flex;align-items:center;gap:20px}
 .logo{height:140px;cursor:pointer}
 .search-area{flex:1;display:flex;gap:10px}
 .search-area input{flex:1;padding:14px;border-radius:14px;border:none}
@@ -22,63 +22,45 @@ header{background:#1e293b;padding:26px;color:white;position:relative}
 .icons{display:flex;gap:14px;align-items:center}
 .icons img{width:28px}
 
-/* CART */
-.cart-icon{position:relative;cursor:pointer;font-size:22px}
+/* CART ICON */
+.cart-icon{position:relative;font-size:22px;cursor:pointer}
 .cart-count{position:absolute;top:-6px;right:-10px;background:#dc2626;color:white;font-size:12px;padding:2px 6px;border-radius:50%}
 
 /* CATEGORIES */
 #categories{
-  display:none;
-  position:absolute;
-  top:190px;
-  left:50%;
+  display:none;position:absolute;top:190px;left:50%;
   transform:translateX(-50%);
-  background:white;
-  width:280px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.3);
-  z-index:100
+  background:white;width:300px;border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:100
 }
 #categories div{padding:14px;font-weight:600;cursor:pointer}
 #categories div:hover{background:#e2e8f0}
 
 /* MAIN */
 main{padding:24px}
+.section{margin-bottom:40px}
 
 /* SLIDER */
-.section{margin-bottom:40px}
 .slider{position:relative}
-.track{display:flex;gap:16px;overflow:hidden}
+.track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
 .arrow{
   position:absolute;top:45%;
-  width:38px;height:38px;
-  border-radius:50%;
-  border:none;
-  background:#1e293b;
-  color:white;
-  font-size:20px;
-  cursor:pointer;
-  display:none
+  width:38px;height:38px;border-radius:50%;
+  border:none;background:#1e293b;color:white;
+  font-size:20px;cursor:pointer;display:none
 }
 .arrow.left{left:-18px}
 .arrow.right{right:-18px}
 
 /* CARD */
 .card{
-  background:white;
-  width:220px;
-  min-width:220px;
-  border-radius:18px;
-  padding:14px;
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  opacity:0;
-  transform:translateY(20px);
-  transition:.5s
+  background:white;width:220px;min-width:220px;
+  border-radius:18px;padding:14px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;opacity:0;transform:translateY(20px);
+  transition:.4s
 }
-.card.show{opacity:1;transform:translateY(0)}
+.card.show{opacity:1;transform:none}
 .card.disabled{opacity:.4;pointer-events:none}
 .card img{width:100%;height:140px;object-fit:contain;cursor:pointer}
 .card h3{font-size:14px;margin:8px 0;cursor:pointer}
@@ -91,17 +73,13 @@ main{padding:24px}
 .out-stock{position:absolute;top:10px;right:10px;background:#6b7280;color:white;font-size:12px;padding:4px 8px;border-radius:10px}
 
 /* QTY */
-.qty{display:flex;justify-content:center;gap:8px;margin-top:6px}
+.qty{display:flex;justify-content:center;gap:8px;margin:6px 0}
 .qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white;cursor:pointer}
 
 /* BUTTONS */
 .add-btn,.buy-btn{
-  margin-top:8px;
-  height:38px;
-  border-radius:12px;
-  border:none;
-  cursor:pointer;
-  transition:.2s
+  height:38px;border-radius:12px;border:none;
+  cursor:pointer;transition:.2s;width:100%;margin-top:6px
 }
 .add-btn{background:#0ea5e9;color:white}
 .buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -113,10 +91,9 @@ main{padding:24px}
 #detail{display:none}
 .detail-wrapper{display:flex;justify-content:center}
 .detail-box{display:flex;gap:30px;background:white;padding:20px;border-radius:20px}
-.detail-box img{width:280px}
-.detail-info{max-width:320px}
-.back-btn img{width:32px;cursor:pointer}
-.detail-info .qty{justify-content:flex-start}
+.detail-box img{width:300px}
+.detail-info{max-width:340px}
+.back-btn img{width:36px;cursor:pointer;margin-bottom:10px}
 
 /* CART */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40}
@@ -124,8 +101,8 @@ main{padding:24px}
 #cart.active{right:0}
 #cart-overlay.active{display:block}
 .cart-item{display:flex;justify-content:space-between;margin-bottom:10px}
-.cart-x{position:absolute;top:10px;right:10px;cursor:pointer}
 .timer{margin:10px 0;font-weight:600;color:#dc2626}
+.cart-x{position:absolute;top:10px;right:10px;cursor:pointer}
 </style>
 </head>
 
@@ -164,48 +141,99 @@ main{padding:24px}
 </div>
 
 <script>
-/* ===== DOM ===== */
-const catalog=document.getElementById("catalog")
-const detail=document.getElementById("detail")
-const categories=document.getElementById("categories")
-const search=document.getElementById("search")
-const cart=document.getElementById("cart")
-const cartOverlay=document.getElementById("cart-overlay")
-const cartItems=document.getElementById("cartItems")
-const cartTotal=document.getElementById("cartTotal")
-const cartCount=document.getElementById("cartCount")
-const timer=document.getElementById("timer")
+let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
+const RESERVE_TIME=20*60*1000;
+let cartExpire=Date.now()+RESERVE_TIME;
 
-/* ===== DATA ===== */
-const DATA={
-  "Ofertas":[
-    {id:0,name:"MiniGT Nissan GT-R",category:"MiniGT",price:80,final:65,discount:true,stock:2,image:"imagenes/TarmacDriftshop.webp",qty:1}
-  ],
-  "MiniGT":[
-    {id:1,name:"MiniGT Skyline",category:"MiniGT",price:75,discount:false,stock:5,image:"imagenes/TopSecretGT300.webp",qty:1}
-  ]
+/* DOM */
+const catalog=catalog=document.getElementById("catalog");
+const detail=document.getElementById("detail");
+const categories=document.getElementById("categories");
+const search=document.getElementById("search");
+const cart=document.getElementById("cart");
+const cartOverlay=document.getElementById("cart-overlay");
+const cartItems=document.getElementById("cartItems");
+const cartTotal=document.getElementById("cartTotal");
+const cartCount=document.getElementById("cartCount");
+const timer=document.getElementById("timer");
+
+/* FETCH DATA */
+fetch("products.json")
+.then(r=>r.json())
+.then(d=>{
+  DATA=d;
+  Object.values(DATA).flat().forEach(p=>p._qty=1);
+  buildCategories();
+  renderAll();
+  renderCart();
+});
+
+/* UTIL */
+function available(p){
+  const c=CART[p.name];
+  return p.stock-(c?c.qty:0);
 }
 
-let CART={}
-let cartExpire=Date.now()+20*60000
+/* RENDER */
+function renderAll(){
+  catalog.innerHTML="";
+  const q=search.value.toLowerCase();
 
-/* ===== CORE ===== */
-function toggleCategories(){
-  categories.style.display=categories.style.display==="block"?"none":"block"
-}
-function toggleCart(o){
-  cart.classList.toggle("active",o)
-  cartOverlay.classList.toggle("active",o)
-}
-function goHome(){
-  detail.style.display="none"
-  catalog.style.display="block"
+  Object.entries(DATA).forEach(([cat,items])=>{
+    const list=items.filter(p=>
+      p.name.toLowerCase().includes(q) || cat.toLowerCase().includes(q)
+    );
+    if(!list.length)return;
+
+    const s=document.createElement("div");
+    s.className="section";
+    s.innerHTML=`
+      <h2>${cat}</h2>
+      <div class="slider">
+        <button class="arrow left">‹</button>
+        <div class="track"></div>
+        <button class="arrow right">›</button>
+      </div>`;
+    const track=s.querySelector(".track");
+
+    list.forEach(p=>{
+      const a=available(p);
+      const c=document.createElement("div");
+      c.className="card"+(a<=0?" disabled":"");
+      c.innerHTML=`
+        ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
+        ${a===1?`<div class="last-unit">Última unidad</div>`:a<=0?`<div class="out-stock">Agotado</div>`:""}
+        <img src="${p.image}" onclick="showDetail('${p.name}')">
+        <h3 onclick="showDetail('${p.name}')">${p.name}</h3>
+        <div>
+          ${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}
+          <span class="price">S/ ${p.discount?p.finalPrice:p.price}</span>
+        </div>
+        <div class="qty">
+          <button onclick="changeQty('${p.name}',-1)">-</button>
+          <span id="q-${p.name}">${p._qty}</span>
+          <button onclick="changeQty('${p.name}',1)">+</button>
+        </div>
+        <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
+        <button class="buy-btn" onclick="buyNow('${p.name}')">
+          <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+        </button>`;
+      track.appendChild(c);
+      setTimeout(()=>c.classList.add("show"),50);
+    });
+
+    catalog.appendChild(s);
+    if(track.scrollWidth>track.clientWidth){
+      s.querySelectorAll(".arrow").forEach(a=>a.style.display="block");
+    }
+  });
 }
 
-function showDetail(id){
-  const p=Object.values(DATA).flat().find(x=>x.id===id)
-  catalog.style.display="none"
-  detail.style.display="block"
+/* DETAIL */
+function showDetail(name){
+  const p=Object.values(DATA).flat().find(x=>x.name===name);
+  catalog.style.display="none";
+  detail.style.display="block";
   detail.innerHTML=`
     <div class="detail-wrapper">
       <div>
@@ -216,110 +244,90 @@ function showDetail(id){
           <img src="${p.image}">
           <div class="detail-info">
             <h2>${p.name}</h2>
-            <p class="price">S/ ${p.discount?p.final:p.price}</p>
+            <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
+            <p>Stock: ${available(p)}</p>
             <div class="qty">
-              <button onclick="changeQty(${id},-1)">-</button>
-              <span id="q-${id}">${p.qty}</span>
-              <button onclick="changeQty(${id},1)">+</button>
+              <button onclick="changeQty('${p.name}',-1)">-</button>
+              <span id="q-${p.name}">${p._qty}</span>
+              <button onclick="changeQty('${p.name}',1)">+</button>
             </div>
-            <button class="add-btn" onclick="addCart(${id})">Añadir al carrito</button>
-            <button class="buy-btn" onclick="addCart(${id})">
+            <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
+            <button class="buy-btn" onclick="buyNow('${p.name}')">
               <img src="imagenes/whatsapp-logo.png"> Comprar ahora
             </button>
           </div>
         </div>
       </div>
-    </div>`
+    </div>`;
 }
 
-function changeQty(id,d){
-  const p=Object.values(DATA).flat().find(x=>x.id===id)
-  p.qty=Math.min(p.stock,Math.max(1,p.qty+d))
-  document.getElementById(`q-${id}`).innerText=p.qty
+/* CART */
+function addToCart(name){
+  const p=Object.values(DATA).flat().find(x=>x.name===name);
+  if(available(p)<=0)return;
+  if(!CART[name]) CART[name]={...p,qty:0,time:Date.now()};
+  CART[name].qty=Math.min(p.stock,CART[name].qty+p._qty);
+  CART[name].time=Date.now();
+  cartExpire=Date.now()+RESERVE_TIME;
+  save();
 }
-
-function addCart(id){
-  const p=Object.values(DATA).flat().find(x=>x.id===id)
-  if(!CART[id])CART[id]={...p,cart:0}
-  CART[id].cart=Math.min(p.stock,CART[id].cart+p.qty)
-  renderCart()
-}
+function buyNow(n){addToCart(n);toggleCart(true)}
+function removeItem(n){delete CART[n];save()}
 
 function renderCart(){
-  cartItems.innerHTML=""
-  let total=0,count=0
+  cartItems.innerHTML="";
+  let t=0,c=0;
   Object.values(CART).forEach(p=>{
-    total+=(p.discount?p.final:p.price)*p.cart
-    count+=p.cart
+    const price=p.discount?p.finalPrice:p.price;
+    t+=price*p.qty;c+=p.qty;
     cartItems.innerHTML+=`
       <div class="cart-item">
-        ${p.name} x${p.cart}
-        <button onclick="delete CART[${p.id}];renderCart()">❌</button>
-      </div>`
-  })
-  cartTotal.innerText=total
-  cartCount.innerText=count
+        ${p.name} x${p.qty}
+        <button onclick="removeItem('${p.name}')">❌</button>
+      </div>`;
+  });
+  cartTotal.innerText=t;
+  cartCount.innerText=c;
 }
 
-function renderAll(){
-  catalog.innerHTML=""
-  const q=search.value.toLowerCase()
-
-  Object.keys(DATA).forEach(cat=>{
-    const list=DATA[cat].filter(p=>
-      p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)
-    )
-    if(!list.length)return
-
-    const sec=document.createElement("div")
-    sec.className="section"
-    sec.innerHTML=`
-      <h2>${cat}</h2>
-      <div class="slider">
-        <button class="arrow left">‹</button>
-        <div class="track"></div>
-        <button class="arrow right">›</button>
-      </div>`
-    const track=sec.querySelector(".track")
-
-    list.forEach(p=>{
-      const c=document.createElement("div")
-      c.className="card"+(p.stock===0?" disabled":"")
-      c.innerHTML=`
-        ${p.discount?'<div class="discount-badge">-'+Math.round((1-p.final/p.price)*100)+'%</div>':""}
-        ${p.stock===1?'<div class="last-unit">Última unidad</div>':p.stock===0?'<div class="out-stock">Agotado</div>':""}
-        <img src="${p.image}" onclick="showDetail(${p.id})">
-        <h3 onclick="showDetail(${p.id})">${p.name}</h3>
-        <div>
-          ${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}
-          <span class="price">S/ ${p.discount?p.final:p.price}</span>
-        </div>
-        <div class="qty">
-          <button onclick="changeQty(${p.id},-1)">-</button>
-          <span>${p.qty}</span>
-          <button onclick="changeQty(${p.id},1)">+</button>
-        </div>
-        <button class="add-btn" onclick="addCart(${p.id})">Añadir al carrito</button>
-        <button class="buy-btn" onclick="addCart(${p.id})">
-          <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-        </button>`
-      track.appendChild(c)
-      setTimeout(()=>c.classList.add("show"),50)
-    })
-
-    catalog.appendChild(sec)
-    if(track.scrollWidth>track.clientWidth){
-      sec.querySelectorAll(".arrow").forEach(a=>a.style.display="block")
-    }
-  })
+/* UTILS */
+function save(){
+  localStorage.setItem("cart",JSON.stringify(CART));
+  renderCart();
+  renderAll();
+}
+function changeQty(n,d){
+  const p=Object.values(DATA).flat().find(x=>x.name===n);
+  p._qty=Math.max(1,Math.min(available(p),p._qty+d));
+  document.getElementById(`q-${n}`).innerText=p._qty;
+}
+function toggleCart(o){
+  cart.classList.toggle("active",o);
+  cartOverlay.classList.toggle("active",o);
+}
+function goHome(){
+  detail.style.display="none";
+  catalog.style.display="block";
+}
+function buildCategories(){
+  categories.innerHTML="";
+  Object.keys(DATA).forEach(c=>{
+    const d=document.createElement("div");
+    d.innerText=c;
+    d.onclick=()=>{search.value=c.toLowerCase();renderAll();categories.style.display="none"};
+    categories.appendChild(d);
+  });
+}
+function toggleCategories(){
+  categories.style.display=categories.style.display==="block"?"none":"block";
 }
 
+/* TIMER */
 setInterval(()=>{
-  const t=Math.max(0,cartExpire-Date.now())
-  timer.innerText="Tiempo restante: "+Math.floor(t/60000)+":"+String(Math.floor(t/1000)%60).padStart(2,"0")
-},1000)
-
-renderAll()
+  const t=Math.max(0,cartExpire-Date.now());
+  timer.innerText="Tiempo restante: "+Math.floor(t/60000)+":"+String(Math.floor(t/1000)%60).padStart(2,"0");
+  if(t<=0){CART={};save()}
+},1000);
 </script>
 
 </body>
