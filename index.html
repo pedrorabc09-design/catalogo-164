@@ -22,9 +22,13 @@ header{background:#1e293b;padding:26px;color:white;position:relative}
 .icons{display:flex;gap:14px;align-items:center}
 .icons img{width:28px}
 
-/* CART ICON */
+/* CART */
 .cart-icon{position:relative;font-size:22px;cursor:pointer}
-.cart-count{position:absolute;top:-6px;right:-10px;background:#dc2626;color:white;font-size:12px;padding:2px 6px;border-radius:50%}
+.cart-count{
+  position:absolute;top:-6px;right:-10px;
+  background:#dc2626;color:white;
+  font-size:12px;padding:2px 6px;border-radius:50%
+}
 
 /* CATEGORIES */
 #categories{
@@ -93,7 +97,7 @@ main{padding:24px}
 .detail-box{display:flex;gap:30px;background:white;padding:20px;border-radius:20px}
 .detail-box img{width:300px}
 .detail-info{max-width:340px}
-.back-btn img{width:36px;cursor:pointer;margin-bottom:10px}
+.back-btn img{width:34px;cursor:pointer;margin-bottom:10px}
 
 /* CART */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40}
@@ -146,7 +150,7 @@ const RESERVE_TIME=20*60*1000;
 let cartExpire=Date.now()+RESERVE_TIME;
 
 /* DOM */
-const catalog=catalog=document.getElementById("catalog");
+const catalog=document.getElementById("catalog");
 const detail=document.getElementById("detail");
 const categories=document.getElementById("categories");
 const search=document.getElementById("search");
@@ -157,7 +161,7 @@ const cartTotal=document.getElementById("cartTotal");
 const cartCount=document.getElementById("cartCount");
 const timer=document.getElementById("timer");
 
-/* FETCH DATA */
+/* FETCH */
 fetch("products.json")
 .then(r=>r.json())
 .then(d=>{
@@ -168,7 +172,7 @@ fetch("products.json")
   renderCart();
 });
 
-/* UTIL */
+/* UTILS */
 function available(p){
   const c=CART[p.name];
   return p.stock-(c?c.qty:0);
@@ -181,7 +185,7 @@ function renderAll(){
 
   Object.entries(DATA).forEach(([cat,items])=>{
     const list=items.filter(p=>
-      p.name.toLowerCase().includes(q) || cat.toLowerCase().includes(q)
+      p.name.toLowerCase().includes(q)||cat.toLowerCase().includes(q)
     );
     if(!list.length)return;
 
@@ -290,7 +294,7 @@ function renderCart(){
   cartCount.innerText=c;
 }
 
-/* UTILS */
+/* MISC */
 function save(){
   localStorage.setItem("cart",JSON.stringify(CART));
   renderCart();
