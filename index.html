@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ===== RESET ===== */
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
 body{background:#f1f5f9;color:#0f172a}
 
@@ -178,6 +177,7 @@ main{padding:22px}
 
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
+const RESERVE_TIME = 20*60*1000;
 
 const catalog=document.getElementById("catalog");
 const search=document.getElementById("search");
@@ -185,6 +185,25 @@ const categoriesDiv=document.getElementById("categories");
 const cartCount=document.getElementById("cartCount");
 const cartItems=document.getElementById("cartItems");
 const cartTotal=document.getElementById("cartTotal");
+
+function cleanExpiredCart(){
+  const now=Date.now();
+  let changed=false;
+  Object.keys(CART).forEach(k=>{
+    if(CART[k].reservedAt && now-CART[k].reservedAt>RESERVE_TIME){
+      delete CART[k]; changed=true;
+    }
+  });
+  if(changed) localStorage.setItem("cart",JSON.stringify(CART));
+}
+
+function reservedQty(name){
+  cleanExpiredCart();
+  return CART[name]?.qty||0;
+}
+function availableStock(p){
+  return Math.max(0,p.stock-reservedQty(p.name));
+}
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
@@ -197,16 +216,13 @@ fetch("products.json").then(r=>r.json()).then(d=>{
 search.addEventListener("input",e=>render(e.target.value.toLowerCase()));
 
 function render(filter){
+  cleanExpiredCart();
   catalog.innerHTML="";
   let offers=[];
   Object.values(DATA).flat().forEach(p=>{if(p.discount) offers.push(p)});
-  if(offers.length && !filter){
-    catalog.appendChild(section("🔥 Ofertas",offers));
-  }
+  if(offers.length&&!filter) catalog.appendChild(section("🔥 Ofertas",offers));
   Object.entries(DATA).forEach(([b,ps])=>{
-    const m=b.toLowerCase().includes(filter)
-      ? ps
-      : ps.filter(p=>p.name.toLowerCase().includes(filter));
+    const m=b.toLowerCase().includes(filter)?ps:ps.filter(p=>p.name.toLowerCase().includes(filter));
     if(m.length) catalog.appendChild(section(b,m));
   });
 }
@@ -228,7 +244,8 @@ function section(title,products){
     c.className="card";
     c.innerHTML=`
       ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-      ${p.stock===1?`<div class="last-unit">Última unidad</div>`:""}
+      ${availableStock(p)===0?`<div class="last-unit" style="background:#dc2626">Agotado</div>`:""}
+      ${availableStock(p)===1?`<div class="last-unit">Última unidad</div>`:""}
       <img src="${p.image}">
       <h3>${p.name}</h3>
       <div>
@@ -246,19 +263,32 @@ function section(title,products){
       </button>`;
     track.appendChild(c);
   });
+
+  setTimeout(()=>updateArrows(s),0);
   return s;
+}
+
+function updateArrows(slider){
+  const track=slider.querySelector(".track");
+  const arrows=slider.querySelectorAll(".arrow");
+  const need=track.scrollWidth>track.clientWidth;
+  arrows.forEach(a=>a.style.display=need?"block":"none");
 }
 
 function changeQty(name,d){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  p._qty=Math.max(1,Math.min(p.stock,p._qty+d));
+  const max=availableStock(p);
+  p._qty=Math.max(1,Math.min(max,p._qty+d));
   document.getElementById(`q-${name}`).innerText=p._qty;
 }
 
 function addToCart(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  if(!CART[name]) CART[name]={...p,qty:0};
+  const max=availableStock(p);
+  if(max<=0) return;
+  if(!CART[name]) CART[name]={...p,qty:0,reservedAt:Date.now()};
   CART[name].qty=Math.min(p.stock,CART[name].qty+p._qty);
+  CART[name].reservedAt=Date.now();
   saveCart();
 }
 function buyNow(name){addToCart(name);toggleCart(true)}
@@ -285,9 +315,7 @@ function renderCart(){
 function removeItem(n){delete CART[n];saveCart()}
 function checkout(){
   let msg="Hola, quiero comprar:%0A";
-  Object.values(CART).forEach(p=>{
-    msg+=`- ${p.name} x${p.qty}%0A`;
-  });
+  Object.values(CART).forEach(p=>msg+=`- ${p.name} x${p.qty}%0A`);
   window.open("https://wa.me/51942434659?text="+msg);
 }
 function toggleCart(o){
@@ -307,7 +335,7 @@ function toggleCategories(){
   categoriesDiv.style.display=categoriesDiv.style.display==="block"?"none":"block";
 }
 function slide(btn,d){btn.parentElement.querySelector(".track").scrollLeft+=d*240}
-function goHome(){render("");}
+function goHome(){render("")}
 </script>
 
 </body>
