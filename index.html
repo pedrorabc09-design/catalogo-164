@@ -77,10 +77,6 @@ main{padding:24px}
 .discount-badge{position:absolute;top:10px;left:10px;background:#dc2626;color:white;font-size:12px;padding:4px 8px;border-radius:10px}
 .last-unit{position:absolute;top:10px;right:10px;background:#f59e0b;color:white;font-size:12px;padding:4px 8px;border-radius:10px}
 
-/* QTY */
-.qty{display:flex;justify-content:center;gap:8px;margin:6px 0}
-.qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white}
-
 /* BUTTONS */
 .add-btn,.buy-btn{
   height:38px;border-radius:12px;
@@ -96,15 +92,16 @@ main{padding:24px}
 /* DETAIL */
 #detail{display:none}
 .detail-wrapper{display:flex;justify-content:center}
-.back-btn img{width:70px;cursor:pointer;margin-bottom:14px}
+.back-btn img{width:56px;cursor:pointer}
 .detail-box{
   display:flex;gap:40px;
   background:white;padding:24px;
   border-radius:18px;max-width:900px;width:100%
 }
-.detail-box img{width:360px;object-fit:contain}
+.detail-product-img{width:360px;object-fit:contain}
 .detail-info{max-width:420px}
 .detail-info h2{margin-bottom:10px}
+.detail-icon{width:20px}
 
 /* CART */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5)}
@@ -114,14 +111,11 @@ main{padding:24px}
   background:white;padding:20px;transition:.3s;z-index:50
 }
 #cart.active{right:0}
-.cart-header{display:flex;justify-content:space-between;align-items:center}
-.cart-item{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
-.cart-item button{border:none;background:none;cursor:pointer}
-.cart-timer{color:#dc2626;font-weight:600;margin:10px 0}
 
+/* MOBILE */
 @media(max-width:768px){
   .detail-box{flex-direction:column}
-  .detail-box img{width:100%}
+  .detail-product-img{width:100%}
 }
 </style>
 </head>
@@ -151,37 +145,16 @@ main{padding:24px}
   <div id="detail"></div>
 </main>
 
-<div id="cart-overlay" onclick="toggleCart(false)"></div>
-<div id="cart">
-  <div class="cart-header">
-    <h2>Carrito</h2>
-    <button onclick="toggleCart(false)">❌</button>
-  </div>
-  <div class="cart-timer" id="cartTimer"></div>
-  <div id="cartItems"></div>
-  <strong>Total: S/ <span id="cartTotal">0</span></strong>
-  <button class="buy-btn">Finalizar por WhatsApp</button>
-</div>
-
 <script>
-let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
-const RESERVE_TIME=20*60*1000;
-let CART_TIME=localStorage.getItem("cartTime")||Date.now();
+let DATA={}, CART={}, IN_DETAIL=false;
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
-  Object.values(DATA).flat().forEach(p=>p._qty=1);
-  buildCategories();
   render("");
-  renderCart();
-  setInterval(updateCartTimer,1000);
 });
 
-function available(p){
-  return p.stock-(CART[p.name]?.qty||0);
-}
-
 function render(filter){
+  if(IN_DETAIL) return;
   catalog.innerHTML="";
   detail.style.display="none";
   catalog.style.display="block";
@@ -211,24 +184,16 @@ function buildSection(title,products){
   const track=sec.querySelector(".track");
 
   products.forEach(p=>{
-    const a=available(p);
-    if(p._qty>a) p._qty=a||1;
     const c=document.createElement("div");
-    c.className="card"+(a<=0?" out":"");
+    c.className="card";
     c.innerHTML=`
       ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-      ${a===1?`<div class="last-unit">Ultima unidad</div>`:""}
       <img src="${p.image}" onclick="showDetail('${p.name}')">
       <h3 onclick="showDetail('${p.name}')">${p.name}</h3>
       <span class="price">S/ ${p.discount?p.finalPrice:p.price}</span>
-      <div class="qty">
-        <button onclick="changeQty('${p.name}',-1)">-</button>
-        <span id="q-${p.name}">${p._qty}</span>
-        <button onclick="changeQty('${p.name}',1)">+</button>
-      </div>
-      <button class="add-btn" ${a<=0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
-      <button class="buy-btn" ${a<=0?"disabled":""} onclick="buyNow('${p.name}')">
-        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+      <button class="add-btn">Añadir al carrito</button>
+      <button class="buy-btn">
+        <img class="detail-icon" src="imagenes/whatsapp-logo.png"> Comprar ahora
       </button>`;
     track.appendChild(c);
     observe(c);
@@ -250,21 +215,20 @@ function enableSlider(sec){
 }
 
 function showDetail(name){
+  IN_DETAIL=true;
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  const a=available(p);
   detail.innerHTML=`
     <div class="detail-wrapper">
       <div>
         <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png"></div>
         <div class="detail-box">
-          <img src="${p.image}">
+          <img class="detail-product-img" src="${p.image}">
           <div class="detail-info">
             <h2>${p.name}</h2>
-            <p>Stock disponible: ${a}</p>
             <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
-            <button class="add-btn" ${a<=0?"disabled":""} onclick="addToCart('${p.name}')">Añadir al carrito</button>
-            <button class="buy-btn" ${a<=0?"disabled":""} onclick="buyNow('${p.name}')">
-              <img src="imagenes/whatsapp-logo.png"> Comprar ahora
+            <button class="add-btn">Añadir al carrito</button>
+            <button class="buy-btn">
+              <img class="detail-icon" src="imagenes/whatsapp-logo.png"> Comprar ahora
             </button>
           </div>
         </div>
@@ -274,88 +238,14 @@ function showDetail(name){
   detail.style.display="block";
 }
 
-function addToCart(n){
-  const p=Object.values(DATA).flat().find(x=>x.name===n);
-  if(available(p)<=0) return;
-  if(!CART[n]) CART[n]={...p,qty:0};
-  CART[n].qty+=p._qty;
-  CART_TIME=Date.now();
-  localStorage.setItem("cartTime",CART_TIME);
-  localStorage.setItem("cart",JSON.stringify(CART));
-  renderCart();
+function goHome(){
+  IN_DETAIL=false;
   render(search.value.toLowerCase());
-}
-
-function removeItem(n){
-  delete CART[n];
-  localStorage.setItem("cart",JSON.stringify(CART));
-  renderCart();
-  render(search.value.toLowerCase());
-}
-
-function renderCart(){
-  let t=0,c=0;
-  cartItems.innerHTML="";
-  Object.values(CART).forEach(p=>{
-    const price=p.discount?p.finalPrice:p.price;
-    t+=price*p.qty;c+=p.qty;
-    cartItems.innerHTML+=`
-      <div class="cart-item">
-        ${p.name} x${p.qty}
-        <button onclick="removeItem('${p.name}')">❌</button>
-      </div>`;
-  });
-  cartTotal.innerText=t;
-  cartCount.innerText=c;
-}
-
-function updateCartTimer(){
-  const left=RESERVE_TIME-(Date.now()-CART_TIME);
-  if(left<=0){
-    CART={};
-    localStorage.clear();
-    renderCart();
-    render("");
-    cartTimer.innerText="Reserva expirada";
-    return;
-  }
-  const m=Math.floor(left/60000);
-  const s=Math.floor((left%60000)/1000);
-  cartTimer.innerText=`Reserva válida: ${m}:${s.toString().padStart(2,"0")}`;
-}
-
-function toggleCart(o){
-  cart.classList.toggle("active",o);
-  cartOverlay.classList.toggle("active",o);
-}
-
-function buildCategories(){
-  categories.innerHTML="";
-  Object.keys(DATA).forEach(b=>{
-    const d=document.createElement("div");
-    d.innerText=b;
-    d.onclick=()=>{render(b.toLowerCase());categories.style.display="none"};
-    categories.appendChild(d);
-  });
 }
 
 function toggleCategories(){
   categories.style.display=categories.style.display==="block"?"none":"block";
 }
-
-function changeQty(n,d){
-  const p=Object.values(DATA).flat().find(x=>x.name===n);
-  const max=available(p);
-  p._qty=Math.min(Math.max(1,p._qty+d),max);
-  document.getElementById(`q-${n}`).innerText=p._qty;
-}
-
-function buyNow(n){
-  addToCart(n);
-  toggleCart(true);
-}
-
-function goHome(){render("")}
 
 function observe(el){
   const o=new IntersectionObserver(e=>{
