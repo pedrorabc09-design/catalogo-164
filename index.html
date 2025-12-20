@@ -45,11 +45,12 @@ main{padding:24px}
 .arrow.right{right:-20px}
 
 /* CARD */
-.card{background:white;width:220px;min-width:220px;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+.card{background:white;width:220px;min-width:220px;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;position:relative;transition:.3s}
 .card img{width:100%;height:140px;object-fit:contain;cursor:pointer}
 .card h3{font-size:14px;margin:8px 0;cursor:pointer}
 .price{font-weight:700;color:#16a34a}
 .old-price{text-decoration:line-through;color:#64748b;margin-right:6px}
+.card.disabled{opacity:.5;pointer-events:none}
 
 /* BADGES */
 .discount-badge{position:absolute;top:10px;left:10px;background:#dc2626;color:white;font-size:12px;padding:4px 8px;border-radius:10px}
@@ -58,12 +59,15 @@ main{padding:24px}
 
 /* QTY */
 .qty{display:flex;justify-content:center;gap:8px;margin:6px 0}
-.qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white}
+.qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white;transition:.2s}
+.qty button:hover{transform:translateY(-2px)}
+.qty button:active{transform:scale(.92)}
 
 /* BUTTONS */
-.add-btn,.buy-btn{margin-top:8px;height:38px;border-radius:12px;border:none;cursor:pointer;transition:.2s;width:100%}
+.add-btn,.buy-btn{margin-top:8px;height:38px;border-radius:12px;border:none;cursor:pointer;transition:.3s;width:100%}
 .add-btn{background:#0ea5e9;color:white}
 .buy-btn{background:#25d366;color:white;display:flex;justify-content:center;gap:6px;align-items:center}
+.add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
 .add-btn:active,.buy-btn:active{transform:scale(.92)}
 .buy-btn img{width:18px}
 
@@ -72,7 +76,7 @@ main{padding:24px}
 .detail-box{display:flex;gap:30px;align-items:center}
 .detail-box img{width:320px;object-fit:contain}
 .detail-box .buy-btn img{width:18px}
-.back-btn{margin-bottom:20px;cursor:pointer}
+.back-btn img{width:36px;cursor:pointer;display:block;margin-bottom:16px}
 
 /* CART */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5)}
@@ -202,7 +206,7 @@ function showDetail(name){
   catalog.style.display="none";
   detail.style.display="block";
   detail.innerHTML=`
-    <button class="back-btn" onclick="goHome()">⬅ Volver</button>
+    <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png"></div>
     <div class="detail-box">
       <img src="${p.image}">
       <div>
