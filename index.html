@@ -211,24 +211,25 @@ function renderAll(categoryToShow) {
 
   const q = search.value.toLowerCase();
 
-  // ofertas primero
-  const offers = Object.values(DATA).flat().filter(p => p.discount && p.name.toLowerCase().includes(q));
-  if (offers.length) renderSection("🔥 Ofertas", offers.sort((a,b) => a.finalPrice - b.finalPrice));
+  // Ofertas primero (si no es categoría específica)
+  const allProducts = Object.values(DATA).flat();
+  const offers = allProducts.filter(p => p.discount && (!categoryToShow ? p.name.toLowerCase().includes(q) : true));
+  if(offers.length) renderSection("🔥 Ofertas", offers.sort((a,b)=>a.finalPrice-b.finalPrice));
 
   Object.entries(DATA).forEach(([category, products]) => {
-    // Si pasamos una categoría específica, mostramos esa categoría completa
-    if (categoryToShow) {
-      if (category === categoryToShow) {
-        renderSection(category, products.sort((a,b) => a.price - b.price));
-      }
-      return; // no hacemos nada con otras categorías
+    let filteredProducts;
+
+    if(categoryToShow) {
+      // Si estamos mostrando una categoría, mostramos todos los productos de esa categoría
+      if(category === categoryToShow) filteredProducts = products;
+      else return;
+    } else {
+      // Si no, filtramos por búsqueda
+      filteredProducts = products.filter(p => p.name.toLowerCase().includes(q));
+      if(!filteredProducts.length) return;
     }
 
-    // Si no, hacemos la búsqueda normal
-    const matched = products.some(p => p.name.toLowerCase().includes(q));
-    if (!matched) return;
-
-    renderSection(category, products.sort((a,b) => a.price - b.price));
+    renderSection(category, filteredProducts.sort((a,b)=>a.price-b.price));
   });
 }
 
@@ -410,14 +411,22 @@ function toggleCart(show){
 }
 
 function buildCategories(){
-  categories.innerHTML="";
-  Object.keys(DATA).forEach(cat=>{
-    const d=document.createElement("div");
-    d.innerText=cat;
-    d.onclick=()=>{search.value=cat; renderAll(); categories.style.display="none";};
+  categories.innerHTML = "";
+
+  Object.keys(DATA).forEach(cat => {
+    const d = document.createElement("div");
+    d.innerText = cat;
+
+    d.onclick = () => {
+      search.value = "";        // NO usar búsqueda por texto
+      renderAll(cat);           // Mostrar directamente la categoría
+      categories.style.display = "none";
+    };
+
     categories.appendChild(d);
   });
 }
+
 function toggleCategories(){categories.style.display=categories.style.display==="block"?"none":"block"}
 </script>
 
