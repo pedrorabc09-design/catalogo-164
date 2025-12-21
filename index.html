@@ -240,13 +240,20 @@ function renderSection(title,products){
   });
 
   // flechas
-  const left=s.querySelector(".left"),right=s.querySelector(".right");
-  if(track.scrollWidth>track.clientWidth){
-    left.style.display="block";
-    right.style.display="block";
-    left.onclick=()=>track.scrollLeft-=240;
-    right.onclick=()=>track.scrollLeft+=240;
-  }
+const left = s.querySelector(".left");
+const right = s.querySelector(".right");
+
+// mostrar flechas solo si el contenido es más ancho que el contenedor
+if (track.scrollWidth > track.clientWidth) {
+    left.style.display = "block";
+    right.style.display = "block";
+
+    left.onclick = () => track.scrollLeft -= 240;  // ajusta 240 según el ancho de tus cards + gap
+    right.onclick = () => track.scrollLeft += 240;
+} else {
+    left.style.display = "none";
+    right.style.display = "none";
+}
 
   catalog.appendChild(s);
 }
