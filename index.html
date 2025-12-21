@@ -256,8 +256,6 @@ main{padding:24px}
 </div>
 
 <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -273,11 +271,20 @@ main{padding:24px}
   const db = firebase.firestore();
 </script>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getFirestore, collection, getDocs } 
-    from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+<script type="module">
+  /* ===============================
+     🔥 FIREBASE v10 (ÚNICO BLOQUE)
+     =============================== */
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  // 🔹 Configuración Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
     authDomain: "ignicar-toys.firebaseapp.com",
@@ -287,14 +294,18 @@ main{padding:24px}
     appId: "1:166759344812:web:5722c60005bde18e568d09"
   };
 
+  // 🔹 Inicializar Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  async function loadProductsFromFirestore(){
+  /* ===============================
+     📦 FUNCIÓN PARA CARGAR PRODUCTOS
+     =============================== */
+  async function loadProductsFromFirestore() {
     const snapshot = await getDocs(collection(db, "products"));
     const products = [];
 
-    snapshot.forEach(doc=>{
+    snapshot.forEach(doc => {
       products.push({
         id: doc.id,
         ...doc.data()
@@ -304,11 +315,10 @@ main{padding:24px}
     return products;
   }
 
-  // ✅ PROBAR AQUÍ MISMO
-  const products = await loadProductsFromFirestore();
-  console.log("Productos desde Firestore:", products);
-
-  // 👉 luego aquí conectaremos con tu DATA
+  /* ===============================
+     🌍 EXPONER AL HTML NORMAL
+     =============================== */
+  window.loadProductsFromFirestore = loadProductsFromFirestore;
 </script>
 
 
