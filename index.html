@@ -4,45 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IGNICAR TOYS</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="imagenes/Volver.png" type="image/png">
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
 body{background:#f1f5f9;color:#0f172a}
 
 /* HEADER */
-header{background:#1e293b;padding:28px;color:white}
-.header-top{display:flex;align-items:center;gap:20px}
+header{background:#1e293b;padding:28px;color:white;position:relative}
+.header-top{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .logo{height:180px;cursor:pointer}
 .search-area{flex:1;display:flex;gap:10px}
 .search-area input{flex:1;padding:14px;border-radius:14px;border:none}
 .cat-btn{padding:12px 16px;border:none;border-radius:14px;font-size:22px;background:#334155;color:white}
 .icons{display:flex;gap:14px;align-items:center}
-.icons img{width:32px}
-
-/* CART ICON */
+.icons img{width:28px}
 .cart-icon{position:relative;font-size:22px;cursor:pointer;transition:.3s}
 .cart-icon.bounce{animation:bounce .4s}
-@keyframes bounce{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.25)}
-  100%{transform:scale(1)}
-}
-.cart-count{
-  position:absolute;top:-6px;right:-10px;
-  background:#dc2626;color:white;
-  font-size:12px;padding:2px 6px;border-radius:50%
-}
+@keyframes bounce{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
+.cart-count{position:absolute;top:-6px;right:-10px;background:#dc2626;color:white;font-size:12px;padding:2px 6px;border-radius:50%}
 
 /* CATEGORIES */
-#categories{
-  display:none;position:absolute;top:230px;left:50%;
-  transform:translateX(-50%);
-  background:white;width:300px;border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:10;color:#0f172a;
-}
+#categories{display:none;position:absolute;top:230px;left:50%;transform:translateX(-50%);background:white;width:300px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:10}
 #categories div{padding:14px;font-weight:600;cursor:pointer}
 #categories div:hover{background:#e2e8f0}
 
@@ -54,26 +36,12 @@ main{padding:24px}
 /* SLIDER */
 .slider{position:relative}
 .track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
-.arrow{
-  display:none;
-  position:absolute;top:45%;
-  width:38px;height:38px;border-radius:50%;
-  border:none;background:#1e293b;color:white;font-size:20px;cursor:pointer;z-index:5
-}
+.arrow{display:none;position:absolute;top:45%;width:38px;height:38px;border-radius:50%;border:none;background:#1e293b;color:white;cursor:pointer;z-index:5;font-size:22px}
 .arrow.left{left:-18px}
 .arrow.right{right:-18px}
 
 /* CARD */
-.card{
-  background:white;width:220px;min-width:220px;
-  border-radius:18px;padding:14px;
-  display:flex;flex-direction:column;
-  justify-content:space-between;
-  position:relative;
-  opacity:0;transform:translateY(20px);
-  transition:.5s
-}
-.card.show{opacity:1;transform:none}
+.card{background:white;width:220px;min-width:220px;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;position:relative;transition:.3s}
 .card.disabled{opacity:.45;pointer-events:none}
 .card img{width:100%;height:140px;object-fit:contain;cursor:pointer}
 .card h3{font-size:14px;margin:8px 0;min-height:36px;cursor:pointer}
@@ -88,14 +56,11 @@ main{padding:24px}
 /* QTY */
 .qty{display:flex;justify-content:center;gap:8px;margin:6px 0}
 .qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white;cursor:pointer;transition:.2s}
+.qty button:hover{transform:translateY(-2px)}
 .qty button:active{transform:scale(.92)}
 
 /* BUTTONS */
-.add-btn,.buy-btn{
-  height:38px;border-radius:12px;
-  border:none;cursor:pointer;
-  transition:.2s;width:100%;margin-top:6px
-}
+.add-btn,.buy-btn{height:38px;border-radius:12px;border:none;cursor:pointer;transition:.2s;width:100%;margin-top:6px}
 .add-btn{background:#0ea5e9;color:white}
 .buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
 .add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
@@ -104,22 +69,15 @@ main{padding:24px}
 
 /* DETAIL */
 #detail{display:none}
-.back-btn img{width:36px;cursor:pointer;margin-bottom:16px}
-.detail-box{
-  display:flex;gap:28px;background:white;
-  padding:24px;border-radius:22px;
-  align-items:center;justify-content:center
-}
-.detail-box img{width:280px}
-.detail-info{max-width:360px}
+.detail-box{display:flex;gap:28px;background:white;padding:24px;border-radius:22px;align-items:center;justify-content:center;flex-wrap:wrap}
+.detail-box img{width:280px;object-fit:contain}
+.detail-info{max-width:360px;display:flex;flex-direction:column;gap:6px}
+.back-btn img{width:28px;cursor:pointer;margin-bottom:8px}
 
 /* CART */
-#cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5)}
+#cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40}
 #cart-overlay.active{display:block}
-#cart{
-  position:fixed;right:-420px;top:0;width:420px;height:100%;
-  background:white;padding:20px;transition:.3s;z-index:50
-}
+#cart{position:fixed;right:-420px;top:0;width:420px;height:100%;background:white;padding:20px;transition:.3s;z-index:50}
 #cart.active{right:0}
 .cart-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:14px}
 .cart-item small{color:#dc2626}
@@ -127,12 +85,12 @@ main{padding:24px}
 
 /* MOBILE */
 @media(max-width:768px){
+  .header-top{flex-direction:column}
   .detail-box{flex-direction:column}
   .detail-box img{width:100%}
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -143,6 +101,8 @@ main{padding:24px}
       <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
     <div class="icons">
+      <a href="https://wa.me/51942434659" target="_blank"><img src="imagenes/whatsapp-logo.png"></a>
+      <a href="#" target="_blank"><img src="imagenes/facebook.png"></a>
       <div class="cart-icon" onclick="toggleCart(true)">
         🛒 <span class="cart-count" id="cartCount">0</span>
       </div>
@@ -161,29 +121,20 @@ main{padding:24px}
   <h2>Carrito <small id="cartTimer"></small></h2>
   <div id="cartItems"></div>
   <strong>Total: S/ <span id="cartTotal">0</span></strong>
-  <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
+  <button class="buy-btn" onclick="checkout()"><img src="imagenes/whatsapp-logo.png"> Finalizar por WhatsApp</button>
 </div>
 
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
 const RESERVE_TIME=60*60*1000; // 1 hora
-let cartTimeout;
-
-const catalog=document.getElementById("catalog");
-const detail=document.getElementById("detail");
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
   Object.values(DATA).flat().forEach(p=>p._qty=1);
   buildCategories();
   renderAll();
-  startCartTimer();
+  setInterval(renderCart,1000);
 });
-
-function startCartTimer(){
-  clearInterval(cartTimeout);
-  cartTimeout=setInterval(()=>{renderCart();},1000);
-}
 
 function available(p){
   const c=CART[p.name];
@@ -197,21 +148,30 @@ function renderAll(){
 
   const q=search.value.toLowerCase();
 
-  // ofertas primero
-  const offers=Object.values(DATA).flat().filter(p=>p.discount && (p.name.toLowerCase().includes(q)));
-  if(offers.length) renderSection("🔥 Ofertas",offers.sort((a,b)=>a.finalPrice-b.finalPrice));
+  // Ofertas primero
+  const allProducts=Object.values(DATA).flat().sort((a,b)=>{
+    if(a.discount && !b.discount) return -1;
+    if(!a.discount && b.discount) return 1;
+    return (a.discount?a.finalPrice:a.price)-(b.discount?b.finalPrice:b.price);
+  });
 
-  Object.entries(DATA).forEach(([b,ps])=>{
-    const filtered=ps.filter(p=>p.name.toLowerCase().includes(q));
-    if(!filtered.length) return;
-    renderSection(b,filtered.sort((a,b)=>a.price-b.price));
+  const categoriesSorted=Object.keys(DATA);
+
+  categoriesSorted.forEach(cat=>{
+    const products=allProducts.filter(p=>p.category===cat && (p.name.toLowerCase().includes(q) || cat.toLowerCase().includes(q)));
+    if(products.length) renderSection(cat,products);
   });
 }
 
 function renderSection(title,products){
   const s=document.createElement("div");
   s.className="section";
-  s.innerHTML=`<h2>${title}</h2><div class="slider"><button class="arrow left">‹</button><div class="track"></div><button class="arrow right">›</button></div>`;
+  s.innerHTML=`<h2>${title}</h2>
+    <div class="slider">
+      <button class="arrow left">‹</button>
+      <div class="track"></div>
+      <button class="arrow right">›</button>
+    </div>`;
   const track=s.querySelector(".track");
 
   products.forEach(p=>{
@@ -226,7 +186,7 @@ function renderSection(title,products){
       <div>${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}<span class="price">S/ ${p.discount?p.finalPrice:p.price}</span></div>
       <div class="qty">
         <button onclick="changeQty('${p.name}',-1)">-</button>
-        <span class="q-span">${p._qty}</span>
+        <span id="q-${p.name}">${p._qty}</span>
         <button onclick="changeQty('${p.name}',1)">+</button>
       </div>
       <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
@@ -235,21 +195,19 @@ function renderSection(title,products){
     setTimeout(()=>c.classList.add("show"),50);
   });
 
-  // flechas
-  const left=s.querySelector(".left"),right=s.querySelector(".right");
+  // Flechas visibles si es necesario
   if(track.scrollWidth>track.clientWidth){
-    left.style.display="block";
-    right.style.display="block";
-    left.onclick=()=>track.scrollLeft-=240;
-    right.onclick=()=>track.scrollLeft+=240;
+    s.querySelectorAll(".arrow").forEach(a=>a.style.display="block");
   }
+
+  s.querySelector(".left").onclick=()=>track.scrollLeft-=240;
+  s.querySelector(".right").onclick=()=>track.scrollLeft+=240;
 
   catalog.appendChild(s);
 }
 
 function showDetail(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  if(!p) return;
   catalog.style.display="none";
   detail.style.display="block";
   detail.innerHTML=`
@@ -264,7 +222,7 @@ function showDetail(name){
         <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
         <div class="qty">
           <button onclick="changeQty('${p.name}',-1)">-</button>
-          <span class="q-span">${p._qty}</span>
+          <span id="q-${p.name}">${p._qty}</span>
           <button onclick="changeQty('${p.name}',1)">+</button>
         </div>
         <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
@@ -273,12 +231,10 @@ function showDetail(name){
     </div>`;
 }
 
-function changeQty(name,d){
+function changeQty(name,delta){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  p._qty=Math.max(1,Math.min(available(p),p._qty+d));
-  document.querySelectorAll(`.q-span`).forEach(e=>{
-    if(e.closest(".card")?.querySelector("h3")?.innerText===name || e.closest(".detail-info")) e.innerText=p._qty;
-  });
+  p._qty=Math.max(1,Math.min(available(p),p._qty+delta));
+  document.querySelectorAll(`#q-${name}`).forEach(el=>el.innerText=p._qty);
 }
 
 function addToCart(name){
@@ -287,45 +243,33 @@ function addToCart(name){
   if(!CART[name]) CART[name]={...p,qty:0,time:Date.now()};
   CART[name].qty+=p._qty;
   CART[name].time=Date.now();
-  saveCart();
+  save();
 }
 
 function buyNow(name){addToCart(name);toggleCart(true)}
 function goHome(){renderAll()}
 
-function saveCart(){
-  localStorage.setItem("cart",JSON.stringify(CART));
-  renderCart();
-  renderAll();
-}
-
 function renderCart(){
-  let total=0, count=0;
-  cartItems.innerHTML="";
   const now=Date.now();
+  let total=0,count=0,maxTime=0;
+  cartItems.innerHTML="";
   Object.values(CART).forEach(p=>{
     const left=RESERVE_TIME-(now-p.time);
     if(left<=0) return;
+    maxTime=Math.max(maxTime,left);
+    cartItems.innerHTML+=`<div class="cart-item">${p.name} x${p.qty}</div>`;
     total+=(p.discount?p.finalPrice:p.price)*p.qty;
     count+=p.qty;
-    cartItems.innerHTML+=`<div class="cart-item">${p.name} x${p.qty}</div>`;
   });
   cartTotal.innerText=total;
   cartCount.innerText=count;
-  const minutes=Math.floor(RESERVE_TIME/60000);
-  cartTimer.innerText=`(${minutes} min)`;
+  cartTimer.innerText=maxTime?`(${Math.floor(maxTime/60000)} min)`:"";
 }
 
-function checkout(){
-  let msg="Hola, quiero comprar:%0A";
-  let t=0;
-  Object.values(CART).forEach(p=>{
-    const price=p.discount?p.finalPrice:p.price;
-    msg+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;
-    t+=price*p.qty;
-  });
-  msg+=`%0ATotal: S/ ${t}`;
-  window.open("https://wa.me/51942434659?text="+msg);
+function save(){
+  localStorage.setItem("cart",JSON.stringify(CART));
+  renderCart();
+  renderAll();
 }
 
 function toggleCart(show){
@@ -333,16 +277,30 @@ function toggleCart(show){
   document.getElementById("cart-overlay").classList.toggle("active",show);
 }
 
+function checkout(){
+  let msg="Hola, quiero comprar:%0A";
+  let total=0;
+  Object.values(CART).forEach(p=>{
+    const price=p.discount?p.finalPrice:p.price;
+    msg+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;
+    total+=price*p.qty;
+  });
+  msg+=`%0ATotal: S/ ${total}`;
+  window.open("https://wa.me/51942434659?text="+msg);
+}
+
 function buildCategories(){
   categories.innerHTML="";
   Object.keys(DATA).forEach(cat=>{
-    const d=document.createElement("div");
-    d.innerText=cat;
-    d.onclick=()=>{search.value=cat; renderAll(); categories.style.display="none";};
-    categories.appendChild(d);
+    const div=document.createElement("div");
+    div.innerText=cat;
+    div.onclick=()=>{search.value=cat;renderAll();categories.style.display="none"};
+    categories.appendChild(div);
   });
 }
-function toggleCategories(){categories.style.display=categories.style.display==="block"?"none":"block"}
+function toggleCategories(){
+  categories.style.display=categories.style.display==="block"?"none":"block";
+}
 </script>
 
 </body>
