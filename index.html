@@ -55,18 +55,18 @@ main{padding:24px}
 .slider{position:relative}
 .track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
 .arrow {
-  position:absolute;
-  top:45%;
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  border:none;
-  background:#1e293b;
-  color:white;
-  font-size:20px;
-  cursor:pointer;
-  z-index:5;
-  display:none; /* Se activará desde JS */
+  position: absolute;
+  top: 45%;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #1e293b;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 5;
+  display: inline-block; /* antes era display:none */
 }
 
 .arrow.left{left:-18px}
@@ -262,15 +262,12 @@ function renderSection(title, products) {
   const right = s.querySelector(".right");
 
   if (track.scrollWidth > track.clientWidth) {
-    left.style.display = "block";
-    right.style.display = "block";
-
-    left.onclick = () => track.scrollBy({ left: -240, behavior: 'smooth' });
-    right.onclick = () => track.scrollBy({ left: 240, behavior: 'smooth' });
+  left.style.display = "inline-block";
+  right.style.display = "inline-block";
   } else {
-    left.style.display = "none";
-    right.style.display = "none";
-  }
+  left.style.display = "none";
+  right.style.display = "none";
+}
 
   catalog.appendChild(s);
 }
