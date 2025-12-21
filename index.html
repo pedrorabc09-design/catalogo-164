@@ -273,31 +273,6 @@ main{padding:24px}
   const db = firebase.firestore();
 </script>
 
-<script>
-async function importProductsFromJSON() {
-  const res = await fetch("products.json");
-  const data = await res.json();
-
-  for (const [category, products] of Object.entries(data)) {
-    for (const p of products) {
-      await db.collection("products").add({
-        name: p.name,
-        category: category,
-        price: p.price,
-        finalPrice: p.finalPrice || p.price,
-        discount: p.discount || 0,
-        stock: p.stock,
-        image: p.image
-      });
-    }
-  }
-
-  alert("✅ Productos importados correctamente");
-}
-</script>
-  
-
-
 <!-- TU JS NORMAL -->
 <script>
   // TODO tu código actual
