@@ -258,10 +258,12 @@ function renderSection(title, products) {
       <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:16px;"> Comprar ahora</button>
     `;
     track.appendChild(c);
+
+    // animación de aparición
     setTimeout(() => c.classList.add("show"), 50);
   });
 
-  // Función que muestra/oculta flechas
+  // Función para mostrar/ocultar flechas
   function updateArrows() {
     if(track.scrollWidth > track.clientWidth) {
       left.style.display = "inline-block";
@@ -272,17 +274,20 @@ function renderSection(title, products) {
     }
   }
 
-  // Scroll al click de las flechas
+  // Scroll al hacer click
   left.onclick = () => track.scrollBy({ left: -220, behavior: 'smooth' });
   right.onclick = () => track.scrollBy({ left: 220, behavior: 'smooth' });
 
-  // Actualizar flechas al render y al hacer scroll
+  // Actualizar flechas después de un pequeño delay para que el DOM calcule tamaños
+  setTimeout(updateArrows, 50);
+
+  // También actualizamos al hacer scroll y redimensionar
   track.addEventListener("scroll", updateArrows);
-  window.addEventListener("resize", updateArrows); // Para que se ajuste si cambia tamaño
-  updateArrows();
+  window.addEventListener("resize", updateArrows);
 
   catalog.appendChild(s);
 }
+
 
 
 function showDetail(name){
