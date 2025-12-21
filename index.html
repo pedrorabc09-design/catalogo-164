@@ -493,16 +493,33 @@ function removeFromCart(name){
 }
 
 function checkout(){
-  let msg="Hola, quiero comprar:%0A";
-  let t=0;
+  // 📌 generar ID único
+  const now = new Date();
+  const dateCode = now.toISOString().slice(0,10).replace(/-/g,"");
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  const orderId = `IGN-${dateCode}-${rand}`;
+
+  const dateStr = now.toLocaleDateString("es-PE");
+  const timeStr = now.toLocaleTimeString("es-PE",{hour:'2-digit',minute:'2-digit'});
+
+  let msg = `Hola 👋%0A`;
+  msg += `Pedido: *${orderId}*%0A`;
+  msg += `Fecha: ${dateStr} ${timeStr}%0A%0A`;
+  msg += `Productos:%0A`;
+
+  let total = 0;
+
   Object.values(CART).forEach(p=>{
-    const price=p.discount?p.finalPrice:p.price;
-    msg+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;
-    t+=price*p.qty;
+    const price = p.discount ? p.finalPrice : p.price;
+    msg += `• ${p.name} x${p.qty} = S/ ${price * p.qty}%0A`;
+    total += price * p.qty;
   });
-  msg+=`%0ATotal: S/ ${t}`;
-  window.open("https://wa.me/51942434659?text="+msg);
+
+  msg += `%0A*Total: S/ ${total}*`;
+
+  window.open(`https://wa.me/51942434659?text=${msg}`);
 }
+
 
 function toggleCart(show){
   document.getElementById("cart").classList.toggle("active",show);
