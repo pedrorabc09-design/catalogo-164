@@ -257,16 +257,16 @@ function renderSection(title, products) {
     track.appendChild(c);
     // después de agregar todos los cards
     setTimeout(() => {
-    if(track.scrollWidth > track.clientWidth){
+  if(track.scrollWidth > track.clientWidth){
     left.style.display = "block";
     right.style.display = "block";
     left.onclick = () => track.scrollBy({left: -240, behavior: 'smooth'});
     right.onclick = () => track.scrollBy({left: 240, behavior: 'smooth'});
-    } else {
+  } else {
     left.style.display = "none";
     right.style.display = "none";
   }
-}, 50);
+}, 50); // <- coma después del cierre de la función arrow
 
 
   // Flechas con scroll dinámico
