@@ -312,19 +312,23 @@ function renderAll(selectedCategory = null){
     return;
   }
 
-  // 🔍 BÚSQUEDA POR TEXTO
-  Object.entries(DATA).forEach(([cat, products])=>{
-    const filtered = products.filter(p =>
-      p.name.toLowerCase().includes(q)
-    );
+// 🔍 BÚSQUEDA POR TEXTO (PRODUCTO O CATEGORÍA)
+Object.entries(DATA).forEach(([cat, products])=>{
+  const catMatch = cat.toLowerCase().includes(q);
 
-    if(filtered.length){
-      renderSection(
-        cat,
-        filtered.sort((a,b)=>a.price-b.price)
+  const filtered = catMatch
+    ? products                           // si coincide categoría → todo
+    : products.filter(p =>
+        p.name.toLowerCase().includes(q) // si no → por nombre
       );
-    }
-  });
+
+  if(filtered.length){
+    renderSection(
+      cat,
+      filtered.sort((a,b)=>a.price-b.price)
+    );
+  }
+});
 }
 
 
