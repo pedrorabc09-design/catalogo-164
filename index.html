@@ -255,11 +255,10 @@ main{padding:24px}
   <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
 </div>
 
-
 <script type="module">
-  /* ===============================
-     🔥 FIREBASE v10 (ÚNICO BLOQUE)
-     =============================== */
+  /**********************************
+   🔥 FIREBASE v10 — BLOQUE ÚNICO
+  **********************************/
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import {
@@ -268,7 +267,6 @@ main{padding:24px}
     getDocs
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  // 🔹 Configuración Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
     authDomain: "ignicar-toys.firebaseapp.com",
@@ -278,13 +276,11 @@ main{padding:24px}
     appId: "1:166759344812:web:5722c60005bde18e568d09"
   };
 
-  // 🔹 Inicializar Firebase
+  // Inicializar Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  /* ===============================
-     📦 FUNCIÓN PARA CARGAR PRODUCTOS
-     =============================== */
+  // 🔹 FUNCIÓN ÚNICA DE CARGA
   async function loadProductsFromFirestore() {
     const snapshot = await getDocs(collection(db, "products"));
     const products = [];
@@ -299,21 +295,10 @@ main{padding:24px}
     return products;
   }
 
-  /* ===============================
-     🌍 EXPONER AL HTML NORMAL
-     =============================== */
+  // 🌍 Exponer al JS normal
   window.loadProductsFromFirestore = loadProductsFromFirestore;
 </script>
 
-
-
-
-
-
-<!-- TU JS NORMAL -->
-<script>
-  // TODO tu código actual
-</script>
 
   
 <script>
