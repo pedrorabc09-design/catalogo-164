@@ -140,6 +140,69 @@ main{padding:24px}
   .detail-box{flex-direction:column}
   .detail-box img{width:100%}
 }
+
+@media (max-width: 768px){
+
+  /* HEADER */
+  .header-top{
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .logo{
+    height: 110px;
+    margin: 0 auto;
+  }
+
+  .search-area{
+    width: 100%;
+  }
+
+  .icons{
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* SLIDER */
+  .track{
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .arrow{
+    display: none !important; /* flechas fuera en móvil */
+  }
+
+  /* CARDS */
+  .card{
+    width: 160px;
+    min-width: 160px;
+  }
+
+  .card img{
+    height: 110px;
+  }
+
+  .card h3{
+    font-size: 13px;
+  }
+
+  /* DETAIL */
+  .detail-box{
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .detail-info{
+    text-align: center;
+  }
+
+  /* CART */
+  #cart{
+    width: 100%;
+  }
+}
+
 </style>
 </head>
 
