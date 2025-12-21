@@ -257,17 +257,29 @@ function renderSection(title, products) {
     setTimeout(() => c.classList.add("show"), 50);
   });
 
-  // Flechas
+  // Flechas con scroll dinámico
   const left = s.querySelector(".left");
   const right = s.querySelector(".right");
 
+  function updateArrows() {
+  left.style.display = track.scrollLeft > 0 ? "inline-block" : "none";
+  right.style.display = track.scrollLeft + track.clientWidth < track.scrollWidth ? "inline-block" : "none";
+}
+
+  // mostrar o ocultar según si hay scroll
   if (track.scrollWidth > track.clientWidth) {
   left.style.display = "inline-block";
   right.style.display = "inline-block";
+  left.onclick = () => { track.scrollBy({left: -240, behavior: 'smooth'}); setTimeout(updateArrows, 100); }
+  right.onclick = () => { track.scrollBy({left: 240, behavior: 'smooth'}); setTimeout(updateArrows, 100); }
   } else {
   left.style.display = "none";
   right.style.display = "none";
 }
+
+track.addEventListener("scroll", updateArrows);
+updateArrows();
+
 
   catalog.appendChild(s);
 }
