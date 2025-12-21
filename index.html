@@ -84,7 +84,8 @@ main{padding:24px}
 
 /* QTY */
 .qty{display:flex;justify-content:center;gap:8px;margin:6px 0}
-.qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white;cursor:pointer}
+.qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white;cursor:pointer;transition:.2s}
+.qty button:active{transform:scale(0.9)}
 
 /* BUTTONS */
 .add-btn,.buy-btn{
@@ -96,7 +97,7 @@ main{padding:24px}
 .buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
 .add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
 .add-btn:active,.buy-btn:active{transform:scale(.92)}
-.buy-btn img{width:18px}
+.buy-btn img{width:24px;height:24px;object-fit:contain}
 
 /* DETAIL */
 #detail{display:none;position:relative}
@@ -194,7 +195,6 @@ function renderAll(){
     let filtered=ps.filter(p=>p.name.toLowerCase().includes(q));
     if(!filtered.length) return;
 
-    // Ordena primero por descuento y luego por precio ascendente
     filtered.sort((a,b)=>{
       if(a.discount && !b.discount) return -1;
       if(!a.discount && b.discount) return 1;
@@ -262,14 +262,14 @@ function showDetail(name){
           <button onclick="changeQty('${p.name}',1)">+</button>
         </div>
         <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-        <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>
+        <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:24px;height:24px"> Comprar ahora</button>
       </div>
     </div>`;
 }
 
 function changeQty(name,d){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  p._qty=Math.max(1,Math.min(available(p),p._qty+d));
+  p._qty=Math.max(1,Math.min(p.stock-(CART[name]?CART[name].qty:0),p._qty+d));
   document.querySelectorAll(`#q-${name}, #q-${name}-detail`).forEach(e=>e.innerText=p._qty);
   const stockElem=document.getElementById(`stock-${name}`);
   if(stockElem) stockElem.innerText=available(p);
