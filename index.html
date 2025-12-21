@@ -255,8 +255,19 @@ function renderSection(title, products) {
       <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:16px;"> Comprar ahora</button>
     `;
     track.appendChild(c);
-    setTimeout(() => c.classList.add("show"), 50);
-  });
+    // después de agregar todos los cards
+    setTimeout(() => {
+    if(track.scrollWidth > track.clientWidth){
+    left.style.display = "block";
+    right.style.display = "block";
+    left.onclick = () => track.scrollBy({left: -240, behavior: 'smooth'});
+    right.onclick = () => track.scrollBy({left: 240, behavior: 'smooth'});
+    } else {
+    left.style.display = "none";
+    right.style.display = "none";
+  }
+}, 50);
+
 
   // Flechas con scroll dinámico
   const left = s.querySelector(".left");
