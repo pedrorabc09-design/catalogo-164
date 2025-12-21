@@ -20,7 +20,6 @@ header{background:#1e293b;padding:28px;color:white}
 .search-area input{flex:1;padding:14px;border-radius:14px;border:none}
 .cat-btn{padding:12px 16px;border:none;border-radius:14px;font-size:22px;background:#334155;color:white}
 .icons{display:flex;gap:14px;align-items:center}
-.icons img{width:32px}
 
 /* CART ICON */
 .cart-icon{position:relative;font-size:22px;cursor:pointer;transition:.3s}
@@ -162,7 +161,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Función para traer productos
+// Variables globales
+let DATA = {}, CART = JSON.parse(localStorage.getItem("cart") || "{}");
+const RESERVE_TIME = 60*60*1000;
+let cartTimeout;
+
+const catalog = document.getElementById("catalog");
+const detail = document.getElementById("detail");
+
+// ==== Función para traer productos desde Firestore ====
 async function loadProductsFromFirestore() {
   const snapshot = await getDocs(collection(db, "products"));
   const products = [];
@@ -170,17 +177,9 @@ async function loadProductsFromFirestore() {
   return products;
 }
 
-// ==== TODO TU JS ==== //
-let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
-const RESERVE_TIME=60*60*1000;
-let cartTimeout;
-
-const catalog=document.getElementById("catalog");
-const detail=document.getElementById("detail");
-
+// ==== Inicialización ====
 (async () => {
   const products = await loadProductsFromFirestore();
-
   DATA = {};
   products.forEach(p => {
     if(!DATA[p.category]) DATA[p.category] = [];
@@ -193,51 +192,21 @@ const detail=document.getElementById("detail");
   startCartTimer();
 })();
 
-</script>
+// ==== FUNCIONES ====
 
-  
-<div id="cart-overlay" onclick="toggleCart(false)"></div>
-<div id="cart">
-  <h2>Carrito <small id="cartTimer"></small></h2>
-  <div id="cartItems"></div>
-  <strong>Total: S/ <span id="cartTotal">0</span></strong>
-  <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
-</div>
-
-<script>
-let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
-const RESERVE_TIME=60*60*1000; // 1 hora
-let cartTimeout;
-
-const catalog=document.getElementById("catalog");
-const detail=document.getElementById("detail");
-
-(async () => {
-  const products = await window.loadProductsFromFirestore(); // ✅ obligatorio usar window
-  DATA = {};
-  products.forEach(p => {
-    if (!DATA[p.category]) DATA[p.category] = [];
-    p._qty = 1;
-    DATA[p.category].push(p);
-  });
-
-  buildCategories();
-  renderAll();
-  startCartTimer();
-})();
-
-
-
+// Timer carrito
 function startCartTimer(){
   clearInterval(cartTimeout);
-  cartTimeout=setInterval(()=>{renderCart();},1000);
+  cartTimeout=setInterval(renderCart,1000);
 }
 
+// Stock disponible
 function available(p){
   const c=CART[p.name];
   return p.stock-(c?c.qty:0);
 }
 
+// Render catálogo
 function renderAll(selectedCategory = null){
   catalog.innerHTML = "";
   detail.style.display = "none";
@@ -246,50 +215,27 @@ function renderAll(selectedCategory = null){
   const q = search.value.toLowerCase().trim();
   const isSearching = q !== "" || selectedCategory !== null;
 
-  // 🔥 OFERTAS SOLO EN HOME
   if(!isSearching){
-    const offers = Object.values(DATA)
-      .flat()
-      .filter(p => p.discount);
-
+    const offers = Object.values(DATA).flat().filter(p => p.discount);
     if(offers.length){
-      renderSection(
-        "🔥 Ofertas",
-        offers.sort((a,b)=>a.finalPrice-b.finalPrice)
-      );
+      renderSection("🔥 Ofertas", offers.sort((a,b)=>a.finalPrice-b.finalPrice));
     }
   }
 
-  // 📦 MOSTRAR POR CATEGORÍA
   if(selectedCategory){
-    renderSection(
-      selectedCategory,
-      DATA[selectedCategory].sort((a,b)=>a.price-b.price)
-    );
+    renderSection(selectedCategory, DATA[selectedCategory].sort((a,b)=>a.price-b.price));
     return;
   }
 
-// 🔍 BÚSQUEDA POR TEXTO (PRODUCTO O CATEGORÍA)
-Object.entries(DATA).forEach(([cat, products])=>{
-  const catMatch = cat.toLowerCase().includes(q);
-
-  const filtered = catMatch
-    ? products                           // si coincide categoría → todo
-    : products.filter(p =>
-        p.name.toLowerCase().includes(q) // si no → por nombre
-      );
-
-  if(filtered.length){
-    renderSection(
-      cat,
-      filtered.sort((a,b)=>a.price-b.price)
-    );
-  }
-});
+  Object.entries(DATA).forEach(([cat, products])=>{
+    const catMatch = cat.toLowerCase().includes(q);
+    const filtered = catMatch ? products : products.filter(p=>p.name.toLowerCase().includes(q));
+    if(filtered.length) renderSection(cat, filtered.sort((a,b)=>a.price-b.price));
+  });
 }
 
-
-function renderSection(title, products) {
+// Render sección
+function renderSection(title, products){
   const s = document.createElement("div");
   s.className = "section";
   s.innerHTML = `
@@ -300,22 +246,20 @@ function renderSection(title, products) {
       <button class="arrow right">›</button>
     </div>
   `;
-
   const track = s.querySelector(".track");
   const left = s.querySelector(".left");
   const right = s.querySelector(".right");
 
-  // Crear los cards
-  products.forEach(p => {
+  products.forEach(p=>{
     const a = available(p);
     const c = document.createElement("div");
-    c.className = "card" + (a <= 0 ? " disabled" : "");
+    c.className = "card" + (a<=0?" disabled":"");
     c.innerHTML = `
       ${p.discount ? `<div class="discount-badge">-${p.discount}%</div>` : ""}
-      ${a === 1 ? `<div class="last-unit">Última unidad</div>` : a <= 0 ? `<div class="out-stock">Agotado</div>` : ""}
+      ${a===1 ? `<div class="last-unit">Última unidad</div>` : a<=0 ? `<div class="out-stock">Agotado</div>` : ""}
       <img src="${p.image}" onclick="showDetail('${p.name}')">
       <h3 onclick="showDetail('${p.name}')">${p.name}</h3>
-      <div>${p.discount ? `<span class="old-price">S/ ${p.price}</span>` : ""}<span class="price">S/ ${p.discount ? p.finalPrice : p.price}</span></div>
+      <div>${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}<span class="price">S/ ${p.discount?p.finalPrice:p.price}</span></div>
       <div class="qty">
         <button onclick="changeQty('${p.name}',-1)">-</button>
         <span class="q-span">${p._qty}</span>
@@ -325,38 +269,29 @@ function renderSection(title, products) {
       <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:16px;"> Comprar ahora</button>
     `;
     track.appendChild(c);
-
-    // animación de aparición
-    setTimeout(() => c.classList.add("show"), 50);
+    setTimeout(()=>c.classList.add("show"),50);
   });
 
-  // Función para mostrar/ocultar flechas
-  function updateArrows() {
-    if(track.scrollWidth > track.clientWidth) {
-      left.style.display = "inline-block";
-      right.style.display = "inline-block";
+  // Flechas
+  function updateArrows(){
+    if(track.scrollWidth > track.clientWidth){
+      left.style.display="inline-block";
+      right.style.display="inline-block";
     } else {
-      left.style.display = "none";
-      right.style.display = "none";
+      left.style.display="none";
+      right.style.display="none";
     }
   }
-
-  // Scroll al hacer click
-  left.onclick = () => track.scrollBy({ left: -220, behavior: 'smooth' });
-  right.onclick = () => track.scrollBy({ left: 220, behavior: 'smooth' });
-
-  // Actualizar flechas después de un pequeño delay para que el DOM calcule tamaños
-  setTimeout(updateArrows, 50);
-
-  // También actualizamos al hacer scroll y redimensionar
+  left.onclick = ()=>track.scrollBy({left:-220, behavior:'smooth'});
+  right.onclick = ()=>track.scrollBy({left:220, behavior:'smooth'});
+  setTimeout(updateArrows,50);
   track.addEventListener("scroll", updateArrows);
   window.addEventListener("resize", updateArrows);
 
   catalog.appendChild(s);
 }
 
-
-
+// Mostrar detalle
 function showDetail(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
   if(!p) return;
@@ -364,49 +299,50 @@ function showDetail(name){
   detail.style.display="block";
   detail.innerHTML=`
     <div class="detail-box">
-  <div style="position:relative;">
-    <!-- Icono Volver más pequeño -->
-    <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png" style="width:28px;"></div>
-    <img src="${p.image}">
-  </div>
-  <div class="detail-info">
-    <h2>${p.name}</h2>
-    <p>Stock disponible: ${available(p)}</p>
-    <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
-    <div class="qty">
-      <button onclick="changeQty('${p.name}',-1)">-</button>
-      <span class="q-span">${p._qty}</span>
-      <button onclick="changeQty('${p.name}',1)">+</button>
+      <div style="position:relative;">
+        <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png" style="width:28px;"></div>
+        <img src="${p.image}">
+      </div>
+      <div class="detail-info">
+        <h2>${p.name}</h2>
+        <p>Stock disponible: ${available(p)}</p>
+        <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
+        <div class="qty">
+          <button onclick="changeQty('${p.name}',-1)">-</button>
+          <span class="q-span">${p._qty}</span>
+          <button onclick="changeQty('${p.name}',1)">+</button>
+        </div>
+        <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
+        <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:16px;"> Comprar ahora</button>
+      </div>
     </div>
-    <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-    <!-- Icono WhatsApp más pequeño -->
-    <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:16px;"> Comprar ahora</button>
-  </div>
-</div>`;
+  `;
 }
 
+// Cambiar cantidad
 function changeQty(name,d){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
-  p._qty=Math.max(1,Math.min(available(p),p._qty+d));
+  p._qty=Math.max(1, Math.min(available(p), p._qty+d));
   document.querySelectorAll(`.q-span`).forEach(e=>{
     if(e.closest(".card")?.querySelector("h3")?.innerText===name || e.closest(".detail-info")) e.innerText=p._qty;
   });
 }
 
+// Carrito
 function addToCart(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
   if(available(p)<=0) return;
-  if(!CART[name]) CART[name]={...p,qty:0,time:Date.now()};
+  if(!CART[name]) CART[name]={...p, qty:0, time:Date.now()};
   CART[name].qty+=p._qty;
   CART[name].time=Date.now();
   saveCart();
 }
 
-function buyNow(name){addToCart(name);toggleCart(true)}
-function goHome(){renderAll()}
+function buyNow(name){addToCart(name); toggleCart(true);}
+function goHome(){renderAll();}
 
 function saveCart(){
-  localStorage.setItem("cart",JSON.stringify(CART));
+  localStorage.setItem("cart", JSON.stringify(CART));
   renderCart();
   renderAll();
 }
@@ -420,15 +356,13 @@ function renderCart(){
   Object.values(CART).forEach(p=>{
     const elapsed = now - p.time;
     const left = RESERVE_TIME - elapsed;
-    if(left <= 0) return; // si expiró, lo ignoramos
+    if(left <= 0) return;
 
-    total += (p.discount?p.finalPrice:p.price) * p.qty;
+    total += (p.discount?p.finalPrice:p.price)*p.qty;
     count += p.qty;
 
-    // calcular tiempo restante de este producto
     const minutes = Math.floor(left/60000);
     const seconds = Math.floor((left%60000)/1000);
-
     minLeft = minutes;
     secLeft = seconds;
 
@@ -446,16 +380,14 @@ function renderCart(){
 
 function removeFromCart(name){
   delete CART[name];
-  saveCart(); // actualiza localStorage y vuelve a renderizar
+  saveCart();
 }
 
 function checkout(){
-  // 📌 generar ID único
-  const now = new Date();
+  const now=new Date();
   const dateCode = now.toISOString().slice(0,10).replace(/-/g,"");
-  const rand = Math.floor(1000 + Math.random() * 9000);
+  const rand = Math.floor(1000 + Math.random()*9000);
   const orderId = `IGN-${dateCode}-${rand}`;
-
   const dateStr = now.toLocaleDateString("es-PE");
   const timeStr = now.toLocaleTimeString("es-PE",{hour:'2-digit',minute:'2-digit'});
 
@@ -465,38 +397,33 @@ function checkout(){
   msg += `Productos:%0A`;
 
   let total = 0;
-
   Object.values(CART).forEach(p=>{
-    const price = p.discount ? p.finalPrice : p.price;
-    msg += `• ${p.name} x${p.qty} = S/ ${price * p.qty}%0A`;
-    total += price * p.qty;
+    const price=p.discount?p.finalPrice:p.price;
+    msg += `• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;
+    total += price*p.qty;
   });
-
   msg += `%0A*Total: S/ ${total}*`;
 
   window.open(`https://wa.me/51942434659?text=${msg}`);
 }
 
-
+// Mostrar/ocultar carrito
 function toggleCart(show){
   document.getElementById("cart").classList.toggle("active",show);
   document.getElementById("cart-overlay").classList.toggle("active",show);
 }
 
+// Categorías
 function buildCategories(){
-  categories.innerHTML = "";
-
-  Object.keys(DATA).forEach(cat => {
-    const d = document.createElement("div");
-    d.innerText = cat;
-
-    d.onclick = () => {
-    search.value = "";
-    renderAll(cat);
-    closeCategories(); // 👈 cierre limpio y consistente
-};
-
-
+  categories.innerHTML="";
+  Object.keys(DATA).forEach(cat=>{
+    const d=document.createElement("div");
+    d.innerText=cat;
+    d.onclick=()=>{
+      search.value="";
+      renderAll(cat);
+      closeCategories();
+    };
     categories.appendChild(d);
   });
 }
@@ -504,18 +431,13 @@ function buildCategories(){
 function toggleCategories(){
   const open = categories.style.display !== "block";
   categories.style.display = open ? "block" : "none";
-  document
-    .getElementById("categories-overlay")
-    .classList.toggle("active", open);
+  document.getElementById("categories-overlay").classList.toggle("active", open);
 }
 
-  function closeCategories(){
-  categories.style.display = "none";
-  document
-    .getElementById("categories-overlay")
-    .classList.remove("active");
+function closeCategories(){
+  categories.style.display="none";
+  document.getElementById("categories-overlay").classList.remove("active");
 }
-
 </script>
 
 </body>
