@@ -204,34 +204,52 @@ function available(p){
   return p.stock-(c?c.qty:0);
 }
 
-function renderAll(categoryToShow) {
+function renderAll(selectedCategory = null){
   catalog.innerHTML = "";
   detail.style.display = "none";
   catalog.style.display = "block";
 
-  const q = search.value.toLowerCase();
+  const q = search.value.toLowerCase().trim();
+  const isSearching = q !== "" || selectedCategory !== null;
 
-  // Ofertas primero (si no es categoría específica)
-  const allProducts = Object.values(DATA).flat();
-  const offers = allProducts.filter(p => p.discount && (!categoryToShow ? p.name.toLowerCase().includes(q) : true));
-  if(offers.length) renderSection("🔥 Ofertas", offers.sort((a,b)=>a.finalPrice-b.finalPrice));
+  // 🔥 OFERTAS SOLO EN HOME
+  if(!isSearching){
+    const offers = Object.values(DATA)
+      .flat()
+      .filter(p => p.discount);
 
-  Object.entries(DATA).forEach(([category, products]) => {
-    let filteredProducts;
-
-    if(categoryToShow) {
-      // Si estamos mostrando una categoría, mostramos todos los productos de esa categoría
-      if(category === categoryToShow) filteredProducts = products;
-      else return;
-    } else {
-      // Si no, filtramos por búsqueda
-      filteredProducts = products.filter(p => p.name.toLowerCase().includes(q));
-      if(!filteredProducts.length) return;
+    if(offers.length){
+      renderSection(
+        "🔥 Ofertas",
+        offers.sort((a,b)=>a.finalPrice-b.finalPrice)
+      );
     }
+  }
 
-    renderSection(category, filteredProducts.sort((a,b)=>a.price-b.price));
+  // 📦 MOSTRAR POR CATEGORÍA
+  if(selectedCategory){
+    renderSection(
+      selectedCategory,
+      DATA[selectedCategory].sort((a,b)=>a.price-b.price)
+    );
+    return;
+  }
+
+  // 🔍 BÚSQUEDA POR TEXTO
+  Object.entries(DATA).forEach(([cat, products])=>{
+    const filtered = products.filter(p =>
+      p.name.toLowerCase().includes(q)
+    );
+
+    if(filtered.length){
+      renderSection(
+        cat,
+        filtered.sort((a,b)=>a.price-b.price)
+      );
+    }
   });
 }
+
 
 function renderSection(title, products) {
   const s = document.createElement("div");
