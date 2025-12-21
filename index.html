@@ -275,7 +275,7 @@ main{padding:24px}
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { 
+  import {
     getFirestore,
     collection,
     getDocs
@@ -293,10 +293,12 @@ main{padding:24px}
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // 👇 Hacemos accesible Firestore al resto del código
+  // 🔥 EXPONEMOS A WINDOW
   window.db = db;
-  window.fs = { collection, getDocs };
+  window.collection = collection;
+  window.getDocs = getDocs;
 </script>
+
 
 
 <!-- TU JS NORMAL -->
@@ -311,7 +313,7 @@ const RESERVE_TIME=60*60*1000; // 1 hora
 let cartTimeout;
 
 async function loadProductsFromFirestore(){
-  const snapshot = await fs.getDocs(fs.collection(db, "products"));
+  const snapshot = await getDocs(collection(db, "products"));
   const products = [];
 
   snapshot.forEach(doc=>{
