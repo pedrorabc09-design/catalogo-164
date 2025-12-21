@@ -273,16 +273,11 @@ main{padding:24px}
   const db = firebase.firestore();
 </script>
 
-<!-- FIREBASE + FIRESTORE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    getDocs
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  import { getFirestore, collection, getDocs } 
+    from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  // 🔐 TU CONFIGURACIÓN REAL
   const firebaseConfig = {
     apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
     authDomain: "ignicar-toys.firebaseapp.com",
@@ -292,11 +287,9 @@ main{padding:24px}
     appId: "1:166759344812:web:5722c60005bde18e568d09"
   };
 
-  // 🚀 Inicializar Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // 📦 Cargar productos desde Firestore
   async function loadProductsFromFirestore(){
     const snapshot = await getDocs(collection(db, "products"));
     const products = [];
@@ -311,17 +304,13 @@ main{padding:24px}
     return products;
   }
 
-  // 🔎 PRUEBA (solo para validar que funciona)
-  (async ()=>{
-    const products = await loadProductsFromFirestore();
-    console.log("Productos desde Firestore:", products);
+  // ✅ PROBAR AQUÍ MISMO
+  const products = await loadProductsFromFirestore();
+  console.log("Productos desde Firestore:", products);
 
-    // 👉 en el siguiente paso aquí conectaremos con tu DATA
-  })();
-
-  // 🌍 Exponer funciones si las necesitas fuera
-  window.loadProductsFromFirestore = loadProductsFromFirestore;
+  // 👉 luego aquí conectaremos con tu DATA
 </script>
+
 
 
 
