@@ -238,7 +238,7 @@ function renderSection(title, products) {
   const left = s.querySelector(".left");
   const right = s.querySelector(".right");
 
-  // Crear cards
+  // Crear los cards
   products.forEach(p => {
     const a = available(p);
     const c = document.createElement("div");
@@ -261,9 +261,9 @@ function renderSection(title, products) {
     setTimeout(() => c.classList.add("show"), 50);
   });
 
-  // Función para mostrar/ocultar flechas
+  // Función que muestra/oculta flechas
   function updateArrows() {
-    if(track.scrollWidth > track.clientWidth){
+    if(track.scrollWidth > track.clientWidth) {
       left.style.display = "inline-block";
       right.style.display = "inline-block";
     } else {
@@ -272,16 +272,18 @@ function renderSection(title, products) {
     }
   }
 
-  // Asignar scroll al click de flechas
+  // Scroll al click de las flechas
   left.onclick = () => track.scrollBy({ left: -220, behavior: 'smooth' });
   right.onclick = () => track.scrollBy({ left: 220, behavior: 'smooth' });
 
-  // Actualizar flechas al inicio y al hacer scroll
+  // Actualizar flechas al render y al hacer scroll
   track.addEventListener("scroll", updateArrows);
+  window.addEventListener("resize", updateArrows); // Para que se ajuste si cambia tamaño
   updateArrows();
 
   catalog.appendChild(s);
 }
+
 
 function showDetail(name){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
