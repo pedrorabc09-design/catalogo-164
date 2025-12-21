@@ -143,6 +143,9 @@ main{padding:24px}
       <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
     <div class="icons">
+      <!-- Iconos sociales junto al carrito -->
+      <a href="https://wa.me/51942434659" target="_blank"><img src="imagenes/whatsapp-logo.png" style="width:28px;"></a>
+      <a href="#" target="_blank"><img src="imagenes/facebook.png" style="width:28px;"></a>
       <div class="cart-icon" onclick="toggleCart(true)">
         🛒 <span class="cart-count" id="cartCount">0</span>
       </div>
@@ -150,6 +153,7 @@ main{padding:24px}
   </div>
   <div id="categories"></div>
 </header>
+
 
 <main>
   <div id="catalog"></div>
@@ -254,23 +258,25 @@ function showDetail(name){
   detail.style.display="block";
   detail.innerHTML=`
     <div class="detail-box">
-      <div style="position:relative;">
-        <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png"></div>
-        <img src="${p.image}">
-      </div>
-      <div class="detail-info">
-        <h2>${p.name}</h2>
-        <p>Stock disponible: ${available(p)}</p>
-        <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
-        <div class="qty">
-          <button onclick="changeQty('${p.name}',-1)">-</button>
-          <span class="q-span">${p._qty}</span>
-          <button onclick="changeQty('${p.name}',1)">+</button>
-        </div>
-        <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-        <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>
-      </div>
-    </div>`;
+  <div style="position:relative;">
+    <!-- Icono Volver más pequeño -->
+    <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png" style="width:28px;"></div>
+    <img src="${p.image}">
+  </div>
+  <div class="detail-info">
+    <h2>${p.name}</h2>
+    <p>Stock disponible: ${available(p)}</p>
+    <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
+    <div class="qty">
+      <button onclick="changeQty('${p.name}',-1)">-</button>
+      <span class="q-span">${p._qty}</span>
+      <button onclick="changeQty('${p.name}',1)">+</button>
+    </div>
+    <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
+    <!-- Icono WhatsApp más pequeño -->
+    <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:16px;"> Comprar ahora</button>
+  </div>
+</div>`;
 }
 
 function changeQty(name,d){
