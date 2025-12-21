@@ -54,12 +54,21 @@ main{padding:24px}
 /* SLIDER */
 .slider{position:relative}
 .track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
-.arrow{
-  display:none;
-  position:absolute;top:45%;
-  width:38px;height:38px;border-radius:50%;
-  border:none;background:#1e293b;color:white;font-size:20px;cursor:pointer;z-index:5
+.arrow {
+  position:absolute;
+  top:45%;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:none;
+  background:#1e293b;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  z-index:5;
+  display:none; /* Se activará desde JS */
 }
+
 .arrow.left{left:-18px}
 .arrow.right{right:-18px}
 
@@ -212,48 +221,56 @@ function renderAll(){
   });
 }
 
-function renderSection(title,products){
-  const s=document.createElement("div");
-  s.className="section";
-  s.innerHTML=`<h2>${title}</h2><div class="slider"><button class="arrow left">‹</button><div class="track"></div><button class="arrow right">›</button></div>`;
-  const track=s.querySelector(".track");
+function renderSection(title, products) {
+  const s = document.createElement("div");
+  s.className = "section";
+  s.innerHTML = `
+    <h2>${title}</h2>
+    <div class="slider">
+      <button class="arrow left">‹</button>
+      <div class="track"></div>
+      <button class="arrow right">›</button>
+    </div>
+  `;
+  
+  const track = s.querySelector(".track");
 
-  products.forEach(p=>{
-    const a=available(p);
-    const c=document.createElement("div");
-    c.className="card"+(a<=0?" disabled":"");
-    c.innerHTML=`
-      ${p.discount?`<div class="discount-badge">-${p.discount}%</div>`:""}
-      ${a===1?`<div class="last-unit">Última unidad</div>`:a<=0?`<div class="out-stock">Agotado</div>`:""}
+  products.forEach(p => {
+    const a = available(p);
+    const c = document.createElement("div");
+    c.className = "card" + (a <= 0 ? " disabled" : "");
+    c.innerHTML = `
+      ${p.discount ? `<div class="discount-badge">-${p.discount}%</div>` : ""}
+      ${a === 1 ? `<div class="last-unit">Última unidad</div>` : a <= 0 ? `<div class="out-stock">Agotado</div>` : ""}
       <img src="${p.image}" onclick="showDetail('${p.name}')">
       <h3 onclick="showDetail('${p.name}')">${p.name}</h3>
-      <div>${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}<span class="price">S/ ${p.discount?p.finalPrice:p.price}</span></div>
+      <div>${p.discount ? `<span class="old-price">S/ ${p.price}</span>` : ""}<span class="price">S/ ${p.discount ? p.finalPrice : p.price}</span></div>
       <div class="qty">
         <button onclick="changeQty('${p.name}',-1)">-</button>
         <span class="q-span">${p._qty}</span>
         <button onclick="changeQty('${p.name}',1)">+</button>
       </div>
       <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-      <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>`;
+      <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png" style="width:16px;"> Comprar ahora</button>
+    `;
     track.appendChild(c);
-    setTimeout(()=>c.classList.add("show"),50);
+    setTimeout(() => c.classList.add("show"), 50);
   });
 
-  // flechas
-const left = s.querySelector(".left");
-const right = s.querySelector(".right");
+  // Flechas
+  const left = s.querySelector(".left");
+  const right = s.querySelector(".right");
 
-// mostrar flechas solo si el contenido es más ancho que el contenedor
-if (track.scrollWidth > track.clientWidth) {
+  if (track.scrollWidth > track.clientWidth) {
     left.style.display = "block";
     right.style.display = "block";
 
-    left.onclick = () => track.scrollLeft -= 240;  // ajusta 240 según el ancho de tus cards + gap
-    right.onclick = () => track.scrollLeft += 240;
-} else {
+    left.onclick = () => track.scrollBy({ left: -240, behavior: 'smooth' });
+    right.onclick = () => track.scrollBy({ left: 240, behavior: 'smooth' });
+  } else {
     left.style.display = "none";
     right.style.display = "none";
-}
+  }
 
   catalog.appendChild(s);
 }
