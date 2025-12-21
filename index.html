@@ -131,6 +131,19 @@ main{padding:24px}
   background:white;padding:20px;transition:.3s;z-index:50
 }
 #cart.active{right:0}
+
+/* CATEGORIES OVERLAY */
+#categories-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:transparent;
+  z-index:9;
+}
+#categories-overlay.active{
+  display:block;
+}
+
 .cart-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:14px}
 .cart-item small{color:#dc2626}
 .cart-item button{border:none;background:none;cursor:pointer}
@@ -227,7 +240,8 @@ main{padding:24px}
   <div id="categories"></div>
 </header>
 
-
+  <div id="categories-overlay" onclick="closeCategories()"></div>
+  
 <main>
   <div id="catalog"></div>
   <div id="detail"></div>
@@ -499,16 +513,31 @@ function buildCategories(){
     d.innerText = cat;
 
     d.onclick = () => {
-      search.value = "";        // NO usar búsqueda por texto
-      renderAll(cat);           // Mostrar directamente la categoría
-      categories.style.display = "none";
-    };
+    search.value = "";
+    renderAll(cat);
+    closeCategories(); // 👈 cierre limpio y consistente
+};
+
 
     categories.appendChild(d);
   });
 }
 
-function toggleCategories(){categories.style.display=categories.style.display==="block"?"none":"block"}
+function toggleCategories(){
+  const open = categories.style.display !== "block";
+  categories.style.display = open ? "block" : "none";
+  document
+    .getElementById("categories-overlay")
+    .classList.toggle("active", open);
+}
+
+  function closeCategories(){
+  categories.style.display = "none";
+  document
+    .getElementById("categories-overlay")
+    .classList.remove("active");
+}
+
 </script>
 
 </body>
