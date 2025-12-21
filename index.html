@@ -6,6 +6,7 @@
 <title>IGNICAR TOYS</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="imagenes/Volver.png" type="image/png">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Montserrat',sans-serif}
@@ -13,22 +14,35 @@ body{background:#f1f5f9;color:#0f172a}
 
 /* HEADER */
 header{background:#1e293b;padding:28px;color:white}
-.header-top{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-.logo{height:120px;cursor:pointer}
+.header-top{display:flex;align-items:center;gap:20px}
+.logo{height:180px;cursor:pointer}
 .search-area{flex:1;display:flex;gap:10px}
 .search-area input{flex:1;padding:14px;border-radius:14px;border:none}
 .cat-btn{padding:12px 16px;border:none;border-radius:14px;font-size:22px;background:#334155;color:white}
 .icons{display:flex;gap:14px;align-items:center}
-.icons img{width:28px;cursor:pointer}
+.icons img{width:32px}
 
 /* CART ICON */
 .cart-icon{position:relative;font-size:22px;cursor:pointer;transition:.3s}
 .cart-icon.bounce{animation:bounce .4s}
-@keyframes bounce{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
-.cart-count{position:absolute;top:-6px;right:-10px;background:#dc2626;color:white;font-size:12px;padding:2px 6px;border-radius:50%}
+@keyframes bounce{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.25)}
+  100%{transform:scale(1)}
+}
+.cart-count{
+  position:absolute;top:-6px;right:-10px;
+  background:#dc2626;color:white;
+  font-size:12px;padding:2px 6px;border-radius:50%
+}
 
 /* CATEGORIES */
-#categories{display:none;position:absolute;top:230px;left:50%;transform:translateX(-50%);background:white;width:300px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:10}
+#categories{
+  display:none;position:absolute;top:230px;left:50%;
+  transform:translateX(-50%);
+  background:white;width:300px;border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:10;color:#0f172a;
+}
 #categories div{padding:14px;font-weight:600;cursor:pointer}
 #categories div:hover{background:#e2e8f0}
 
@@ -40,12 +54,25 @@ main{padding:24px}
 /* SLIDER */
 .slider{position:relative}
 .track{display:flex;gap:16px;overflow:hidden;scroll-behavior:smooth}
-.arrow{display:none;position:absolute;top:45%;width:38px;height:38px;border-radius:50%;border:none;background:#1e293b;color:white;font-size:20px;cursor:pointer;z-index:5}
+.arrow{
+  display:none;
+  position:absolute;top:45%;
+  width:38px;height:38px;border-radius:50%;
+  border:none;background:#1e293b;color:white;font-size:20px;cursor:pointer;z-index:5
+}
 .arrow.left{left:-18px}
 .arrow.right{right:-18px}
 
 /* CARD */
-.card{background:white;width:220px;min-width:220px;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;position:relative;opacity:0;transform:translateY(20px);transition:.5s}
+.card{
+  background:white;width:220px;min-width:220px;
+  border-radius:18px;padding:14px;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  opacity:0;transform:translateY(20px);
+  transition:.5s
+}
 .card.show{opacity:1;transform:none}
 .card.disabled{opacity:.45;pointer-events:none}
 .card img{width:100%;height:140px;object-fit:contain;cursor:pointer}
@@ -61,28 +88,38 @@ main{padding:24px}
 /* QTY */
 .qty{display:flex;justify-content:center;gap:8px;margin:6px 0}
 .qty button{width:28px;height:28px;border:none;border-radius:6px;background:#334155;color:white;cursor:pointer;transition:.2s}
-.qty button:hover{transform:translateY(-2px)}
 .qty button:active{transform:scale(.92)}
 
 /* BUTTONS */
-.add-btn,.buy-btn{height:38px;border-radius:12px;border:none;cursor:pointer;transition:.2s;width:100%;margin-top:6px}
+.add-btn,.buy-btn{
+  height:38px;border-radius:12px;
+  border:none;cursor:pointer;
+  transition:.2s;width:100%;margin-top:6px
+}
 .add-btn{background:#0ea5e9;color:white}
 .buy-btn{background:#25d366;color:white;display:flex;align-items:center;justify-content:center;gap:6px}
 .add-btn:hover,.buy-btn:hover{transform:translateY(-2px)}
 .add-btn:active,.buy-btn:active{transform:scale(.92)}
-.buy-btn img{width:18px;object-fit:contain}
+.buy-btn img{width:16px}
 
 /* DETAIL */
 #detail{display:none}
 .back-btn img{width:36px;cursor:pointer;margin-bottom:16px}
-.detail-box{display:flex;gap:28px;background:white;padding:24px;border-radius:22px;align-items:center;justify-content:center}
-.detail-box img{width:280px;object-fit:contain}
+.detail-box{
+  display:flex;gap:28px;background:white;
+  padding:24px;border-radius:22px;
+  align-items:center;justify-content:center
+}
+.detail-box img{width:280px}
 .detail-info{max-width:360px}
 
 /* CART */
 #cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5)}
 #cart-overlay.active{display:block}
-#cart{position:fixed;right:-420px;top:0;width:420px;height:100%;background:white;padding:20px;transition:.3s;z-index:50}
+#cart{
+  position:fixed;right:-420px;top:0;width:420px;height:100%;
+  background:white;padding:20px;transition:.3s;z-index:50
+}
 #cart.active{right:0}
 .cart-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:14px}
 .cart-item small{color:#dc2626}
@@ -90,7 +127,6 @@ main{padding:24px}
 
 /* MOBILE */
 @media(max-width:768px){
-  .header-top{flex-direction:column}
   .detail-box{flex-direction:column}
   .detail-box img{width:100%}
 }
@@ -107,8 +143,6 @@ main{padding:24px}
       <button class="cat-btn" onclick="toggleCategories()">☰</button>
     </div>
     <div class="icons">
-      <a href="https://wa.me/51942434659" target="_blank"><img src="imagenes/whatsapp-logo.png"></a>
-      <a href="#" target="_blank"><img src="imagenes/facebook.png"></a>
       <div class="cart-icon" onclick="toggleCart(true)">
         🛒 <span class="cart-count" id="cartCount">0</span>
       </div>
@@ -133,6 +167,10 @@ main{padding:24px}
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
 const RESERVE_TIME=60*60*1000; // 1 hora
+let cartTimeout;
+
+const catalog=document.getElementById("catalog");
+const detail=document.getElementById("detail");
 
 fetch("products.json").then(r=>r.json()).then(d=>{
   DATA=d;
@@ -142,38 +180,38 @@ fetch("products.json").then(r=>r.json()).then(d=>{
   startCartTimer();
 });
 
-function available(p){return p.stock-(CART[p.name]?CART[p.name].qty:0);}
+function startCartTimer(){
+  clearInterval(cartTimeout);
+  cartTimeout=setInterval(()=>{renderCart();},1000);
+}
+
+function available(p){
+  const c=CART[p.name];
+  return p.stock-(c?c.qty:0);
+}
 
 function renderAll(){
   catalog.innerHTML="";
   detail.style.display="none";
   catalog.style.display="block";
+
   const q=search.value.toLowerCase();
 
-  Object.entries(DATA).forEach(([cat,products])=>{
-    let filtered = products.filter(p=>p.name.toLowerCase().includes(q));
+  // ofertas primero
+  const offers=Object.values(DATA).flat().filter(p=>p.discount && (p.name.toLowerCase().includes(q)));
+  if(offers.length) renderSection("🔥 Ofertas",offers.sort((a,b)=>a.finalPrice-b.finalPrice));
+
+  Object.entries(DATA).forEach(([b,ps])=>{
+    const filtered=ps.filter(p=>p.name.toLowerCase().includes(q));
     if(!filtered.length) return;
-
-    // Orden: ofertas primero, luego precio ascendente
-    filtered.sort((a,b)=>{
-      if(a.discount && !b.discount) return -1;
-      if(!a.discount && b.discount) return 1;
-      return (a.discount?a.finalPrice:a.price)-(b.discount?b.finalPrice:b.price);
-    });
-
-    renderSection(cat,filtered);
+    renderSection(b,filtered.sort((a,b)=>a.price-b.price));
   });
 }
 
 function renderSection(title,products){
   const s=document.createElement("div");
   s.className="section";
-  s.innerHTML=`<h2>${title}</h2>
-    <div class="slider">
-      <button class="arrow left">‹</button>
-      <div class="track"></div>
-      <button class="arrow right">›</button>
-    </div>`;
+  s.innerHTML=`<h2>${title}</h2><div class="slider"><button class="arrow left">‹</button><div class="track"></div><button class="arrow right">›</button></div>`;
   const track=s.querySelector(".track");
 
   products.forEach(p=>{
@@ -188,26 +226,24 @@ function renderSection(title,products){
       <div>${p.discount?`<span class="old-price">S/ ${p.price}</span>`:""}<span class="price">S/ ${p.discount?p.finalPrice:p.price}</span></div>
       <div class="qty">
         <button onclick="changeQty('${p.name}',-1)">-</button>
-        <span id="q-${p.name}">${p._qty}</span>
+        <span class="q-span">${p._qty}</span>
         <button onclick="changeQty('${p.name}',1)">+</button>
       </div>
       <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-      <button class="buy-btn" onclick="buyNow('${p.name}')">
-        <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-      </button>`;
+      <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>`;
     track.appendChild(c);
     setTimeout(()=>c.classList.add("show"),50);
   });
 
-  // Flechas
-  const left=s.querySelector(".left");
-  const right=s.querySelector(".right");
+  // flechas
+  const left=s.querySelector(".left"),right=s.querySelector(".right");
   if(track.scrollWidth>track.clientWidth){
     left.style.display="block";
     right.style.display="block";
     left.onclick=()=>track.scrollLeft-=240;
     right.onclick=()=>track.scrollLeft+=240;
   }
+
   catalog.appendChild(s);
 }
 
@@ -217,24 +253,22 @@ function showDetail(name){
   catalog.style.display="none";
   detail.style.display="block";
   detail.innerHTML=`
-    <div style="position:relative;">
-      <div class="back-btn" style="position:absolute;left:0;top:0;" onclick="goHome()"><img src="imagenes/Volver.png"></div>
-      <div class="detail-box">
+    <div class="detail-box">
+      <div style="position:relative;">
+        <div class="back-btn" onclick="goHome()"><img src="imagenes/Volver.png"></div>
         <img src="${p.image}">
-        <div class="detail-info">
-          <h2>${p.name}</h2>
-          <p>Stock disponible: ${available(p)}</p>
-          <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
-          <div class="qty">
-            <button onclick="changeQty('${p.name}',-1)">-</button>
-            <span id="q-${p.name}">${p._qty}</span>
-            <button onclick="changeQty('${p.name}',1)">+</button>
-          </div>
-          <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
-          <button class="buy-btn" onclick="buyNow('${p.name}')">
-            <img src="imagenes/whatsapp-logo.png"> Comprar ahora
-          </button>
+      </div>
+      <div class="detail-info">
+        <h2>${p.name}</h2>
+        <p>Stock disponible: ${available(p)}</p>
+        <p class="price">S/ ${p.discount?p.finalPrice:p.price}</p>
+        <div class="qty">
+          <button onclick="changeQty('${p.name}',-1)">-</button>
+          <span class="q-span">${p._qty}</span>
+          <button onclick="changeQty('${p.name}',1)">+</button>
         </div>
+        <button class="add-btn" onclick="addToCart('${p.name}')">Añadir al carrito</button>
+        <button class="buy-btn" onclick="buyNow('${p.name}')"><img src="imagenes/whatsapp-logo.png"> Comprar ahora</button>
       </div>
     </div>`;
 }
@@ -242,7 +276,9 @@ function showDetail(name){
 function changeQty(name,d){
   const p=Object.values(DATA).flat().find(x=>x.name===name);
   p._qty=Math.max(1,Math.min(available(p),p._qty+d));
-  document.querySelectorAll(`#q-${name}`).forEach(e=>e.innerText=p._qty);
+  document.querySelectorAll(`.q-span`).forEach(e=>{
+    if(e.closest(".card")?.querySelector("h3")?.innerText===name || e.closest(".detail-info")) e.innerText=p._qty;
+  });
 }
 
 function addToCart(name){
@@ -251,42 +287,38 @@ function addToCart(name){
   if(!CART[name]) CART[name]={...p,qty:0,time:Date.now()};
   CART[name].qty+=p._qty;
   CART[name].time=Date.now();
-  save();
+  saveCart();
 }
 
-function buyNow(name){addToCart(name);toggleCart(true);}
-function goHome(){renderAll();}
-function toggleCart(show){
-  cart.classList.toggle("active",show);
-  cartOverlay.classList.toggle("active",show);
-}
+function buyNow(name){addToCart(name);toggleCart(true)}
+function goHome(){renderAll()}
 
-function buildCategories(){
-  categories.innerHTML="";
-  Object.keys(DATA).forEach(cat=>{
-    const d=document.createElement("div");
-    d.innerText=cat;
-    d.onclick=()=>{search.value=cat;renderAll();categories.style.display="none"};
-    categories.appendChild(d);
-  });
+function saveCart(){
+  localStorage.setItem("cart",JSON.stringify(CART));
+  renderCart();
+  renderAll();
 }
-
-function toggleCategories(){categories.style.display=categories.style.display==="block"?"none":"block";}
 
 function renderCart(){
-  let total=0,count=0;
+  let total=0, count=0;
   cartItems.innerHTML="";
+  const now=Date.now();
   Object.values(CART).forEach(p=>{
+    const left=RESERVE_TIME-(now-p.time);
+    if(left<=0) return;
     total+=(p.discount?p.finalPrice:p.price)*p.qty;
     count+=p.qty;
     cartItems.innerHTML+=`<div class="cart-item">${p.name} x${p.qty}</div>`;
   });
   cartTotal.innerText=total;
   cartCount.innerText=count;
+  const minutes=Math.floor(RESERVE_TIME/60000);
+  cartTimer.innerText=`(${minutes} min)`;
 }
 
 function checkout(){
-  let msg="Hola, quiero comprar:%0A";let t=0;
+  let msg="Hola, quiero comprar:%0A";
+  let t=0;
   Object.values(CART).forEach(p=>{
     const price=p.discount?p.finalPrice:p.price;
     msg+=`• ${p.name} x${p.qty} = S/ ${price*p.qty}%0A`;
@@ -296,18 +328,22 @@ function checkout(){
   window.open("https://wa.me/51942434659?text="+msg);
 }
 
-function startCartTimer(){
-  setInterval(()=>{
-    const now=Date.now();
-    let hasItems=false;
-    Object.values(CART).forEach(p=>{
-      if(now-p.time>RESERVE_TIME) delete CART[p.name];
-      else hasItems=true;
-    });
-    save();
-    cartTimer.innerText=hasItems?`(${Math.ceil(RESERVE_TIME/60000)} min)`:"";
-  },1000);
+function toggleCart(show){
+  document.getElementById("cart").classList.toggle("active",show);
+  document.getElementById("cart-overlay").classList.toggle("active",show);
 }
+
+function buildCategories(){
+  categories.innerHTML="";
+  Object.keys(DATA).forEach(cat=>{
+    const d=document.createElement("div");
+    d.innerText=cat;
+    d.onclick=()=>{search.value=cat; renderAll(); categories.style.display="none";};
+    categories.appendChild(d);
+  });
+}
+function toggleCategories(){categories.style.display=categories.style.display==="block"?"none":"block"}
 </script>
+
 </body>
 </html>
