@@ -66,8 +66,9 @@ main{padding:24px}
   font-size: 20px;
   cursor: pointer;
   z-index: 5;
-  display: inline-block; /* antes era display:none */
+  display: none;  /* línea a cambiar */
 }
+
 
 .arrow.left{left:-18px}
 .arrow.right{right:-18px}
@@ -261,21 +262,16 @@ function renderSection(title, products) {
   const left = s.querySelector(".left");
   const right = s.querySelector(".right");
 
-  function updateArrows() {
-  left.style.display = track.scrollLeft > 0 ? "inline-block" : "none";
-  right.style.display = track.scrollLeft + track.clientWidth < track.scrollWidth ? "inline-block" : "none";
-}
-
-  // mostrar o ocultar según si hay scroll
-  if (track.scrollWidth > track.clientWidth) {
-  left.style.display = "inline-block";
-  right.style.display = "inline-block";
-  left.onclick = () => { track.scrollBy({left: -240, behavior: 'smooth'}); setTimeout(updateArrows, 100); }
-  right.onclick = () => { track.scrollBy({left: 240, behavior: 'smooth'}); setTimeout(updateArrows, 100); }
+  if(track.scrollWidth > track.clientWidth){
+  left.style.display = "block";
+  right.style.display = "block";
+  left.onclick = () => track.scrollBy({left: -240, behavior: 'smooth'});
+  right.onclick = () => track.scrollBy({left: 240, behavior: 'smooth'});
   } else {
   left.style.display = "none";
   right.style.display = "none";
 }
+
 
 track.addEventListener("scroll", updateArrows);
 updateArrows();
