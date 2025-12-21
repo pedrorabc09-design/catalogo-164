@@ -309,17 +309,38 @@ function renderCart(){
   let total=0, count=0;
   cartItems.innerHTML="";
   const now=Date.now();
+  let minLeft=0, secLeft=0;
+
   Object.values(CART).forEach(p=>{
-    const left=RESERVE_TIME-(now-p.time);
-    if(left<=0) return;
-    total+=(p.discount?p.finalPrice:p.price)*p.qty;
-    count+=p.qty;
-    cartItems.innerHTML+=`<div class="cart-item">${p.name} x${p.qty}</div>`;
+    const elapsed = now - p.time;
+    const left = RESERVE_TIME - elapsed;
+    if(left <= 0) return; // si expiró, lo ignoramos
+
+    total += (p.discount?p.finalPrice:p.price) * p.qty;
+    count += p.qty;
+
+    // calcular tiempo restante de este producto
+    const minutes = Math.floor(left/60000);
+    const seconds = Math.floor((left%60000)/1000);
+
+    minLeft = minutes;
+    secLeft = seconds;
+
+    cartItems.innerHTML += `
+      <div class="cart-item">
+        ${p.name} x${p.qty}
+        <button onclick="removeFromCart('${p.name}')">❌</button>
+      </div>`;
   });
-  cartTotal.innerText=total;
-  cartCount.innerText=count;
-  const minutes=Math.floor(RESERVE_TIME/60000);
-  cartTimer.innerText=`(${minutes} min)`;
+
+  cartTotal.innerText = total;
+  cartCount.innerText = count;
+  cartTimer.innerText = `(${minLeft}m ${secLeft}s)`;
+}
+
+function removeFromCart(name){
+  delete CART[name];
+  saveCart(); // actualiza localStorage y vuelve a renderizar
 }
 
 function checkout(){
