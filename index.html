@@ -66,7 +66,7 @@ main{padding:24px}
   font-size: 20px;
   cursor: pointer;
   z-index: 5;
-  display: none;  /* línea a cambiar */
+  display: none; /* Se controla por JS */
 }
 
 
@@ -261,7 +261,7 @@ function renderSection(title, products) {
     setTimeout(() => c.classList.add("show"), 50);
   });
 
-  // Función para mostrar/ocultar flechas según scroll
+  // Función para mostrar/ocultar flechas
   function updateArrows() {
     if(track.scrollWidth > track.clientWidth){
       left.style.display = "inline-block";
@@ -273,10 +273,10 @@ function renderSection(title, products) {
   }
 
   // Asignar scroll al click de flechas
-  left.onclick = () => track.scrollBy({ left: -240, behavior: 'smooth' });
-  right.onclick = () => track.scrollBy({ left: 240, behavior: 'smooth' });
+  left.onclick = () => track.scrollBy({ left: -220, behavior: 'smooth' });
+  right.onclick = () => track.scrollBy({ left: 220, behavior: 'smooth' });
 
-  // Actualizar flechas al iniciar y al hacer scroll
+  // Actualizar flechas al inicio y al hacer scroll
   track.addEventListener("scroll", updateArrows);
   updateArrows();
 
