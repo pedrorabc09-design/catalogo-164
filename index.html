@@ -247,22 +247,11 @@ main{padding:24px}
   <div id="detail"></div>
 </main>
 
-<div id="cart-overlay" onclick="toggleCart(false)"></div>
-<div id="cart">
-  <h2>Carrito <small id="cartTimer"></small></h2>
-  <div id="cartItems"></div>
-  <strong>Total: S/ <span id="cartTotal">0</span></strong>
-  <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
-</div>
-
 <script type="module">
-  /**********************************
-   🔥 FIREBASE v10 — BLOQUE ÚNICO
-  **********************************/
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
+// Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
   authDomain: "ignicar-toys.firebaseapp.com",
@@ -275,6 +264,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Función para traer productos
 async function loadProductsFromFirestore() {
   const snapshot = await getDocs(collection(db, "products"));
   const products = [];
@@ -282,13 +272,39 @@ async function loadProductsFromFirestore() {
   return products;
 }
 
-// 🔹 Exponer globalmente
-window.loadProductsFromFirestore = loadProductsFromFirestore;
+// Tu JS normal que depende de Firebase:
+let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
+const RESERVE_TIME = 60*60*1000;
+let cartTimeout;
 
+const catalog=document.getElementById("catalog");
+const detail=document.getElementById("detail");
+
+(async () => {
+  const products = await loadProductsFromFirestore(); // ✅ ya está disponible
+
+  DATA = {};
+  products.forEach(p => {
+    if(!DATA[p.category]) DATA[p.category] = [];
+    p._qty = 1;
+    DATA[p.category].push(p);
+  });
+
+  buildCategories();
+  renderAll();
+  startCartTimer();
+})();
 </script>
 
-
   
+<div id="cart-overlay" onclick="toggleCart(false)"></div>
+<div id="cart">
+  <h2>Carrito <small id="cartTimer"></small></h2>
+  <div id="cartItems"></div>
+  <strong>Total: S/ <span id="cartTotal">0</span></strong>
+  <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
+</div>
+
 <script>
 let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
 const RESERVE_TIME=60*60*1000; // 1 hora
