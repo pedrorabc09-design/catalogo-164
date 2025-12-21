@@ -209,16 +209,19 @@ function renderAll(){
   detail.style.display="none";
   catalog.style.display="block";
 
-  const q=search.value.toLowerCase();
+  const q = search.value.toLowerCase();
 
   // ofertas primero
-  const offers=Object.values(DATA).flat().filter(p=>p.discount && (p.name.toLowerCase().includes(q)));
-  if(offers.length) renderSection("🔥 Ofertas",offers.sort((a,b)=>a.finalPrice-b.finalPrice));
+  const offers = Object.values(DATA).flat().filter(p => p.discount && p.name.toLowerCase().includes(q));
+  if(offers.length) renderSection("🔥 Ofertas", offers.sort((a,b) => a.finalPrice - b.finalPrice));
 
-  Object.entries(DATA).forEach(([b,ps])=>{
-    const filtered=ps.filter(p=>p.name.toLowerCase().includes(q));
-    if(!filtered.length) return;
-    renderSection(b,filtered.sort((a,b)=>a.price-b.price));
+  // recorrer categorías
+  Object.entries(DATA).forEach(([category, products]) => {
+    const matched = products.some(p => p.name.toLowerCase().includes(q));
+    if(!matched) return; // si ningún producto coincide, no mostramos la categoría
+
+    // mostramos TODOS los productos de la categoría
+    renderSection(category, products.sort((a,b) => a.price - b.price));
   });
 }
 
