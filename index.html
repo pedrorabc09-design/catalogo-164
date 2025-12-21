@@ -204,23 +204,30 @@ function available(p){
   return p.stock-(c?c.qty:0);
 }
 
-function renderAll(){
-  catalog.innerHTML="";
-  detail.style.display="none";
-  catalog.style.display="block";
+function renderAll(categoryToShow) {
+  catalog.innerHTML = "";
+  detail.style.display = "none";
+  catalog.style.display = "block";
 
   const q = search.value.toLowerCase();
 
   // ofertas primero
   const offers = Object.values(DATA).flat().filter(p => p.discount && p.name.toLowerCase().includes(q));
-  if(offers.length) renderSection("🔥 Ofertas", offers.sort((a,b) => a.finalPrice - b.finalPrice));
+  if (offers.length) renderSection("🔥 Ofertas", offers.sort((a,b) => a.finalPrice - b.finalPrice));
 
-  // recorrer categorías
   Object.entries(DATA).forEach(([category, products]) => {
-    const matched = products.some(p => p.name.toLowerCase().includes(q));
-    if(!matched) return; // si ningún producto coincide, no mostramos la categoría
+    // Si pasamos una categoría específica, mostramos esa categoría completa
+    if (categoryToShow) {
+      if (category === categoryToShow) {
+        renderSection(category, products.sort((a,b) => a.price - b.price));
+      }
+      return; // no hacemos nada con otras categorías
+    }
 
-    // mostramos TODOS los productos de la categoría
+    // Si no, hacemos la búsqueda normal
+    const matched = products.some(p => p.name.toLowerCase().includes(q));
+    if (!matched) return;
+
     renderSection(category, products.sort((a,b) => a.price - b.price));
   });
 }
