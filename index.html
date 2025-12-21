@@ -273,6 +273,32 @@ main{padding:24px}
   const db = firebase.firestore();
 </script>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { 
+    getFirestore,
+    collection,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
+    authDomain: "ignicar-toys.firebaseapp.com",
+    projectId: "ignicar-toys",
+    storageBucket: "ignicar-toys.firebasestorage.app",
+    messagingSenderId: "166759344812",
+    appId: "1:166759344812:web:5722c60005bde18e568d09"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 👇 Hacemos accesible Firestore al resto del código
+  window.db = db;
+  window.fs = { collection, getDocs };
+</script>
+
+
 <!-- TU JS NORMAL -->
 <script>
   // TODO tu código actual
@@ -284,16 +310,40 @@ let DATA={}, CART=JSON.parse(localStorage.getItem("cart")||"{}");
 const RESERVE_TIME=60*60*1000; // 1 hora
 let cartTimeout;
 
+async function loadProductsFromFirestore(){
+  const snapshot = await fs.getDocs(fs.collection(db, "products"));
+  const products = [];
+
+  snapshot.forEach(doc=>{
+    products.push({
+      id: doc.id,
+      ...doc.data()
+    });
+  });
+
+  return products;
+}
+
+
 const catalog=document.getElementById("catalog");
 const detail=document.getElementById("detail");
 
-fetch("products.json").then(r=>r.json()).then(d=>{
-  DATA=d;
-  Object.values(DATA).flat().forEach(p=>p._qty=1);
+(async ()=>{
+  const products = await loadProductsFromFirestore();
+
+  // 🔁 Reconstruimos DATA como antes
+  DATA = {};
+  products.forEach(p=>{
+    if(!DATA[p.category]) DATA[p.category] = [];
+    p._qty = 1;
+    DATA[p.category].push(p);
+  });
+
   buildCategories();
   renderAll();
   startCartTimer();
-});
+})();
+
 
 function startCartTimer(){
   clearInterval(cartTimeout);
