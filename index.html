@@ -708,35 +708,6 @@ function removeFromCart(name){
   }
 }
 
-async function checkout(){
-
-  const ok = await validateCartStock();
-  if(!ok){
-    alert("⚠️ Algunos productos ya no tienen stock disponible.");
-    return;
-  }
-
-
-  // 🧹 limpiar carrito SIN devolver stock
-  CART = {};
-  localStorage.removeItem("cart");
-  renderCart();
-  renderAll();
-
-  // 📲 mensaje WhatsApp
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("es-PE");
-  const timeStr = now.toLocaleTimeString("es-PE",{hour:'2-digit',minute:'2-digit'});
-
-  let msg = `Hola 👋%0A`;
-  msg += `Pedido: *${orderId}*%0A`;
-  msg += `Fecha: ${dateStr} ${timeStr}%0A%0A`;
-  msg += `Productos:%0A`;
-
-  Object.values(CART).forEach(p=>{
-    msg += `• ${p.name} x${p.qty}%0A`;
-  });
-
 async function checkout() {
   if(Object.keys(CART).length === 0){
     alert("El carrito está vacío");
