@@ -249,7 +249,7 @@ main{padding:24px}
   <h2>Carrito <small id="cartTimer"></small></h2>
   <div id="cartItems"></div>
   <strong>Total: S/ <span id="cartTotal">0</span></strong>
-  <button class="buy-btn" onclick="checkout()">Finalizar por WhatsApp</button>
+  <button class="buy-btn" id="checkoutBtn" onclick="checkout()">Finalizar por WhatsApp</button>
 </div>
 
 <!-- ==== Módulo único para Firebase y todo el JS ==== -->
@@ -283,6 +283,8 @@ const db = getFirestore(app);
 let DATA = {}, CART = JSON.parse(localStorage.getItem("cart") || "{}");
 //const RESERVE_TIME=60*60*1000; // 1 hora
 let cartTimeout;
+let checkoutInProgress = false;
+let checkoutConfirmed = sessionStorage.getItem("checkoutConfirmed") === "1";
 
 const catalog = document.getElementById("catalog");
 const detail = document.getElementById("detail");
@@ -405,28 +407,31 @@ async function confirmStock(){
   }
 }
 
-
-
 async function createOrder() {
   if (Object.keys(CART).length === 0) return null;
+
+  const sessionId =
+    localStorage.getItem("sessionId") ||
+    crypto.randomUUID();
+
+  localStorage.setItem("sessionId", sessionId);
 
   let total = 0;
   const items = [];
 
   Object.values(CART).forEach(p => {
     const price = p.discount ? p.finalPrice : p.price;
-
     items.push({
       id: p.id,
       name: p.name,
       qty: p.qty,
       price
     });
-
     total += price * p.qty;
   });
 
   const order = {
+    sessionId,
     createdAt: serverTimestamp(),
     status: "pending",
     total,
@@ -440,9 +445,11 @@ async function createOrder() {
 
 // ==== Inicialización ====
 (() => {
-  listenProductsRealtime(); // 🔥 escucha Firestore en tiempo real
+  checkoutConfirmed = sessionStorage.getItem("checkoutConfirmed") === "1";
+  listenProductsRealtime();
   startCartTimer();
 })();
+
 
 // ==== FUNCIONES ====
 
@@ -706,12 +713,27 @@ function removeFromCart(name){
     saveCart();
   }
 }
+  
+let checkoutInProgress = false;
+let checkoutInProgress = false;
 
+  
 async function checkout() {
+  if (checkoutInProgress || checkoutConfirmed) return;
+
+  checkoutInProgress = true;
+  checkoutConfirmed = true;
+
+  const btn = document.getElementById("checkoutBtn");
+  if (btn) btn.disabled = true;
+
   if(Object.keys(CART).length === 0){
     alert("El carrito está vacío");
+    checkoutInProgress = false;
+    if(btn) btn.disabled = false;
     return;
   }
+
 
   const ok = await validateCartStock();
   if(!ok){
