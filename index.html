@@ -298,20 +298,10 @@ async function loadProductsFromFirestore() {
   const products = await loadProductsFromFirestore();
   DATA = {};
   products.forEach(p => {
-  if(!DATA[p.category]) DATA[p.category] = [];
-
-  p.stock = Number(p.stock || 0);
-  p.discount = Number(p.discount || 0);
-
-  p.finalPrice = p.discount
-    ? Math.round(p.price * (1 - p.discount / 100))
-    : p.price;
-
-  p._qty = 1;
-
-  DATA[p.category].push(p);
-});
-
+    if(!DATA[p.category]) DATA[p.category] = [];
+    p._qty = 1;
+    DATA[p.category].push(p);
+  });
 
   buildCategories();
   renderAll();
@@ -327,12 +317,10 @@ function startCartTimer(){
 }
 
 // Stock disponible
-products.forEach(p => {
-  if(p.price == null || p.stock == null){
-    console.warn("Producto incompleto:", p);
-  }
-});
-
+function available(p){
+  const c=CART[p.name];
+  return Math.max(0, p.stock - (c ? c.qty : 0));
+}
 
 // Render catálogo
 function renderAll(selectedCategory = null){
