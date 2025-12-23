@@ -292,7 +292,7 @@ const cartItems = document.getElementById("cartItems");
 const cartTotal = document.getElementById("cartTotal");
 const cartCount = document.getElementById("cartCount");
 const cartTimer = document.getElementById("cartTimer");
-const CART_TIMEOUT = 5 * 60 * 1000; // 5 minutos
+const CART_TIMEOUT = 60 * 60 * 1000; // 5 minutos
 
 
 function listenProductsRealtime() {
@@ -713,24 +713,37 @@ async function checkout() {
     return;
   }
 
-  // 🔍 Validar stock antes de finalizar
   const ok = await validateCartStock();
   if(!ok){
-    alert("Algunos productos ya no tienen stock");
+    alert("⚠️ Algunos productos ya no tienen stock");
     return;
   }
 
-  // 🔒 PASO 5.3.2 → AQUÍ VA
+  // 🔒 confirmar stock (NO se devuelve)
   await confirmStock();
-  await saveOrder(orderId);
+
+  // 📦 crear pedido
+  const orderId = await createOrder();
+
+  // 📲 WhatsApp
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("es-PE");
+  const timeStr = now.toLocaleTimeString("es-PE",{hour:'2-digit',minute:'2-digit'});
+
+  let msg = `Hola 👋%0A`;
+  msg += `Pedido: *${orderId}*%0A`;
+  msg += `Fecha: ${dateStr} ${timeStr}%0A%0A`;
+  msg += `Productos:%0A`;
+
+  Object.values(CART).forEach(p=>{
+    msg += `• ${p.name} x${p.qty}%0A`;
+  });
 
   // 🧹 limpiar carrito
   CART = {};
   localStorage.removeItem("cart");
   renderCart();
 
-  // 📲 WhatsApp
-  const whatsappURL = buildWhatsAppMessage()
   window.open(`https://wa.me/51942434659?text=${msg}`);
 }
 
