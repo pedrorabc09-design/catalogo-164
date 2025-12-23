@@ -723,6 +723,7 @@ async function checkout() {
 
   checkoutInProgress = true;
   checkoutConfirmed = true;
+  sessionStorage.setItem("checkoutConfirmed", "1");
 
   const btn = document.getElementById("checkoutBtn");
   if (btn) btn.disabled = true;
@@ -767,7 +768,19 @@ async function checkout() {
   renderCart();
 
   window.open(`https://wa.me/51942434659?text=${msg}`);
+  setTimeout(clearAfterCheckout, 800);
 }
+
+function clearAfterCheckout(){
+  CART = {};
+  localStorage.removeItem("cart");
+
+  checkoutInProgress = false;
+
+  renderCart();
+  renderAll();
+}
+
 
 async function saveOrder(orderId) {
   const items = [];
