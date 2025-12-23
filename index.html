@@ -723,14 +723,21 @@ async function checkout() {
   sessionStorage.setItem("checkoutConfirmed", "1");
 
   const btn = document.getElementById("checkoutBtn");
-  if (btn) btn.disabled = true;
+  if (btn) {
+  btn.disabled = true;
+  btn.innerText = "Procesando pedido...";
+}
 
   if(Object.keys(CART).length === 0){
-    alert("El carrito está vacío");
-    checkoutInProgress = false;
-    if(btn) btn.disabled = false;
-    return;
+  alert("El carrito está vacío");
+  checkoutInProgress = false;
+  if (btn) {
+    btn.disabled = false;
+    btn.innerText = "Finalizar por WhatsApp";
   }
+  return;
+}
+
 
 
   const ok = await validateCartStock();
@@ -774,9 +781,16 @@ function clearAfterCheckout(){
 
   checkoutInProgress = false;
 
+  const btn = document.getElementById("checkoutBtn");
+  if (btn) {
+    btn.disabled = false;
+    btn.innerText = "Finalizar por WhatsApp";
+  }
+
   renderCart();
   renderAll();
 }
+
 
 
 async function saveOrder(orderId) {
