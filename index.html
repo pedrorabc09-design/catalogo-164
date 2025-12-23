@@ -255,7 +255,24 @@ main{padding:24px}
 <!-- ==== Módulo único para Firebase y todo el JS ==== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  getDoc,
+  addDoc,
+  serverTimestamp,
+  runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+import {
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+
+
 
 // Config Firebase
 const firebaseConfig = {
@@ -272,7 +289,7 @@ const db = getFirestore(app);
 
 // Variables globales
 let DATA = {}, CART = JSON.parse(localStorage.getItem("cart") || "{}");
-const RESERVE_TIME=60*60*1000; // 1 hora
+//const RESERVE_TIME=60*60*1000; // 1 hora
 let cartTimeout;
 
 const catalog = document.getElementById("catalog");
@@ -283,28 +300,155 @@ const cartItems = document.getElementById("cartItems");
 const cartTotal = document.getElementById("cartTotal");
 const cartCount = document.getElementById("cartCount");
 const cartTimer = document.getElementById("cartTimer");
+const CART_TIMEOUT = 5 * 60 * 1000; // 5 minutos
 
 
-// ==== Función para traer productos desde Firestore ====
-async function loadProductsFromFirestore() {
-  const snapshot = await getDocs(collection(db, "products"));
-  const products = [];
-  snapshot.forEach(doc => products.push({ id: doc.id, ...doc.data() }));
-  return products;
+function listenProductsRealtime() {
+  const ref = collection(db, "products");
+
+  onSnapshot(ref, (snapshot) => {
+    DATA = {}; // reset limpio
+
+    snapshot.forEach(docu => {
+      const p = { id: docu.id, ...docu.data() };
+
+      // 🔒 Evitar documentos basura (ej: init)
+      if (
+        !p.name ||
+        !p.category ||
+        typeof p.price !== "number" ||
+        typeof p.stock !== "number"
+      ) return;
+
+      if (!DATA[p.category]) DATA[p.category] = [];
+
+      p._qty = 1;
+      DATA[p.category].push(p);
+    });
+
+    buildCategories();
+    renderAll();
+  });
 }
 
-// ==== Inicialización ====
-(async () => {
-  const products = await loadProductsFromFirestore();
-  DATA = {};
-  products.forEach(p => {
-    if(!DATA[p.category]) DATA[p.category] = [];
-    p._qty = 1;
-    DATA[p.category].push(p);
+  
+// ==== Función para traer productos desde Firestore ====
+//async function loadProductsFromFirestore() {
+//const snapshot = await getDocs(collection(db, "products"));
+//const products = [];
+//snapshot.forEach(doc => products.push({ id: doc.id, ...doc.data() }));
+//return products;
+//}
+
+async function reserveStock(productId, qty) {
+  const ref = doc(db, "products", productId);
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(ref);
+      if (!snap.exists()) throw "Producto no existe";
+
+      const data = snap.data();
+
+      if (data.stock < qty) {
+        throw "Stock insuficiente";
+      }
+
+      transaction.update(ref, {
+        stock: data.stock - qty
+      });
+    });
+
+    return true;
+  } catch (e) {
+    console.warn("❌ No se pudo reservar stock:", e);
+    return false;
+  }
+}
+
+async function releaseStock(productId, qty){
+  try{
+    await runTransaction(db, async (tx)=>{
+      const ref = doc(db, "products", productId);
+      const snap = await tx.get(ref);
+      if(!snap.exists()) return;
+
+      const stock = snap.data().stock || 0;
+      tx.update(ref, { stock: stock + qty });
+    });
+  }catch(e){
+    console.error("Error liberando stock", e);
+  }
+}
+
+async function validateCartStock(){
+  for(const item of Object.values(CART)){
+    const ref = doc(db, "products", item.id);
+    const snap = await getDoc(ref);
+
+    if(!snap.exists()) return false;
+
+    const stock = snap.data().stock ?? 0;
+
+    if(stock < 0){
+      return false;
+    }
+  }
+  return true;
+}
+
+async function confirmStock(){
+  for(const item of Object.values(CART)){
+    const ref = doc(db, "products", item.id);
+
+    await runTransaction(db, async (tx)=>{
+      const snap = await tx.get(ref);
+      if(!snap.exists()) return;
+
+      const stock = snap.data().stock ?? 0;
+
+      // 🔒 stock ya fue descontado, solo aseguramos que no se libere
+      tx.update(ref, { stock });
+    });
+  }
+}
+
+
+
+async function createOrder() {
+  if (Object.keys(CART).length === 0) return null;
+
+  let total = 0;
+  const items = [];
+
+  Object.values(CART).forEach(p => {
+    const price = p.discount ? p.finalPrice : p.price;
+
+    items.push({
+      id: p.id,
+      name: p.name,
+      qty: p.qty,
+      price
+    });
+
+    total += price * p.qty;
   });
 
-  buildCategories();
-  renderAll();
+  const order = {
+    createdAt: serverTimestamp(),
+    status: "pending",
+    total,
+    items
+  };
+
+  const ref = await addDoc(collection(db, "orders"), order);
+  return ref.id;
+}
+
+
+// ==== Inicialización ====
+(() => {
+  listenProductsRealtime(); // 🔥 escucha Firestore en tiempo real
   startCartTimer();
 })();
 
@@ -312,14 +456,30 @@ async function loadProductsFromFirestore() {
 
 // Timer carrito
 function startCartTimer(){
-  clearInterval(cartTimeout);
-  cartTimeout=setInterval(()=>{renderCart();},1000);
+  setInterval(()=>{
+    checkExpiredCart();
+    renderCart();
+  }, 1000);
 }
+
+function checkExpiredCart(){
+  const now = Date.now();
+
+  Object.entries(CART).forEach(([name, item])=>{
+    if(now - item.time > CART_TIMEOUT){
+  // solo liberar si NO se confirmó pedido
+  releaseStock(item.id, item.qty);
+  delete CART[name];
+  }
+});
+
+  saveCart();
+}
+  
 
 // Stock disponible
 function available(p){
-  const c=CART[p.name];
-  return Math.max(0, p.stock - (c ? c.qty : 0));
+  return Math.max(0, p.stock);
 }
 
 // Render catálogo
@@ -477,14 +637,34 @@ function changeQty(name,d){
 }
 
 // Carrito
-function addToCart(name){
-  const p=Object.values(DATA).flat().find(x=>x.name===name);
-  if(available(p)<=0) return;
-  if(!CART[name]) CART[name]={...p, qty:0, time:Date.now()};
-  CART[name].qty+=p._qty;
-  CART[name].time=Date.now();
+let reserving = false;
+
+async function addToCart(name){
+  if(reserving) return;
+  reserving = true;
+
+  const p = Object.values(DATA).flat().find(x => x.name === name);
+  if(!p){
+    reserving = false;
+    return;
+  }
+
+  const ok = await reserveStock(p.id, p._qty);
+
+  if(!ok){
+    alert("⚠️ Stock insuficiente");
+    reserving = false;
+    return;
+  }
+
+  if(!CART[name]) CART[name] = {...p, qty:0, time:Date.now()};
+  CART[name].qty += p._qty;
+  CART[name].time = Date.now();
+
   saveCart();
+  reserving = false;
 }
+
 
 function buyNow(name){addToCart(name);toggleCart(true)}
 function goHome(){renderAll()}
@@ -503,7 +683,7 @@ function renderCart(){
 
   Object.values(CART).forEach(p=>{
     const elapsed = now - p.time;
-    const left = RESERVE_TIME - elapsed;
+    const left = CART_TIMEOUT - elapsed;
     if(left <= 0) return; // si expiró, lo ignoramos
 
     total += (p.discount?p.finalPrice:p.price)*p.qty;
@@ -528,17 +708,31 @@ function renderCart(){
 }
 
 function removeFromCart(name){
-  delete CART[name];
-  saveCart(); // actualiza localStorage y vuelve a renderizar
+  const item = CART[name];
+  if(item){
+    releaseStock(item.id, item.qty);
+    delete CART[name];
+    saveCart();
+  }
 }
 
-function checkout(){
-  // 📌 generar ID único
-  const now = new Date();
-  const dateCode = now.toISOString().slice(0,10).replace(/-/g,"");
-  const rand = Math.floor(1000 + Math.random() * 9000);
-  const orderId = `IGN-${dateCode}-${rand}`;
+async function checkout(){
 
+  const ok = await validateCartStock();
+  if(!ok){
+    alert("⚠️ Algunos productos ya no tienen stock disponible.");
+    return;
+  }
+
+
+  // 🧹 limpiar carrito SIN devolver stock
+  CART = {};
+  localStorage.removeItem("cart");
+  renderCart();
+  renderAll();
+
+  // 📲 mensaje WhatsApp
+  const now = new Date();
   const dateStr = now.toLocaleDateString("es-PE");
   const timeStr = now.toLocaleTimeString("es-PE",{hour:'2-digit',minute:'2-digit'});
 
@@ -547,17 +741,61 @@ function checkout(){
   msg += `Fecha: ${dateStr} ${timeStr}%0A%0A`;
   msg += `Productos:%0A`;
 
-  let total = 0;
   Object.values(CART).forEach(p=>{
-    const price = p.discount ? p.finalPrice : p.price;
-    msg += `• ${p.name} x${p.qty} = S/ ${price * p.qty}%0A`;
-    total += price * p.qty;
+    msg += `• ${p.name} x${p.qty}%0A`;
   });
-  msg += `%0A*Total: S/ ${total}*`;
 
+async function checkout() {
+  if(Object.keys(CART).length === 0){
+    alert("El carrito está vacío");
+    return;
+  }
+
+  // 🔍 Validar stock antes de finalizar
+  const ok = await validateCartStock();
+  if(!ok){
+    alert("Algunos productos ya no tienen stock");
+    return;
+  }
+
+  // 🔒 PASO 5.3.2 → AQUÍ VA
+  await confirmStock();
+  await saveOrder(orderId);
+
+  // 🧹 limpiar carrito
+  CART = {};
+  localStorage.removeItem("cart");
+  renderCart();
+
+  // 📲 WhatsApp
+  const whatsappURL = buildWhatsAppMessage()
   window.open(`https://wa.me/51942434659?text=${msg}`);
 }
 
+async function saveOrder(orderId) {
+  const items = [];
+  let total = 0;
+
+  Object.values(CART).forEach(p => {
+    const price = p.discount ? p.finalPrice : p.price;
+    items.push({
+      name: p.name,
+      qty: p.qty,
+      price: price
+    });
+    total += price * p.qty;
+  });
+
+  await addDoc(collection(db, "orders"), {
+    orderId: orderId,
+    items: items,
+    total: total,
+    status: "pendiente",
+    createdAt: serverTimestamp()
+  });
+}
+
+  
 // Mostrar/ocultar carrito
 function toggleCart(show){
   document.getElementById("cart").classList.toggle("active",show);
