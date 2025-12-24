@@ -47,6 +47,7 @@
         <th>Stock</th>
         <th>Activo</th>
         <th>Guardar</th>
+        <th>Eliminar</th>
       </tr>
     </thead>
     <tbody id="productsTable"></tbody>
@@ -61,7 +62,8 @@ import {
   onSnapshot,
   doc,
   updateDoc,
-  addDoc
+  addDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 // 🔥 Config Firebase
@@ -167,6 +169,10 @@ function listenProducts(){
         <td>
           <button class="saveBtn" data-id="${p.id}">💾 Guardar</button>
         </td>
+        <td>
+        <button class="deleteBtn" data-id="${p.id}" style="background:#dc2626;color:white">🗑 Eliminar</button>
+        </td>
+
       `;
 
       productsTable.appendChild(tr);
@@ -255,6 +261,19 @@ function bindEvents(){
       alert("✅ Producto actualizado");
     }
   });
+
+  document.querySelectorAll(".deleteBtn").forEach(btn=>{
+  btn.onclick = async ()=>{
+    const id = btn.dataset.id;
+
+    if(!confirm("⚠️ ¿Eliminar este producto definitivamente?")) return;
+
+    await deleteDoc(doc(db,"products",id));
+
+    alert("🗑 Producto eliminado correctamente");
+  };
+});
+
 }
 
 document.getElementById("saveAllBtn").onclick = saveAllProducts;
