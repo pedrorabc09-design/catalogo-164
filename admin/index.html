@@ -10,7 +10,8 @@
     table{width:100%;border-collapse:collapse;margin-bottom:20px}
     th, td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}
     input[type="text"], input[type="number"]{width:100px}
-    .nameInput{width:200px; word-break:break-word;}
+    .nameInput{width:250px; word-break:break-word;}
+    .codeInput{width:80px;}
     .hidden{display:none}
     #loginDiv{margin-bottom:20px}
     button{cursor:pointer}
@@ -49,6 +50,7 @@
 
   <h2>Crear Producto</h2>
   <input type="text" id="newName" placeholder="Nombre">
+  <input type="text" id="newCode" placeholder="Código">
   <input type="text" id="newCategory" placeholder="Categoría">
   <input type="number" id="newPrice" placeholder="Precio original">
   <input type="number" id="newDiscountPrice" placeholder="Precio con descuento">
@@ -109,13 +111,12 @@ function listenProducts(){
 
       if(!p.name || p.name === "init") return;
 
-      const discountPrice = p.discountPrice ?? p.price; // precio con descuento
-      const discountPercent = Math.round(((p.price - discountPrice)/p.price)*100);
+      const discountPrice = p.discountPrice ?? p.price;
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><input type="text" value="${p.name}" data-id="${id}" class="nameInput"></td>
-        <td>${id}</td>
+        <td><input type="text" value="${p.code ?? ""}" data-id="${id}" class="codeInput"></td>
         <td><input type="text" value="${p.category}" data-id="${id}" class="catInput"></td>
         <td><input type="number" value="${p.price}" data-id="${id}" class="priceInput"></td>
         <td><input type="number" value="${discountPrice}" data-id="${id}" class="discountPriceInput"></td>
@@ -136,6 +137,7 @@ function bindEvents(){
     btn.onclick = async ()=>{
       const id = btn.dataset.id;
       const name = document.querySelector(`.nameInput[data-id="${id}"]`).value;
+      const code = document.querySelector(`.codeInput[data-id="${id}"]`).value;
       const category = document.querySelector(`.catInput[data-id="${id}"]`).value;
       const price = parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value);
       const discountPrice = parseFloat(document.querySelector(`.discountPriceInput[data-id="${id}"]`).value);
@@ -147,7 +149,7 @@ function bindEvents(){
         return;
       }
 
-      await updateDoc(doc(db, "products", id), { name, category, price, discountPrice, stock, active });
+      await updateDoc(doc(db, "products", id), { name, code, category, price, discountPrice, stock, active });
       alert("✅ Producto actualizado");
     }
   });
@@ -156,20 +158,22 @@ function bindEvents(){
 // ===== Crear producto nuevo =====
 function createProduct(){
   const name = document.getElementById("newName").value;
+  const code = document.getElementById("newCode").value;
   const category = document.getElementById("newCategory").value;
   const price = parseFloat(document.getElementById("newPrice").value);
   const discountPrice = parseFloat(document.getElementById("newDiscountPrice").value);
   const stock = parseInt(document.getElementById("newStock").value);
 
-  if(!name || !category || isNaN(price) || isNaN(discountPrice) || isNaN(stock)){
+  if(!name || !category || !code || isNaN(price) || isNaN(discountPrice) || isNaN(stock)){
     alert("Por favor completa todos los campos correctamente");
     return;
   }
 
-  addDoc(collection(db,"products"), { name, category, price, discountPrice, stock, active:true });
+  addDoc(collection(db,"products"), { name, code, category, price, discountPrice, stock, active:true });
   alert("✅ Producto creado");
 
   document.getElementById("newName").value = "";
+  document.getElementById("newCode").value = "";
   document.getElementById("newCategory").value = "";
   document.getElementById("newPrice").value = "";
   document.getElementById("newDiscountPrice").value = "";
