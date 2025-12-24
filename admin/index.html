@@ -99,37 +99,69 @@ window.login = ()=>{
 let categoriesSet = new Set();
 
 function listenProducts(){
-  onSnapshot(collection(db,"products"), snapshot=>{
-    productsTable.innerHTML="";
+  onSnapshot(collection(db,"products"), snapshot => {
+    productsTable.innerHTML = "";
     categoriesSet.clear();
 
-    snapshot.forEach(docSnap=>{
+    const products = [];
+
+    // ✅ PASO 1: recorrer snapshot SOLO para datos
+    snapshot.forEach(docSnap => {
       const p = docSnap.data();
-      const id = docSnap.id;
+      if(!p.name || p.name === "init") return;
 
-      if(!p.name) return; // ignorar init
-
-      // recolectar categorías
       if(p.category) categoriesSet.add(p.category);
 
+      products.push({
+        id: docSnap.id,
+        ...p
+      });
+    });
+
+    const categoriesHTML = Array.from(categoriesSet)
+      .map(cat => `<option value="${cat}">${cat}</option>`)
+      .join("");
+
+    // ✅ PASO 2: renderizar filas ya con TODAS las categorías
+    products.forEach(p => {
       const tr = document.createElement("tr");
 
-      tr.innerHTML=`
-        <td>${p.image?`<img class="product-img" src="${p.image}">`:""}</td>
-        <td><div style="white-space:normal">${p.name}</div></td>
-        <td><input type="text" value="${p.code||id}" data-id="${id}" class="codeInput"></td>
-        <td>
-          <select data-id="${id}" class="categorySelect">
-            ${Array.from(categoriesSet).map(cat=>`<option value="${cat}" ${p.category===cat?"selected":""}>${cat}</option>`).join("")}
-          </select>
-          <input type="text" placeholder="Nueva categoría" data-id="${id}" class="newCategoryInput">
+      tr.innerHTML = `
+        <td>${p.image ? `<img class="product-img" src="${p.image}">` : ""}</td>
+
+        <td style="white-space:normal;min-width:220px">
+          ${p.name}
         </td>
-        <td><input type="number" min="0" value="${p.price||0}" data-id="${id}" class="priceInput"></td>
-        <td><input type="number" min="0" value="${p.discountPrice||0}" data-id="${id}" class="discountInput"></td>
-        <td><input type="number" min="0" value="${p.stock||0}" data-id="${id}" class="stockInput"></td>
-        <td><input type="checkbox" ${p.active?"checked":""} data-id="${id}" class="activeInput"></td>
-        <td><button data-id="${id}" class="saveBtn">💾 Guardar</button></td>
+
+        <td>
+          <input type="text" value="${p.code || p.id}" class="codeInput">
+        </td>
+
+        <td>
+          <select class="categorySelect">
+            ${categoriesHTML.replace(
+              `value="${p.category}"`,
+              `value="${p.category}" selected`
+            )}
+          </select>
+          <input type="text" placeholder="Nueva categoría" class="newCategoryInput">
+        </td>
+
+        <td><input type="number" value="${p.price || 0}" class="priceInput"></td>
+
+        <td><input type="number" value="${p.discountPrice || 0}" class="discountInput"></td>
+
+        <td><input type="number" value="${p.stock || 0}" class="stockInput"></td>
+
+        <td>
+          <input type="checkbox" class="activeInput" ${p.active ? "checked" : ""}>
+        </td>
+
+        <td>
+          <button class="saveBtn" data-id="${p.id}">💾 Guardar</button>
+        </td>
       `;
+
       productsTable.appendChild(tr);
     });
 
