@@ -217,7 +217,7 @@ window.createNewProduct = async ()=>{
     discountPrice,
     discountPercent: price>0?Math.round(100*(price-discountPrice)/price):0,
     stock,
-    active:true,
+    active: activeCheckbox.checked,
     image
   });
 };
