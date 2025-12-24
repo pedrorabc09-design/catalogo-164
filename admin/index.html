@@ -5,58 +5,38 @@
   <title>Panel Admin - IGNICAR TOYS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body{font-family:sans-serif;padding:20px;background:#f1f5f9}
-    h1{margin-bottom:20px}
-    table{width:100%;border-collapse:collapse;margin-bottom:20px}
-    th, td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}
-    input[type="text"], input[type="number"]{width:100px}
-    .nameInput{width:250px; word-break:break-word;}
-    .codeInput{width:80px;}
-    .hidden{display:none}
-    #loginDiv{margin-bottom:20px}
-    button{cursor:pointer}
+    body{font-family:sans-serif;padding:20px;background:#f0f2f5;}
+    table{width:100%;border-collapse:collapse;margin-top:20px;}
+    th, td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle;}
+    input[type="text"], input[type="number"]{width:100%;box-sizing:border-box;}
+    input[type="file"]{width:100%;}
+    button{padding:6px 12px;margin:2px;cursor:pointer;}
+    .active-checkbox{text-align:center;}
+    img.preview{width:80px;height:80px;object-fit:contain;}
   </style>
 </head>
 <body>
 
 <h1>📦 Panel Admin - IGNICAR TOYS</h1>
 
-<!-- Login simple -->
-<div id="loginDiv">
-  <input type="text" id="username" placeholder="Usuario">
-  <input type="password" id="password" placeholder="Contraseña">
-  <button id="loginBtn">Ingresar</button>
-</div>
+<button onclick="createProduct()">➕ Crear Producto Nuevo</button>
 
-<!-- Panel principal -->
-<div id="adminPanel" class="hidden">
-
-  <h2>Productos</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Código</th>
-        <th>Categoría</th>
-        <th>Precio</th>
-        <th>Precio descuento</th>
-        <th>Stock</th>
-        <th>Activo</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody id="productsTable"></tbody>
-  </table>
-
-  <h2>Crear Producto</h2>
-  <input type="text" id="newName" placeholder="Nombre">
-  <input type="text" id="newCode" placeholder="Código">
-  <input type="text" id="newCategory" placeholder="Categoría">
-  <input type="number" id="newPrice" placeholder="Precio original">
-  <input type="number" id="newDiscountPrice" placeholder="Precio con descuento">
-  <input type="number" id="newStock" placeholder="Stock">
-  <button id="createProductBtn">Crear Producto</button>
-</div>
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Código</th>
+      <th>Categoría</th>
+      <th>Precio S/</th>
+      <th>Precio con Descuento S/</th>
+      <th>Stock</th>
+      <th>Activo</th>
+      <th>Imagen</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody id="productsTable"></tbody>
+</table>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -68,8 +48,9 @@ import {
   updateDoc,
   addDoc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-// 🔥 Config Firebase
+// 🔥 Configuración Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
   authDomain: "ignicar-toys.firebaseapp.com",
@@ -81,110 +62,92 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-const loginDiv = document.getElementById("loginDiv");
-const adminPanel = document.getElementById("adminPanel");
-const productsTable = document.getElementById("productsTable");
+const table = document.getElementById("productsTable");
 
-// ===== Login simple =====
-function login(){
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
+// Escucha productos en tiempo real
+onSnapshot(collection(db, "products"), snapshot => {
+  table.innerHTML = "";
+  snapshot.forEach(docSnap => {
+    const p = docSnap.data();
+    const id = docSnap.id;
+    if (p.name === "init") return;
 
-  if(user === "admin" && pass === "1234"){
-    loginDiv.classList.add("hidden");
-    adminPanel.classList.remove("hidden");
-    listenProducts();
-  } else {
-    alert("Usuario o contraseña incorrectos");
-  }
-}
+    const tr = document.createElement("tr");
 
-// ===== Escucha productos =====
-function listenProducts(){
-  onSnapshot(collection(db, "products"), snapshot => {
-    productsTable.innerHTML = "";
+    const discountPercent = p.price > 0 && p.discountPrice
+      ? Math.round((1 - p.discountPrice / p.price) * 100)
+      : 0;
 
-    snapshot.forEach(docSnap => {
-      const p = docSnap.data();
-      const id = docSnap.id;
-
-      if(!p.name || p.name === "init") return;
-
-      const discountPrice = p.discountPrice ?? p.price;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input type="text" value="${p.name}" data-id="${id}" class="nameInput"></td>
-        <td><input type="text" value="${p.code ?? ""}" data-id="${id}" class="codeInput"></td>
-        <td><input type="text" value="${p.category}" data-id="${id}" class="catInput"></td>
-        <td><input type="number" value="${p.price}" data-id="${id}" class="priceInput"></td>
-        <td><input type="number" value="${discountPrice}" data-id="${id}" class="discountPriceInput"></td>
-        <td><input type="number" value="${p.stock}" data-id="${id}" class="stockInput"></td>
-        <td><input type="checkbox" ${p.active !== false ? "checked" : ""} data-id="${id}" class="activeInput"></td>
-        <td><button data-id="${id}" class="saveBtn">Guardar</button></td>
-      `;
-      productsTable.appendChild(tr);
-    });
-
-    bindEvents();
+    tr.innerHTML = `
+      <td><input type="text" value="${p.name}" data-id="${id}" class="nameInput"></td>
+      <td><input type="text" value="${p.code||id}" data-id="${id}" class="codeInput"></td>
+      <td><input type="text" value="${p.category}" data-id="${id}" class="categoryInput"></td>
+      <td><input type="number" min="0" value="${p.price}" data-id="${id}" class="priceInput"></td>
+      <td><input type="number" min="0" value="${p.discountPrice||p.price}" data-id="${id}" class="discountPriceInput"></td>
+      <td><input type="number" min="0" value="${p.stock}" data-id="${id}" class="stockInput"></td>
+      <td class="active-checkbox"><input type="checkbox" data-id="${id}" class="activeInput" ${p.active !== false ? 'checked' : ''}></td>
+      <td>
+        <img src="${p.image||''}" class="preview"><br>
+        <input type="file" data-id="${id}" class="imageInput">
+      </td>
+      <td>
+        <button data-id="${id}" class="saveBtn">Guardar</button>
+      </td>
+    `;
+    table.appendChild(tr);
   });
-}
+  bindEvents();
+});
 
-// ===== Bind eventos de editar =====
-function bindEvents(){
-  document.querySelectorAll(".saveBtn").forEach(btn=>{
-    btn.onclick = async ()=>{
+function bindEvents() {
+  document.querySelectorAll(".saveBtn").forEach(btn => {
+    btn.onclick = async () => {
       const id = btn.dataset.id;
       const name = document.querySelector(`.nameInput[data-id="${id}"]`).value;
       const code = document.querySelector(`.codeInput[data-id="${id}"]`).value;
-      const category = document.querySelector(`.catInput[data-id="${id}"]`).value;
-      const price = parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value);
-      const discountPrice = parseFloat(document.querySelector(`.discountPriceInput[data-id="${id}"]`).value);
-      const stock = parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value);
+      const category = document.querySelector(`.categoryInput[data-id="${id}"]`).value;
+      const price = parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value) || 0;
+      const discountPrice = parseFloat(document.querySelector(`.discountPriceInput[data-id="${id}"]`).value) || price;
+      const stock = parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value) || 0;
       const active = document.querySelector(`.activeInput[data-id="${id}"]`).checked;
 
-      if(!name || !category || isNaN(price) || isNaN(discountPrice) || isNaN(stock)){
-        alert("Valores inválidos");
-        return;
+      // Subir imagen si hay archivo
+      const imageInput = document.querySelector(`.imageInput[data-id="${id}"]`);
+      let imageUrl = imageInput.closest('td').querySelector('img.preview').src;
+
+      if (imageInput.files.length > 0) {
+        const file = imageInput.files[0];
+        const storageRef = sRef(storage, `products/${id}/${file.name}`);
+        await uploadBytes(storageRef, file);
+        imageUrl = await getDownloadURL(storageRef);
       }
 
-      await updateDoc(doc(db, "products", id), { name, code, category, price, discountPrice, stock, active });
+      await updateDoc(doc(db, "products", id), {
+        name, code, category, price, discountPrice, stock, active, image: imageUrl
+      });
+
       alert("✅ Producto actualizado");
-    }
+    };
   });
 }
 
-// ===== Crear producto nuevo =====
-function createProduct(){
-  const name = document.getElementById("newName").value;
-  const code = document.getElementById("newCode").value;
-  const category = document.getElementById("newCategory").value;
-  const price = parseFloat(document.getElementById("newPrice").value);
-  const discountPrice = parseFloat(document.getElementById("newDiscountPrice").value);
-  const stock = parseInt(document.getElementById("newStock").value);
-
-  if(!name || !category || !code || isNaN(price) || isNaN(discountPrice) || isNaN(stock)){
-    alert("Por favor completa todos los campos correctamente");
-    return;
-  }
-
-  addDoc(collection(db,"products"), { name, code, category, price, discountPrice, stock, active:true });
-  alert("✅ Producto creado");
-
-  document.getElementById("newName").value = "";
-  document.getElementById("newCode").value = "";
-  document.getElementById("newCategory").value = "";
-  document.getElementById("newPrice").value = "";
-  document.getElementById("newDiscountPrice").value = "";
-  document.getElementById("newStock").value = "";
+// Crear producto nuevo
+async function createProduct() {
+  const newDoc = await addDoc(collection(db, "products"), {
+    name: "Nuevo Producto",
+    code: "ID"+Date.now(),
+    category: "Categoría",
+    price: 0,
+    discountPrice: 0,
+    stock: 0,
+    active: true,
+    image: ""
+  });
+  alert("Producto creado ✅");
 }
 
-// ===== Eventos botones =====
-document.getElementById("loginBtn").addEventListener("click", login);
-document.getElementById("createProductBtn").addEventListener("click", createProduct);
-
 </script>
-
 </body>
 </html>
