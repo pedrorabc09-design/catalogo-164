@@ -109,8 +109,6 @@ const loginForm = document.getElementById("loginForm");
 const adminPanel = document.getElementById("adminPanel");
 const productsTable = document.getElementById("productsTable");
 const ordersTable = document.getElementById("ordersTable");
-let ordersCache = [];
-
 const table = document.getElementById("ordersTable");
 let ordersCache = [];
 
@@ -195,15 +193,16 @@ window.login = ()=>{
   const error = document.getElementById("loginError");
 
   if(u===ADMIN_USER && p===ADMIN_PASS){
-  loginForm.style.display="none";
-  adminPanel.style.display="block";
+    loginForm.style.display="none";
+    adminPanel.style.display="block";
 
-  showSection("productsSection"); // 👈 vista inicial
-  listenProducts();
+    showSection("productsSection");
+    listenProducts();
   }else{
     error.innerText="Usuario o contraseña incorrectos";
   }
-}
+};
+
 
 // Escucha productos en tiempo real
 let categoriesSet = new Set();
