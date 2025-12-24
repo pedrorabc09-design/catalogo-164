@@ -30,12 +30,18 @@
 
 <div id="adminPanel" style="display:none">
   <h1>📦 Panel Admin</h1>
+  <!-- 🔀 MENÚ ADMIN -->
+<div id="adminMenu" style="margin-bottom:20px;text-align:center">
+  <button onclick="showSection('productsSection')">📦 Productos</button>
+  <button onclick="showSection('ordersSection')">🧾 Pedidos</button>
+</div>
+<div id="productsSection">
   <button id="newProductBtn" onclick="createNewProduct()">➕ Crear Nuevo Producto</button>
   <button id="saveAllBtn" style="margin:15px 0;padding:8px 14px;">
   💾 Guardar todos los cambios
 </button>
-
-  <table>
+  
+<table>
     <thead>
       <tr>
         <th>Imagen</th>
@@ -53,6 +59,26 @@
     <tbody id="productsTable"></tbody>
   </table>
 </div>
+
+<!-- 🧾 SECCIÓN PEDIDOS -->
+<div id="ordersSection" style="display:none">
+  <h1>🧾 Pedidos</h1>
+
+  <p>📌 Aquí se mostrará el listado de pedidos.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Celular</th>
+        <th>Total</th>
+        <th>Fecha</th>
+        <th>Ver</th>
+      </tr>
+    </thead>
+    <tbody id="ordersTable"></tbody>
+  </table>
+</div>  
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -93,9 +119,11 @@ window.login = ()=>{
   const error = document.getElementById("loginError");
 
   if(u===ADMIN_USER && p===ADMIN_PASS){
-    loginForm.style.display="none";
-    adminPanel.style.display="block";
-    listenProducts();
+  loginForm.style.display="none";
+  adminPanel.style.display="block";
+
+  showSection("productsSection"); // 👈 vista inicial
+  listenProducts();
   }else{
     error.innerText="Usuario o contraseña incorrectos";
   }
@@ -104,6 +132,15 @@ window.login = ()=>{
 // Escucha productos en tiempo real
 let categoriesSet = new Set();
 
+// 🔀 Cambiar sección visible
+window.showSection = (id)=>{
+  document.getElementById("productsSection").style.display = "none";
+  document.getElementById("ordersSection").style.display = "none";
+
+  document.getElementById(id).style.display = "block";
+};
+
+  
 function listenProducts(){
   onSnapshot(collection(db,"products"), snapshot => {
     productsTable.innerHTML = "";
