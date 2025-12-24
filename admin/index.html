@@ -249,24 +249,28 @@ document.getElementById("saveAllBtn").onclick = async () => {
   for (const row of rows) {
     const id = row.dataset.id;
 
-    const name = row.querySelector(".nameInput").value.trim();
-    const code = row.querySelector(".codeInput").value.trim();
-    const category = row.querySelector(".categoryInput").value.trim();
-    const price = parseFloat(row.querySelector(".priceInput").value);
-    const discountPrice = parseFloat(row.querySelector(".discountPriceInput").value);
-    const stock = parseInt(row.querySelector(".stockInput").value);
+    const code = row.querySelector(".codeInput").value;
+    let category = row.querySelector(".categorySelect").value;
+    const newCat = row.querySelector(".newCategoryInput").value;
+    if (newCat) category = newCat;
+
+    const price = parseFloat(row.querySelector(".priceInput").value) || 0;
+    const discountPrice =
+      parseFloat(row.querySelector(".discountInput").value) || 0;
+    const stock = parseInt(row.querySelector(".stockInput").value) || 0;
     const active = row.querySelector(".activeInput").checked;
 
+    const discountPercent =
+      price > 0
+        ? Math.round(((price - discountPrice) / price) * 100)
+        : 0;
+
     await updateDoc(doc(db, "products", id), {
-      name,
       code,
       category,
       price,
       discountPrice,
-      discount:
-        discountPrice < price
-          ? Math.round(((price - discountPrice) / price) * 100)
-          : 0,
+      discountPercent,
       stock,
       active
     });
@@ -277,6 +281,7 @@ document.getElementById("saveAllBtn").onclick = async () => {
 
   alert("✅ Cambios guardados correctamente");
 };
+
 </script>
 
 </body>
