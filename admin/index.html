@@ -8,34 +8,8 @@
   <style>
     body{
       font-family: Arial, sans-serif;
-      padding: 20px;
       background:#f1f5f9;
-    }
-
-    h1,h2{
-      margin-bottom: 16px;
-    }
-
-    input{
-      padding: 8px;
-      width: 220px;
-    }
-
-    button{
-      padding: 8px 14px;
-      cursor: pointer;
-    }
-
-    table{
-      border-collapse: collapse;
-      margin-top: 20px;
-      background:white;
-    }
-
-    th,td{
-      border:1px solid #ccc;
-      padding:8px;
-      text-align:left;
+      padding:20px;
     }
 
     #loginBox{
@@ -44,24 +18,44 @@
       padding:20px;
       border-radius:8px;
       box-shadow:0 10px 30px rgba(0,0,0,.1);
+      margin-bottom:30px;
     }
 
     #adminPanel{
       display:none;
+    }
+
+    table{
+      border-collapse: collapse;
+      background:white;
+      margin-top:20px;
+    }
+
+    th,td{
+      border:1px solid #ccc;
+      padding:8px;
+    }
+
+    input{
+      padding:6px;
+      width:200px;
+    }
+
+    button{
+      padding:6px 12px;
+      cursor:pointer;
     }
   </style>
 </head>
 
 <body>
 
-<!-- 🔐 LOGIN -->
+<!-- 🔐 LOGIN SIMPLE -->
 <div id="loginBox">
   <h2>🔐 Acceso Admin</h2>
 
-  <input id="user" placeholder="Usuario">
-  <br><br>
-  <input id="pass" type="password" placeholder="Contraseña">
-  <br><br>
+  <input id="user" placeholder="Usuario"><br><br>
+  <input id="pass" type="password" placeholder="Contraseña"><br><br>
 
   <button onclick="login()">Ingresar</button>
   <p id="loginError" style="color:red;"></p>
@@ -88,15 +82,14 @@
   <button onclick="logout()">Cerrar sesión</button>
 </div>
 
-<!-- 🔥 SCRIPT -->
 <script type="module">
-  // ===============================
+  // =========================
   // 🔐 LOGIN SIMPLE
-  // ===============================
+  // =========================
   const ADMIN_USER = "admin";
   const ADMIN_PASS = "1234";
 
-  if (sessionStorage.getItem("adminLogged") === "true") {
+  if(sessionStorage.getItem("adminLogged") === "true"){
     showAdmin();
   }
 
@@ -108,7 +101,7 @@
       sessionStorage.setItem("adminLogged","true");
       showAdmin();
     }else{
-      document.getElementById("loginError").innerText = "❌ Credenciales incorrectas";
+      document.getElementById("loginError").innerText = "Credenciales incorrectas";
     }
   }
 
@@ -122,9 +115,9 @@
     document.getElementById("adminPanel").style.display = "block";
   }
 
-  // ===============================
-  // 🔥 FIREBASE
-  // ===============================
+  // =========================
+  // 🔥 FIREBASE (IGUAL AL QUE FUNCIONA)
+  // =========================
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import {
     getFirestore,
@@ -135,12 +128,12 @@
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_DOMINIO",
-    projectId: "TU_PROJECT_ID",
-    storageBucket: "TU_BUCKET",
-    messagingSenderId: "TU_ID",
-    appId: "TU_APP_ID"
+    apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
+    authDomain: "ignicar-toys.firebaseapp.com",
+    projectId: "ignicar-toys",
+    storageBucket: "ignicar-toys.firebasestorage.app",
+    messagingSenderId: "166759344812",
+    appId: "1:166759344812:web:5722c60005bde18e568d09"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -148,18 +141,16 @@
 
   const table = document.getElementById("productsTable");
 
-  // ===============================
-  // 📡 ESCUCHA EN TIEMPO REAL
-  // ===============================
-  onSnapshot(collection(db,"products"), snapshot=>{
+  // 🔄 SNAPSHOT REAL (NO TOCADO)
+  onSnapshot(collection(db, "products"), snapshot => {
     table.innerHTML = "";
 
-    snapshot.forEach(docSnap=>{
+    snapshot.forEach(docSnap => {
       const p = docSnap.data();
       const id = docSnap.id;
 
-      // evitar docs basura
-      if(!p.name || !p.category) return;
+      // ❌ ignorar solo init
+      if (p.name === "init") return;
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
