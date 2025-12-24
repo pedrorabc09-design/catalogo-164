@@ -108,6 +108,82 @@ const db = getFirestore(app);
 const loginForm = document.getElementById("loginForm");
 const adminPanel = document.getElementById("adminPanel");
 const productsTable = document.getElementById("productsTable");
+const ordersTable = document.getElementById("ordersTable");
+let ordersCache = [];
+
+const table = document.getElementById("ordersTable");
+let ordersCache = [];
+
+// 🔄 Escucha pedidos en tiempo real
+onSnapshot(collection(db,"orders"), snapshot=>{
+  table.innerHTML = "";
+  ordersCache = [];
+
+  snapshot.forEach(docSnap=>{
+    const o = docSnap.data();
+    ordersCache.push(o);
+
+    const date = o.createdAt?.toDate
+      ? o.createdAt.toDate().toLocaleString()
+      : "-";
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${o.orderNumber || docSnap.id}</td>
+      <td>${o.customerName || "-"}</td>
+      <td>${date}</td>
+      <td>S/ ${o.total || 0}</td>
+      <td>
+        <span class="status ${o.status}">
+          ${o.status}
+        </span>
+      </td>
+      <td>
+        <button onclick='showDetail(${JSON.stringify(o.items)})'>
+          Ver
+        </button>
+      </td>
+    `;
+
+    table.appendChild(tr);
+  });
+});
+
+// 👁️ Ver detalle
+window.showDetail = (items)=>{
+  let text = "Productos:\n\n";
+  items.forEach(i=>{
+    text += `• ${i.name} x${i.quantity} - S/ ${i.price}\n`;
+  });
+  alert(text);
+};
+
+// 📤 Exportar Excel
+window.exportExcel = ()=>{
+  if(ordersCache.length===0){
+    alert("No hay pedidos");
+    return;
+  }
+
+  const rows = ordersCache.map(o=>({
+    Pedido: o.orderNumber,
+    Cliente: o.customerName,
+    Email: o.customerEmail,
+    Teléfono: o.customerPhone,
+    Total: o.total,
+    Estado: o.status,
+    Fecha: o.createdAt?.toDate
+      ? o.createdAt.toDate().toLocaleString()
+      : ""
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Pedidos");
+
+  XLSX.writeFile(wb, "pedidos-ignicar-toys.xlsx");
+};
 
 // Simple login
 const ADMIN_USER = "admin";
@@ -138,7 +214,13 @@ window.showSection = (id)=>{
   document.getElementById("ordersSection").style.display = "none";
 
   document.getElementById(id).style.display = "block";
+
+  if(id === "ordersSection"){
+    // fuerza render inmediato si ya hay datos
+    ordersTable.innerHTML = ordersTable.innerHTML;
+  }
 };
+
 
   
 function listenProducts(){
