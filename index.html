@@ -314,6 +314,9 @@ function listenProductsRealtime() {
         typeof p.stock !== "number"
       ) return;
 
+      // ❌ NO mostrar productos inactivos
+      if (p.active === false) return;
+
       if (!DATA[p.category]) DATA[p.category] = [];
 
       p._qty = 1;
