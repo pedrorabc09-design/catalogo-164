@@ -1,148 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Panel Admin - IGNICAR TOYS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body{font-family:sans-serif;padding:20px;background:#f0f2f5;}
-    table{width:100%;border-collapse:collapse;margin-top:20px;}
-    th, td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle;}
-    input[type="text"], input[type="number"]{width:100%;box-sizing:border-box;}
-    button{padding:6px 12px;margin:2px;cursor:pointer;}
-    .active-checkbox{text-align:center;}
-    img.preview{width:80px;height:80px;object-fit:contain;}
-  </style>
+<meta charset="UTF-8">
+<title>Panel Admin - IGNICAR TOYS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body{font-family:Arial,sans-serif;padding:20px;background:#f1f5f9}
+  h1,h2{margin-bottom:20px}
+  table{width:100%;border-collapse:collapse;margin-top:20px}
+  th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}
+  th{background:#1e293b;color:white}
+  input[type="text"],input[type="number"],input[type="file"],select{width:100%;padding:6px}
+  button{padding:6px 12px;margin-top:4px;cursor:pointer}
+  .full-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;display:block}
+  #loginDiv{max-width:300px;margin:auto;background:white;padding:20px;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.2)}
+  #adminPanel{display:none}
+</style>
 </head>
 <body>
 
-<h1>📦 Panel Admin - IGNICAR TOYS</h1>
+<div id="loginDiv">
+  <h2>Login Admin</h2>
+  <input id="userInput" placeholder="Usuario">
+  <input id="passInput" placeholder="Contraseña" type="password">
+  <button onclick="login()">Ingresar</button>
+  <p id="loginMsg" style="color:red;"></p>
+</div>
 
-<button onclick="createProduct()">➕ Crear Producto Nuevo</button>
+<div id="adminPanel">
+  <h1>📦 Panel Admin IGNICAR TOYS</h1>
+  <button onclick="showCreateForm()">Crear Nuevo Producto</button>
 
-<table>
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Código</th>
-      <th>Categoría</th>
-      <th>Precio S/</th>
-      <th>Precio con Descuento S/</th>
-      <th>Stock</th>
-      <th>Activo</th>
-      <th>Imagen</th>
-      <th>Acción</th>
-    </tr>
-  </thead>
-  <tbody id="productsTable"></tbody>
-</table>
+  <div id="createForm" style="display:none;margin-top:20px;background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.2)">
+    <h2>Nuevo Producto</h2>
+    <input id="newCode" placeholder="Código interno">
+    <input id="newName" placeholder="Nombre">
+    <input id="newCategory" placeholder="Categoría">
+    <input id="newPrice" placeholder="Precio" type="number" min="0">
+    <input id="newDiscountPrice" placeholder="Precio con descuento" type="number" min="0">
+    <input id="newStock" placeholder="Stock" type="number" min="0">
+    <input id="newImage" type="file">
+    <button onclick="createProduct()">Crear Producto</button>
+    <button onclick="hideCreateForm()">Cancelar</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Código</th>
+        <th>Categoría</th>
+        <th>Precio</th>
+        <th>Precio Desc.</th>
+        <th>% Descuento</th>
+        <th>Stock</th>
+        <th>Activo</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="productsTable"></tbody>
+  </table>
+</div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  doc,
-  updateDoc,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    doc,
+    updateDoc,
+    addDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-// 🔥 Configuración Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
-  authDomain: "ignicar-toys.firebaseapp.com",
-  projectId: "ignicar-toys",
-  storageBucket: "ignicar-toys.firebasestorage.app",
-  messagingSenderId: "166759344812",
-  appId: "1:166759344812:web:5722c60005bde18e568d09"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
+    authDomain: "ignicar-toys.firebaseapp.com",
+    projectId: "ignicar-toys",
+    storageBucket: "ignicar-toys.firebasestorage.app",
+    messagingSenderId: "166759344812",
+    appId: "1:166759344812:web:5722c60005bde18e568d09"
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
-const table = document.getElementById("productsTable");
+  const table = document.getElementById("productsTable");
 
-// Escucha productos en tiempo real
-onSnapshot(collection(db, "products"), snapshot => {
-  table.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const p = docSnap.data();
-    const id = docSnap.id;
-    if (p.name === "init") return;
+  let PRODUCTS = {};
 
-    const discountPrice = p.discountPrice || p.price || 0;
+  // ==== LOGIN SIMPLE ====
+  function login(){
+    const user=document.getElementById("userInput").value;
+    const pass=document.getElementById("passInput").value;
+    if(user==="admin" && pass==="1234"){
+      document.getElementById("loginDiv").style.display="none";
+      document.getElementById("adminPanel").style.display="block";
+      listenProducts();
+    } else {
+      document.getElementById("loginMsg").innerText="Usuario o contraseña incorrectos";
+    }
+  }
 
-    const tr = document.createElement("tr");
+  window.login = login;
 
-    tr.innerHTML = `
-      <td><input type="text" value="${p.name}" data-id="${id}" class="nameInput"></td>
-      <td><input type="text" value="${p.code||id}" data-id="${id}" class="codeInput"></td>
-      <td><input type="text" value="${p.category}" data-id="${id}" class="categoryInput"></td>
-      <td><input type="number" min="0" value="${p.price}" data-id="${id}" class="priceInput"></td>
-      <td><input type="number" min="0" value="${discountPrice}" data-id="${id}" class="discountPriceInput"></td>
-      <td><input type="number" min="0" value="${p.stock}" data-id="${id}" class="stockInput"></td>
-      <td class="active-checkbox"><input type="checkbox" data-id="${id}" class="activeInput" ${p.active !== false ? 'checked' : ''}></td>
-      <td>
-        <img src="${p.image ? p.image : `https://pedrorabc09-design.github.io/catalogo-164/imagenes/no-image.png`}" class="preview">
-        ${p.image ? '' : '<input type="file" data-id="'+id+'" class="imageInput">'}
-      </td>
-      <td><button data-id="${id}" class="saveBtn">Guardar</button></td>
-    `;
-    table.appendChild(tr);
-  });
-  bindEvents();
-});
+  // ==== LISTEN PRODUCTS REALTIME ====
+  function listenProducts(){
+    const refCol = collection(db,"products");
+    onSnapshot(refCol, snapshot=>{
+      table.innerHTML="";
+      PRODUCTS={};
+      snapshot.forEach(docSnap=>{
+        const p=docSnap.data();
+        const id=docSnap.id;
+        if(p.name==="init") return;
+        PRODUCTS[id]=p;
 
-function bindEvents() {
-  document.querySelectorAll(".saveBtn").forEach(btn => {
-    btn.onclick = async () => {
-      const id = btn.dataset.id;
-      const name = document.querySelector(`.nameInput[data-id="${id}"]`).value;
-      const code = document.querySelector(`.codeInput[data-id="${id}"]`).value;
-      const category = document.querySelector(`.categoryInput[data-id="${id}"]`).value;
-      const price = parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value) || 0;
-      const discountPrice = parseFloat(document.querySelector(`.discountPriceInput[data-id="${id}"]`).value) || price;
-      const stock = parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value) || 0;
-      const active = document.querySelector(`.activeInput[data-id="${id}"]`).checked;
+        const discountPercent = p.price > 0 ? Math.round(((p.price - p.discountPrice)/p.price)*100) : 0;
 
-      let imageUrl = document.querySelector(`img.preview`).src;
-
-      // Solo subir imagen si input existe (nuevo producto)
-      const imageInput = document.querySelector(`.imageInput[data-id="${id}"]`);
-      if (imageInput && imageInput.files.length > 0) {
-        const file = imageInput.files[0];
-        const storageRef = sRef(storage, `products/${id}/${file.name}`);
-        await uploadBytes(storageRef, file);
-        imageUrl = await getDownloadURL(storageRef);
-      }
-
-      await updateDoc(doc(db, "products", id), {
-        name, code, category, price, discountPrice, stock, active, image: imageUrl
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td class="full-text">${p.name}</td>
+          <td><input type="text" value="${p.code || id}" data-id="${id}" class="codeInput"></td>
+          <td><input type="text" value="${p.category}" data-id="${id}" class="categoryInput"></td>
+          <td><input type="number" min="0" value="${p.price}" data-id="${id}" class="priceInput"></td>
+          <td><input type="number" min="0" value="${p.discountPrice}" data-id="${id}" class="discountInput"></td>
+          <td>${discountPercent}%</td>
+          <td><input type="number" min="0" value="${p.stock}" data-id="${id}" class="stockInput"></td>
+          <td><input type="checkbox" data-id="${id}" class="activeInput" ${p.active?"checked":""}></td>
+          <td><button data-id="${id}" class="saveBtn">Guardar</button></td>
+        `;
+        table.appendChild(tr);
       });
+      bindEvents();
+    });
+  }
 
-      alert("✅ Producto actualizado");
-    };
-  });
-}
+  function bindEvents(){
+    document.querySelectorAll(".saveBtn").forEach(btn=>{
+      btn.onclick=async ()=>{
+        const id=btn.dataset.id;
+        const code=document.querySelector(`.codeInput[data-id="${id}"]`).value;
+        const name=document.querySelector(`.full-text[data-id="${id}"]`)?.innerText || PRODUCTS[id].name;
+        const category=document.querySelector(`.categoryInput[data-id="${id}"]`).value;
+        const price=parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value);
+        const discountPrice=parseFloat(document.querySelector(`.discountInput[data-id="${id}"]`).value);
+        const stock=parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value);
+        const active=document.querySelector(`.activeInput[data-id="${id}"]`).checked;
 
-// Crear producto nuevo
-async function createProduct() {
-  const newDoc = await addDoc(collection(db, "products"), {
-    name: "Nuevo Producto",
-    code: "ID"+Date.now(),
-    category: "Categoría",
-    price: 0,
-    discountPrice: 0,
-    stock: 0,
-    active: true,
-    image: ""
-  });
-  alert("Producto creado ✅");
-}
+        await updateDoc(doc(db,"products",id),{
+          code,name,category,price,discountPrice,stock,active
+        });
 
+        alert("✅ Producto actualizado");
+      };
+    });
+  }
+
+  // ==== CREAR PRODUCTO NUEVO ====
+  function showCreateForm(){document.getElementById("createForm").style.display="block";}
+  function hideCreateForm(){document.getElementById("createForm").style.display="none";}
+
+  async function createProduct(){
+    const code=document.getElementById("newCode").value || "";
+    const name=document.getElementById("newName").value;
+    const category=document.getElementById("newCategory").value;
+    const price=parseFloat(document.getElementById("newPrice").value);
+    const discountPrice=parseFloat(document.getElementById("newDiscountPrice").value);
+    const stock=parseInt(document.getElementById("newStock").value);
+    const file=document.getElementById("newImage").files[0];
+
+    if(!name || !category || isNaN(price) || isNaN(discountPrice) || isNaN(stock) || !file){
+      alert("Completa todos los campos y selecciona imagen");
+      return;
+    }
+
+    // Subir imagen
+    const imgRef = ref(storage, "productos/"+file.name);
+    await uploadBytes(imgRef,file);
+    const imageURL = await getDownloadURL(imgRef);
+
+    await addDoc(collection(db,"products"),{
+      code,name,category,price,discountPrice,stock,active:true,image:imageURL
+    });
+
+    alert("✅ Producto creado");
+    hideCreateForm();
+  }
+
+  window.showCreateForm = showCreateForm;
+  window.hideCreateForm = hideCreateForm;
+  window.createProduct = createProduct;
 </script>
+
 </body>
 </html>
