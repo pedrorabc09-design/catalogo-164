@@ -175,12 +175,10 @@ function listenProducts(){
       el.onchange = () => {
       tr.dataset.changed = "true";
       tr.style.background = "#fff7ed"; // visual (opcional)
-  };
-});
-    });
+  
     bindEvents();
   });
-
+}
 
  async function saveAllProducts(){
   const rows = document.querySelectorAll("tr[data-changed='true']");
@@ -205,10 +203,9 @@ function listenProducts(){
     const stock = parseInt(tr.querySelector(".stockInput").value)||0;
     const active = tr.querySelector(".activeInput").checked;
 
-    const discountPercent =
-      price > 0
-        ? Math.round(((price - discountPrice) / price) * 100)
-        : 0;
+    const discountPercent = price > 0
+      ? Math.round(((price - discountPrice) / price) * 100)
+      : 0;
 
     await updateDoc(doc(db,"products",id),{
       code,
@@ -220,13 +217,13 @@ function listenProducts(){
       active
     });
 
-    // limpiar estado visual
     tr.dataset.changed = "false";
     tr.style.background = "";
   }
 
   alert("✅ Cambios masivos guardados correctamente");
 }
+
 
   
 // Bind botones y inputs
