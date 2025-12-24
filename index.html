@@ -246,10 +246,46 @@ main{padding:24px}
 
 <div id="cart-overlay" onclick="toggleCart(false)"></div>
 <div id="cart">
+  <!-- MODAL CHECKOUT -->
+<div id="checkoutModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+">
+  <div style="
+    background:white;
+    padding:22px;
+    border-radius:16px;
+    width:90%;
+    max-width:420px;
+  ">
+    <h3 style="margin-bottom:10px">🧾 Datos del pedido</h3>
+
+    <input id="customerNameInput"
+      placeholder="Nombre completo"
+      style="width:100%;padding:10px;margin:6px 0">
+
+    <input id="customerPhoneInput"
+      placeholder="Celular"
+      style="width:100%;padding:10px;margin:6px 0">
+
+    <button
+      style="width:100%;padding:12px;margin-top:10px;background:#25d366;color:white;border:none;border-radius:10px"
+      onclick="confirmCheckout()">
+      Confirmar pedido
+    </button>
+  </div>
+</div>
+
   <h2>Carrito <small id="cartTimer"></small></h2>
   <div id="cartItems"></div>
   <strong>Total: S/ <span id="cartTotal">0</span></strong>
-  <button class="buy-btn" id="checkoutBtn" onclick="checkout()">Finalizar por WhatsApp</button>
+  <button class="buy-btn" id="checkoutBtn" onclick="openCheckoutModal()">Finalizar por WhatsApp</button>
+
 </div>
 
 <!-- ==== Módulo único para Firebase y todo el JS ==== -->
@@ -458,6 +494,15 @@ async function createOrder(customerName, customerPhone) {
 
 
 // ==== FUNCIONES ====
+
+  function openCheckoutModal(){
+  if(Object.keys(CART).length === 0){
+    alert("El carrito está vacío");
+    return;
+  }
+  document.getElementById("checkoutModal").style.display = "flex";
+}
+
 
 // Timer carrito
 function startCartTimer(){
@@ -719,9 +764,26 @@ function removeFromCart(name){
     saveCart();
   }
 }
+
+  function confirmCheckout(){
+  const name = document
+    .getElementById("customerNameInput")
+    .value
+    .trim();
+
+  const phone = document
+    .getElementById("customerPhoneInput")
+    .value
+    .trim();
+
+  processCheckout(name, phone);
+
+  // cerrar modal
+  document.getElementById("checkoutModal").style.display = "none";
+}
   
 
-async function checkout() {
+async function processCheckout(customerName, customerPhone) {
   if (checkoutInProgress || checkoutConfirmed) return;
 
   checkoutInProgress = true;
@@ -756,7 +818,6 @@ async function checkout() {
   await confirmStock();
 
   // 👤 DATOS DEL CLIENTE
-const customerName = prompt("Ingresa tu nombre completo:");
 if (!customerName) {
   alert("El nombre es obligatorio");
   checkoutInProgress = false;
@@ -764,7 +825,6 @@ if (!customerName) {
   return;
 }
 
-const customerPhone = prompt("Ingresa tu número de celular:");
 if (!customerPhone) {
   alert("El celular es obligatorio");
   checkoutInProgress = false;
@@ -797,9 +857,14 @@ if (!customerPhone) {
   localStorage.removeItem("cart");
   renderCart();
 
-  window.open(`https://wa.me/51942434659?text=${msg}`);
-  setTimeout(clearAfterCheckout, 800);
-}
+  window.open(
+  `https://wa.me/51942434659?text=${msg}`,
+  "_blank"
+);
+
+  checkoutInProgress = false;
+
+
 
 function clearAfterCheckout(){
   CART = {};
@@ -890,11 +955,12 @@ window.changeQty = changeQty;
 window.addToCart = addToCart;
 window.buyNow = buyNow;
 window.toggleCart = toggleCart;
-window.checkout = checkout;
 window.goHome = goHome;
 window.toggleCategories = toggleCategories;
 window.closeCategories = closeCategories;
 window.removeFromCart = removeFromCart;
+window.openCheckoutModal = openCheckoutModal;
+window.confirmCheckout = confirmCheckout;
 
 </script>
 
