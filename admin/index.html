@@ -213,74 +213,41 @@ function bindEvents(){
 }
 
 // Crear nuevo producto
-window.createNewProduct = async ()=>{
+window.createNewProduct = async () => {
   const name = prompt("Nombre del producto:");
-  if(!name) return alert("Nombre obligatorio");
-
-  const category = prompt("Categoría del producto:");
-  const price = parseFloat(prompt("Precio:"))||0;
-  const discountPrice = parseFloat(prompt("Precio con descuento:"))||0;
-  const stock = parseInt(prompt("Stock:"))||0;
-  const image = prompt("URL de la imagen (opcional, solo subir nuevas):");
-
-  await addDoc(collection(db,"products"),{
-    name,
-    code:"ID"+Date.now(),
-    category,
-    price,
-    discountPrice,
-    discountPercent: price>0?Math.round(100*(price-discountPrice)/price):0,
-    stock,
-    active: activeCheckbox.checked,
-    image
-  });
-};
-
-document.getElementById("saveAllBtn").onclick = async () => {
-  const rows = document.querySelectorAll("tr[data-changed='true']");
-
-  if (rows.length === 0) {
-    alert("No hay cambios para guardar");
+  if (!name) {
+    alert("Nombre obligatorio");
     return;
   }
 
-  if (!confirm(`Guardar ${rows.length} productos modificados?`)) return;
+  const category = prompt("Categoría del producto:") || "";
+  const price = parseFloat(prompt("Precio:")) || 0;
+  const discountPrice = parseFloat(prompt("Precio con descuento:")) || 0;
+  const stock = parseInt(prompt("Stock:")) || 0;
+  const image = prompt(
+    "URL de la imagen (ej: https://pedrorabc09-design.github.io/catalogo-164/imagenes/archivo.png)"
+  ) || "";
 
-  for (const row of rows) {
-    const id = row.dataset.id;
+  const discountPercent =
+    price > 0
+      ? Math.round(((price - discountPrice) / price) * 100)
+      : 0;
 
-    const code = row.querySelector(".codeInput").value;
-    let category = row.querySelector(".categorySelect").value;
-    const newCat = row.querySelector(".newCategoryInput").value;
-    if (newCat) category = newCat;
+  await addDoc(collection(db, "products"), {
+    name,
+    code: "ID" + Date.now(),
+    category,
+    price,
+    discountPrice,
+    discountPercent,
+    stock,
+    active: true, // 👈 por defecto visible
+    image
+  });
 
-    const price = parseFloat(row.querySelector(".priceInput").value) || 0;
-    const discountPrice =
-      parseFloat(row.querySelector(".discountInput").value) || 0;
-    const stock = parseInt(row.querySelector(".stockInput").value) || 0;
-    const active = row.querySelector(".activeInput").checked;
-
-    const discountPercent =
-      price > 0
-        ? Math.round(((price - discountPrice) / price) * 100)
-        : 0;
-
-    await updateDoc(doc(db, "products", id), {
-      code,
-      category,
-      price,
-      discountPrice,
-      discountPercent,
-      stock,
-      active
-    });
-
-    row.dataset.changed = "false";
-    row.style.background = "";
-  }
-
-  alert("✅ Cambios guardados correctamente");
+  alert("✅ Producto creado correctamente");
 };
+
 
 </script>
 
