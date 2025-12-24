@@ -4,25 +4,127 @@
   <meta charset="UTF-8">
   <title>Panel Admin - IGNICAR TOYS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background:#f1f5f9;
+    }
+
+    h1,h2{
+      margin-bottom: 16px;
+    }
+
+    input{
+      padding: 8px;
+      width: 220px;
+    }
+
+    button{
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    table{
+      border-collapse: collapse;
+      margin-top: 20px;
+      background:white;
+    }
+
+    th,td{
+      border:1px solid #ccc;
+      padding:8px;
+      text-align:left;
+    }
+
+    #loginBox{
+      max-width:300px;
+      background:white;
+      padding:20px;
+      border-radius:8px;
+      box-shadow:0 10px 30px rgba(0,0,0,.1);
+    }
+
+    #adminPanel{
+      display:none;
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>📦 Panel Admin</h1>
+<!-- 🔐 LOGIN -->
+<div id="loginBox">
+  <h2>🔐 Acceso Admin</h2>
 
-<table border="1" cellpadding="8" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Producto</th>
-      <th>Categoría</th>
-      <th>Precio</th>
-      <th>Stock</th>
-      <th>Acción</th>
-    </tr>
-  </thead>
-  <tbody id="productsTable"></tbody>
-</table>
+  <input id="user" placeholder="Usuario">
+  <br><br>
+  <input id="pass" type="password" placeholder="Contraseña">
+  <br><br>
 
+  <button onclick="login()">Ingresar</button>
+  <p id="loginError" style="color:red;"></p>
+</div>
+
+<!-- 📦 PANEL ADMIN -->
+<div id="adminPanel">
+  <h1>📦 Panel Admin – IGNICAR TOYS</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="productsTable"></tbody>
+  </table>
+
+  <br>
+  <button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<!-- 🔥 SCRIPT -->
 <script type="module">
+  // ===============================
+  // 🔐 LOGIN SIMPLE
+  // ===============================
+  const ADMIN_USER = "admin";
+  const ADMIN_PASS = "1234";
+
+  if (sessionStorage.getItem("adminLogged") === "true") {
+    showAdmin();
+  }
+
+  window.login = function(){
+    const u = document.getElementById("user").value;
+    const p = document.getElementById("pass").value;
+
+    if(u === ADMIN_USER && p === ADMIN_PASS){
+      sessionStorage.setItem("adminLogged","true");
+      showAdmin();
+    }else{
+      document.getElementById("loginError").innerText = "❌ Credenciales incorrectas";
+    }
+  }
+
+  window.logout = function(){
+    sessionStorage.removeItem("adminLogged");
+    location.reload();
+  }
+
+  function showAdmin(){
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+  }
+
+  // ===============================
+  // 🔥 FIREBASE
+  // ===============================
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import {
     getFirestore,
@@ -32,14 +134,13 @@
     updateDoc
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  // 🔥 TU CONFIG REAL (NO DEJES TU_API_KEY)
   const firebaseConfig = {
-    apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
-    authDomain: "ignicar-toys.firebaseapp.com",
-    projectId: "ignicar-toys",
-    storageBucket: "ignicar-toys.firebasestorage.app",
-    messagingSenderId: "166759344812",
-    appId: "1:166759344812:web:5722c60005bde18e568d09"
+    apiKey: "TU_API_KEY",
+    authDomain: "TU_DOMINIO",
+    projectId: "TU_PROJECT_ID",
+    storageBucket: "TU_BUCKET",
+    messagingSenderId: "TU_ID",
+    appId: "TU_APP_ID"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -47,29 +148,29 @@
 
   const table = document.getElementById("productsTable");
 
-  // 🔄 Escucha en tiempo real
-  onSnapshot(collection(db, "products"), snapshot => {
+  // ===============================
+  // 📡 ESCUCHA EN TIEMPO REAL
+  // ===============================
+  onSnapshot(collection(db,"products"), snapshot=>{
     table.innerHTML = "";
 
-    snapshot.forEach(docSnap => {
+    snapshot.forEach(docSnap=>{
       const p = docSnap.data();
       const id = docSnap.id;
 
-      // ❌ ignorar documento init
-      if (p.name === "init") return;
+      // evitar docs basura
+      if(!p.name || !p.category) return;
 
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
         <td>${p.name}</td>
         <td>${p.category}</td>
         <td>S/ ${p.price}</td>
         <td>
-          <input type="number" min="0" value="${p.stock}"
-                 data-id="${id}" class="stockInput">
+          <input type="number" min="0" value="${p.stock}" data-id="${id}">
         </td>
         <td>
-          <button data-id="${id}" class="saveBtn">Guardar</button>
+          <button data-id="${id}">Guardar</button>
         </td>
       `;
 
@@ -79,24 +180,24 @@
     bindEvents();
   });
 
-  function bindEvents() {
-    document.querySelectorAll(".saveBtn").forEach(btn => {
-      btn.onclick = async () => {
+  function bindEvents(){
+    table.querySelectorAll("button").forEach(btn=>{
+      btn.onclick = async ()=>{
         const id = btn.dataset.id;
-        const input = document.querySelector(`input[data-id="${id}"]`);
+        const input = table.querySelector(`input[data-id="${id}"]`);
         const newStock = parseInt(input.value);
 
-        if (isNaN(newStock) || newStock < 0) {
+        if(isNaN(newStock) || newStock < 0){
           alert("Stock inválido");
           return;
         }
 
-        await updateDoc(doc(db, "products", id), {
-          stock: newStock
+        await updateDoc(doc(db,"products",id),{
+          stock:newStock
         });
 
         alert("✅ Stock actualizado");
-      };
+      }
     });
   }
 </script>
