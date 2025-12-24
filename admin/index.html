@@ -5,16 +5,17 @@
 <title>Panel Admin - IGNICAR TOYS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  body{font-family:Arial,sans-serif;padding:20px;background:#f1f5f9}
-  h1,h2{margin-bottom:20px}
-  table{width:100%;border-collapse:collapse;margin-top:20px}
-  th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}
-  th{background:#1e293b;color:white}
-  input[type="text"],input[type="number"],input[type="file"],select{width:100%;padding:6px}
-  button{padding:6px 12px;margin-top:4px;cursor:pointer}
-  .full-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;display:block}
-  #loginDiv{max-width:300px;margin:auto;background:white;padding:20px;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.2)}
-  #adminPanel{display:none}
+body{font-family:Arial,sans-serif;padding:20px;background:#f1f5f9}
+h1,h2{margin-bottom:20px}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}
+th{background:#1e293b;color:white}
+input[type="text"],input[type="number"],input[type="file"],select{width:100%;padding:6px;box-sizing:border-box}
+button{padding:6px 12px;margin-top:4px;cursor:pointer}
+img.product-img{width:60px;height:60px;object-fit:contain;border-radius:5px}
+#loginDiv{max-width:300px;margin:auto;background:white;padding:20px;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.2)}
+#adminPanel{display:none}
+#createForm{display:none;margin-top:20px;background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 </style>
 </head>
 <body>
@@ -31,15 +32,20 @@
   <h1>📦 Panel Admin IGNICAR TOYS</h1>
   <button onclick="showCreateForm()">Crear Nuevo Producto</button>
 
-  <div id="createForm" style="display:none;margin-top:20px;background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.2)">
+  <div id="createForm">
     <h2>Nuevo Producto</h2>
-    <input id="newCode" placeholder="Código interno">
+    <input id="newImage" type="file" accept="image/*">
     <input id="newName" placeholder="Nombre">
-    <input id="newCategory" placeholder="Categoría">
+    <input id="newCode" placeholder="Código interno">
+    <select id="newCategory">
+      <option value="">Seleccionar categoría</option>
+      <option value="Pop Race">Pop Race</option>
+      <option value="Mini GT">Mini GT</option>
+      <!-- puedes añadir más categorías -->
+    </select>
     <input id="newPrice" placeholder="Precio" type="number" min="0">
     <input id="newDiscountPrice" placeholder="Precio con descuento" type="number" min="0">
     <input id="newStock" placeholder="Stock" type="number" min="0">
-    <input id="newImage" type="file">
     <button onclick="createProduct()">Crear Producto</button>
     <button onclick="hideCreateForm()">Cancelar</button>
   </div>
@@ -47,12 +53,12 @@
   <table>
     <thead>
       <tr>
+        <th>Imagen</th>
         <th>Nombre</th>
         <th>Código</th>
         <th>Categoría</th>
         <th>Precio</th>
         <th>Precio Desc.</th>
-        <th>% Descuento</th>
         <th>Stock</th>
         <th>Activo</th>
         <th>Acción</th>
@@ -63,136 +69,127 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    onSnapshot,
-    doc,
-    updateDoc,
-    addDoc
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
-    authDomain: "ignicar-toys.firebaseapp.com",
-    projectId: "ignicar-toys",
-    storageBucket: "ignicar-toys.firebasestorage.app",
-    messagingSenderId: "166759344812",
-    appId: "1:166759344812:web:5722c60005bde18e568d09"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
+  authDomain: "ignicar-toys.firebaseapp.com",
+  projectId: "ignicar-toys",
+  storageBucket: "ignicar-toys.firebasestorage.app",
+  messagingSenderId: "166759344812",
+  appId: "1:166759344812:web:5722c60005bde18e568d09"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-  const table = document.getElementById("productsTable");
+const table = document.getElementById("productsTable");
+let PRODUCTS = {};
 
-  let PRODUCTS = {};
-
-  // ==== LOGIN SIMPLE ====
-  function login(){
-    const user=document.getElementById("userInput").value;
-    const pass=document.getElementById("passInput").value;
-    if(user==="admin" && pass==="1234"){
-      document.getElementById("loginDiv").style.display="none";
-      document.getElementById("adminPanel").style.display="block";
-      listenProducts();
-    } else {
-      document.getElementById("loginMsg").innerText="Usuario o contraseña incorrectos";
-    }
+// ===== LOGIN SIMPLE =====
+function login(){
+  const user=document.getElementById("userInput").value;
+  const pass=document.getElementById("passInput").value;
+  if(user==="admin" && pass==="1234"){
+    document.getElementById("loginDiv").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    listenProducts();
+  } else {
+    document.getElementById("loginMsg").innerText="Usuario o contraseña incorrectos";
   }
+}
+window.login = login;
 
-  window.login = login;
+// ===== LISTEN PRODUCTS =====
+function listenProducts(){
+  const refCol = collection(db,"products");
+  onSnapshot(refCol, snapshot=>{
+    table.innerHTML="";
+    PRODUCTS={};
+    snapshot.forEach(docSnap=>{
+      const p=docSnap.data();
+      const id=docSnap.id;
+      if(p.name==="init") return;
+      PRODUCTS[id]=p;
 
-  // ==== LISTEN PRODUCTS REALTIME ====
-  function listenProducts(){
-    const refCol = collection(db,"products");
-    onSnapshot(refCol, snapshot=>{
-      table.innerHTML="";
-      PRODUCTS={};
-      snapshot.forEach(docSnap=>{
-        const p=docSnap.data();
-        const id=docSnap.id;
-        if(p.name==="init") return;
-        PRODUCTS[id]=p;
-
-        const discountPercent = p.price > 0 ? Math.round(((p.price - p.discountPrice)/p.price)*100) : 0;
-
-        const tr=document.createElement("tr");
-        tr.innerHTML=`
-          <td class="full-text">${p.name}</td>
-          <td><input type="text" value="${p.code || id}" data-id="${id}" class="codeInput"></td>
-          <td><input type="text" value="${p.category}" data-id="${id}" class="categoryInput"></td>
-          <td><input type="number" min="0" value="${p.price}" data-id="${id}" class="priceInput"></td>
-          <td><input type="number" min="0" value="${p.discountPrice}" data-id="${id}" class="discountInput"></td>
-          <td>${discountPercent}%</td>
-          <td><input type="number" min="0" value="${p.stock}" data-id="${id}" class="stockInput"></td>
-          <td><input type="checkbox" data-id="${id}" class="activeInput" ${p.active?"checked":""}></td>
-          <td><button data-id="${id}" class="saveBtn">Guardar</button></td>
-        `;
-        table.appendChild(tr);
-      });
-      bindEvents();
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td><img src="${p.image}" class="product-img"></td>
+        <td><input type="text" value="${p.name}" data-id="${id}" class="nameInput"></td>
+        <td><input type="text" value="${p.code||id}" data-id="${id}" class="codeInput"></td>
+        <td>
+          <select data-id="${id}" class="categoryInput">
+            <option value="Pop Race" ${p.category==="Pop Race"?"selected":""}>Pop Race</option>
+            <option value="Mini GT" ${p.category==="Mini GT"?"selected":""}>Mini GT</option>
+          </select>
+        </td>
+        <td><input type="number" min="0" value="${p.price}" data-id="${id}" class="priceInput"></td>
+        <td><input type="number" min="0" value="${p.discountPrice}" data-id="${id}" class="discountInput"></td>
+        <td><input type="number" min="0" value="${p.stock}" data-id="${id}" class="stockInput"></td>
+        <td><input type="checkbox" data-id="${id}" class="activeInput" ${p.active?"checked":""}></td>
+        <td><button data-id="${id}" class="saveBtn">Guardar</button></td>
+      `;
+      table.appendChild(tr);
     });
+    bindEvents();
+  });
+}
+
+// ===== BIND EVENTS =====
+function bindEvents(){
+  document.querySelectorAll(".saveBtn").forEach(btn=>{
+    btn.onclick=async ()=>{
+      const id=btn.dataset.id;
+      const name=document.querySelector(`.nameInput[data-id="${id}"]`).value;
+      const code=document.querySelector(`.codeInput[data-id="${id}"]`).value;
+      const category=document.querySelector(`.categoryInput[data-id="${id}"]`).value;
+      const price=parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value);
+      const discountPrice=parseFloat(document.querySelector(`.discountInput[data-id="${id}"]`).value);
+      const stock=parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value);
+      const active=document.querySelector(`.activeInput[data-id="${id}"]`).checked;
+
+      await updateDoc(doc(db,"products",id),{name,code,category,price,discountPrice,stock,active});
+      alert("✅ Producto actualizado");
+    };
+  });
+}
+
+// ===== CREAR NUEVO PRODUCTO =====
+function showCreateForm(){document.getElementById("createForm").style.display="block";}
+function hideCreateForm(){document.getElementById("createForm").style.display="none";}
+
+async function createProduct(){
+  const file=document.getElementById("newImage").files[0];
+  const name=document.getElementById("newName").value;
+  const code=document.getElementById("newCode").value;
+  const category=document.getElementById("newCategory").value;
+  const price=parseFloat(document.getElementById("newPrice").value);
+  const discountPrice=parseFloat(document.getElementById("newDiscountPrice").value);
+  const stock=parseInt(document.getElementById("newStock").value);
+
+  if(!file || !name || !category || isNaN(price) || isNaN(discountPrice) || isNaN(stock)){
+    alert("Completa todos los campos y selecciona imagen");
+    return;
   }
 
-  function bindEvents(){
-    document.querySelectorAll(".saveBtn").forEach(btn=>{
-      btn.onclick=async ()=>{
-        const id=btn.dataset.id;
-        const code=document.querySelector(`.codeInput[data-id="${id}"]`).value;
-        const name=document.querySelector(`.full-text[data-id="${id}"]`)?.innerText || PRODUCTS[id].name;
-        const category=document.querySelector(`.categoryInput[data-id="${id}"]`).value;
-        const price=parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value);
-        const discountPrice=parseFloat(document.querySelector(`.discountInput[data-id="${id}"]`).value);
-        const stock=parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value);
-        const active=document.querySelector(`.activeInput[data-id="${id}"]`).checked;
+  const imgRef = ref(storage,"productos/"+file.name);
+  await uploadBytes(imgRef,file);
+  const imageURL = await getDownloadURL(imgRef);
 
-        await updateDoc(doc(db,"products",id),{
-          code,name,category,price,discountPrice,stock,active
-        });
+  await addDoc(collection(db,"products"),{
+    image:imageURL,name,code,category,price,discountPrice,stock,active:true
+  });
 
-        alert("✅ Producto actualizado");
-      };
-    });
-  }
+  alert("✅ Producto creado");
+  hideCreateForm();
+}
 
-  // ==== CREAR PRODUCTO NUEVO ====
-  function showCreateForm(){document.getElementById("createForm").style.display="block";}
-  function hideCreateForm(){document.getElementById("createForm").style.display="none";}
-
-  async function createProduct(){
-    const code=document.getElementById("newCode").value || "";
-    const name=document.getElementById("newName").value;
-    const category=document.getElementById("newCategory").value;
-    const price=parseFloat(document.getElementById("newPrice").value);
-    const discountPrice=parseFloat(document.getElementById("newDiscountPrice").value);
-    const stock=parseInt(document.getElementById("newStock").value);
-    const file=document.getElementById("newImage").files[0];
-
-    if(!name || !category || isNaN(price) || isNaN(discountPrice) || isNaN(stock) || !file){
-      alert("Completa todos los campos y selecciona imagen");
-      return;
-    }
-
-    // Subir imagen
-    const imgRef = ref(storage, "productos/"+file.name);
-    await uploadBytes(imgRef,file);
-    const imageURL = await getDownloadURL(imgRef);
-
-    await addDoc(collection(db,"products"),{
-      code,name,category,price,discountPrice,stock,active:true,image:imageURL
-    });
-
-    alert("✅ Producto creado");
-    hideCreateForm();
-  }
-
-  window.showCreateForm = showCreateForm;
-  window.hideCreateForm = hideCreateForm;
-  window.createProduct = createProduct;
+window.showCreateForm=showCreateForm;
+window.hideCreateForm=hideCreateForm;
+window.createProduct=createProduct;
 </script>
 
 </body>
