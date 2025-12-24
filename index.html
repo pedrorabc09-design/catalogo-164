@@ -785,23 +785,6 @@ function removeFromCart(name){
     saveCart();
   }
 }
-
-  function confirmCheckout(){
-  const name = document
-    .getElementById("customerNameInput")
-    .value
-    .trim();
-
-  const phone = document
-    .getElementById("customerPhoneInput")
-    .value
-    .trim();
-
-  processCheckout(name, phone);
-
-  // cerrar modal
-  document.getElementById("checkoutModal").style.display = "none";
-}
   
 
 async function processCheckout(customerName, customerPhone) {
