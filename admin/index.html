@@ -1,75 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Admin - IGNICAR TOYS</title>
-<style>
-body{font-family:sans-serif;margin:20px;background:#f1f5f9;color:#0f172a}
-h1,h2{margin-bottom:12px}
-input,button,select{padding:6px;margin:4px}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th,td{border:1px solid #ccc;padding:8px;text-align:center}
-th{background:#334155;color:white}
-.success{color:green}
-.error{color:red}
-.hidden{display:none}
-</style>
+  <meta charset="UTF-8">
+  <title>Panel Admin - IGNICAR TOYS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:sans-serif;padding:20px;background:#f1f5f9}
+    h1{margin-bottom:20px}
+    table{width:100%;border-collapse:collapse;margin-bottom:20px}
+    th, td{border:1px solid #ccc;padding:8px;text-align:left}
+    input[type="text"], input[type="number"]{width:80px}
+    .hidden{display:none}
+    #loginDiv{margin-bottom:20px}
+  </style>
 </head>
 <body>
 
-<h1>🔐 Panel Admin - IGNICAR TOYS</h1>
+<h1>📦 Panel Admin - IGNICAR TOYS</h1>
 
-<!-- LOGIN -->
+<!-- Login simple -->
 <div id="loginDiv">
-  <h2>Login</h2>
-  <input type="text" id="username" placeholder="Usuario"><br>
-  <input type="password" id="password" placeholder="Contraseña"><br>
-  <button onclick="login()">Ingresar</button>
-  <p id="loginMsg"></p>
+  <input type="text" id="username" placeholder="Usuario">
+  <input type="password" id="password" placeholder="Contraseña">
+  <button id="loginBtn">Ingresar</button>
 </div>
 
-<!-- PANEL ADMIN -->
-<div id="adminDiv" class="hidden">
-
-  <button onclick="logout()">Cerrar sesión</button>
+<!-- Panel principal -->
+<div id="adminPanel" class="hidden">
 
   <h2>Productos</h2>
   <table>
     <thead>
       <tr>
-        <th>Activo</th>
         <th>Nombre</th>
         <th>Categoría</th>
         <th>Precio</th>
-        <th>Descuento (%)</th>
+        <th>Descuento %</th>
         <th>Stock</th>
+        <th>Activo</th>
         <th>Acción</th>
       </tr>
     </thead>
     <tbody id="productsTable"></tbody>
   </table>
 
-  <h2>Crear Producto Nuevo</h2>
-  <div>
-    <input type="text" id="newName" placeholder="Nombre">
-    <input type="text" id="newCategory" placeholder="Categoría">
-    <input type="text" id="newImage" placeholder="URL Imagen">
-    <input type="number" id="newPrice" placeholder="Precio" min="0">
-    <input type="number" id="newDiscount" placeholder="Descuento %" min="0" max="100">
-    <input type="number" id="newStock" placeholder="Stock" min="0">
-    <label>Activo <input type="checkbox" id="newActive" checked></label>
-    <button onclick="createProduct()">Crear</button>
-    <p id="createMsg"></p>
-  </div>
-
+  <h2>Crear Producto</h2>
+  <input type="text" id="newName" placeholder="Nombre">
+  <input type="text" id="newCategory" placeholder="Categoría">
+  <input type="number" id="newPrice" placeholder="Precio">
+  <input type="number" id="newDiscount" placeholder="Descuento %">
+  <input type="number" id="newStock" placeholder="Stock">
+  <button id="createProductBtn">Crear Producto</button>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-// Config Firebase
+// 🔥 Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAMHt8Gu7O5bGWp7TbzS_fNWnyC2TaIfiU",
   authDomain: "ignicar-toys.firebaseapp.com",
@@ -78,118 +73,110 @@ const firebaseConfig = {
   messagingSenderId: "166759344812",
   appId: "1:166759344812:web:5722c60005bde18e568d09"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let currentUser = null;
+const loginDiv = document.getElementById("loginDiv");
+const adminPanel = document.getElementById("adminPanel");
+const productsTable = document.getElementById("productsTable");
 
-// LOGIN
-async function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const msg = document.getElementById("loginMsg");
+// ===== Login simple =====
+function login(){
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
 
-  if(!username || !password){ msg.innerText="Completa ambos campos"; return; }
-
-  const q = query(collection(db,"admins"), where("username","==",username));
-  const snap = await getDocs(q);
-
-  if(snap.empty){ msg.innerText="Usuario no encontrado"; return; }
-
-  const user = snap.docs[0].data();
-  if(user.password !== password){ msg.innerText="Contraseña incorrecta"; return; }
-
-  currentUser = user;
-  document.getElementById("loginDiv").classList.add("hidden");
-  document.getElementById("adminDiv").classList.remove("hidden");
-
-  loadProducts();
+  // 👈 Cambia según tus usuarios
+  if(user === "admin" && pass === "1234"){
+    loginDiv.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+    listenProducts();
+  } else {
+    alert("Usuario o contraseña incorrectos");
+  }
 }
 
-// LOGOUT
-function logout(){
-  currentUser = null;
-  document.getElementById("loginDiv").classList.remove("hidden");
-  document.getElementById("adminDiv").classList.add("hidden");
-  document.getElementById("loginMsg").innerText="";
-}
-
-// CARGAR PRODUCTOS
-function loadProducts(){
-  const table = document.getElementById("productsTable");
-
-  onSnapshot(collection(db,"products"), snapshot => {
-    table.innerHTML = "";
+// ===== Escucha productos =====
+function listenProducts(){
+  onSnapshot(collection(db, "products"), snapshot => {
+    productsTable.innerHTML = "";
 
     snapshot.forEach(docSnap => {
       const p = docSnap.data();
       const id = docSnap.id;
 
-      if(p.name==="init") return;
+      if(!p.name || p.name === "init") return;
 
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
-        <td><input type="checkbox" class="activeBox" data-id="${id}" ${p.active?"checked":""} ${currentUser.role==="stock"?"":"disabled"}></td>
-        <td><input type="text" class="nameInput" value="${p.name}" data-id="${id}" ${currentUser.role==="editor"||currentUser.role==="superadmin"?"":"disabled"}></td>
-        <td><input type="text" class="catInput" value="${p.category}" data-id="${id}" ${currentUser.role==="superadmin"?"":"disabled"}></td>
-        <td><input type="number" class="priceInput" value="${p.price}" data-id="${id}" ${currentUser.role==="editor"||currentUser.role==="superadmin"?"":"disabled"}></td>
-        <td><input type="number" class="discInput" value="${p.discount||0}" data-id="${id}" ${currentUser.role==="editor"||currentUser.role==="superadmin"?"":"disabled"}></td>
-        <td><input type="number" class="stockInput" value="${p.stock}" data-id="${id}" ${currentUser.role==="stock"||currentUser.role==="superadmin"?"":"disabled"}></td>
-        <td><button data-id="${id}">Guardar</button></td>
+        <td><input type="text" value="${p.name}" data-id="${id}" class="nameInput"></td>
+        <td><input type="text" value="${p.category}" data-id="${id}" class="catInput"></td>
+        <td><input type="number" value="${p.price}" data-id="${id}" class="priceInput"></td>
+        <td><input type="number" value="${p.discount || 0}" data-id="${id}" class="discountInput"></td>
+        <td><input type="number" value="${p.stock}" data-id="${id}" class="stockInput"></td>
+        <td>
+          <input type="checkbox" ${p.active !== false ? "checked" : ""} data-id="${id}" class="activeInput">
+        </td>
+        <td><button data-id="${id}" class="saveBtn">Guardar</button></td>
       `;
-
-      table.appendChild(tr);
+      productsTable.appendChild(tr);
     });
 
     bindEvents();
   });
 }
 
-// GUARDAR CAMBIOS
+// ===== Bind eventos de editar =====
 function bindEvents(){
-  document.querySelectorAll("#productsTable button").forEach(btn=>{
+  document.querySelectorAll(".saveBtn").forEach(btn=>{
     btn.onclick = async ()=>{
       const id = btn.dataset.id;
-      const docRef = doc(db,"products",id);
-
-      const active = document.querySelector(`.activeBox[data-id="${id}"]`).checked;
-      const name = document.querySelector(`.nameInput[data-id="${id}"]`).value.trim();
-      const category = document.querySelector(`.catInput[data-id="${id}"]`).value.trim();
+      const name = document.querySelector(`.nameInput[data-id="${id}"]`).value;
+      const category = document.querySelector(`.catInput[data-id="${id}"]`).value;
       const price = parseFloat(document.querySelector(`.priceInput[data-id="${id}"]`).value);
-      const discount = parseInt(document.querySelector(`.discInput[data-id="${id}"]`).value);
+      const discount = parseFloat(document.querySelector(`.discountInput[data-id="${id}"]`).value);
       const stock = parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value);
+      const active = document.querySelector(`.activeInput[data-id="${id}"]`).checked;
 
-      await updateDoc(docRef,{
-        active, name, category, price, discount, stock
-      });
+      if(!name || !category || isNaN(price) || isNaN(discount) || isNaN(stock)){
+        alert("Valores inválidos");
+        return;
+      }
 
+      await updateDoc(doc(db, "products", id), { name, category, price, discount, stock, active });
       alert("✅ Producto actualizado");
-    };
+    }
   });
 }
 
-// CREAR PRODUCTO NUEVO
-async function createProduct(){
-  const name = document.getElementById("newName").value.trim();
-  const category = document.getElementById("newCategory").value.trim();
-  const image = document.getElementById("newImage").value.trim();
+// ===== Crear producto nuevo =====
+function createProduct(){
+  const name = document.getElementById("newName").value;
+  const category = document.getElementById("newCategory").value;
   const price = parseFloat(document.getElementById("newPrice").value);
-  const discount = parseInt(document.getElementById("newDiscount").value) || 0;
+  const discount = parseFloat(document.getElementById("newDiscount").value);
   const stock = parseInt(document.getElementById("newStock").value);
-  const active = document.getElementById("newActive").checked;
-  const msg = document.getElementById("createMsg");
 
-  if(!name||!category||!image||isNaN(price)||isNaN(stock)){ msg.innerText="Completa todos los campos"; return; }
+  if(!name || !category || isNaN(price) || isNaN(discount) || isNaN(stock)){
+    alert("Por favor completa todos los campos correctamente");
+    return;
+  }
 
-  await addDoc(collection(db,"products"),{
-    name, category, image, price, discount, stock, active
-  });
+  addDoc(collection(db,"products"), { name, category, price, discount, stock, active:true });
+  alert("✅ Producto creado");
 
-  msg.innerText = "✅ Producto creado";
-  setTimeout(()=>msg.innerText="",2000);
+  document.getElementById("newName").value = "";
+  document.getElementById("newCategory").value = "";
+  document.getElementById("newPrice").value = "";
+  document.getElementById("newDiscount").value = "";
+  document.getElementById("newStock").value = "";
 }
+
+// ===== Eventos botones =====
+document.getElementById("loginBtn").addEventListener("click", login);
+document.getElementById("createProductBtn").addEventListener("click", createProduct);
 
 </script>
+
 </body>
 </html>
