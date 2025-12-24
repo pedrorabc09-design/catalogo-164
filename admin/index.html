@@ -69,13 +69,16 @@
   <table>
     <thead>
       <tr>
-        <th>Cliente</th>
-        <th>Celular</th>
-        <th>Total</th>
-        <th>Fecha</th>
-        <th>Ver</th>
-      </tr>
-    </thead>
+      <th>Pedido</th>
+      <th>Cliente</th>
+      <th>Celular</th>
+      <th>Fecha</th>
+      <th>Total</th>
+      <th>Estado</th>
+      <th>Detalle</th>
+  </tr>
+</thead>
+
     <tbody id="ordersTable"></tbody>
   </table>
 </div>  
@@ -128,21 +131,23 @@ onSnapshot(collection(db,"orders"), snapshot=>{
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${o.orderNumber || docSnap.id}</td>
-      <td>${o.customerName || "-"}</td>
-      <td>${date}</td>
-      <td>S/ ${o.total || 0}</td>
-      <td>
-        <span class="status ${o.status}">
-          ${o.status}
-        </span>
-      </td>
-      <td>
-        <button onclick='showDetail(${JSON.stringify(o.items)})'>
-          Ver
-        </button>
-      </td>
-    `;
+  <td>${o.orderNumber || docSnap.id}</td>
+  <td>${o.customerName || "-"}</td>
+  <td>${o.customerPhone || "-"}</td>
+  <td>${date}</td>
+  <td>S/ ${o.total || 0}</td>
+  <td>
+    <span class="status ${o.status}">
+      ${o.status}
+    </span>
+  </td>
+  <td>
+    <button onclick='showDetail(${JSON.stringify(o.items)})'>
+      Ver
+    </button>
+  </td>
+`;
+
 
     table.appendChild(tr);
   });
