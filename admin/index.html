@@ -178,11 +178,57 @@ function listenProducts(){
   };
 });
     });
-
     bindEvents();
   });
+
+
+ async function saveAllProducts(){
+  const rows = document.querySelectorAll("tr[data-changed='true']");
+
+  if(rows.length === 0){
+    alert("ℹ️ No hay cambios para guardar");
+    return;
+  }
+
+  if(!confirm(`¿Guardar cambios en ${rows.length} productos?`)) return;
+
+  for(const tr of rows){
+    const id = tr.dataset.id;
+
+    const code = tr.querySelector(".codeInput").value;
+    let category = tr.querySelector(".categorySelect").value;
+    const newCat = tr.querySelector(".newCategoryInput").value;
+    if(newCat) category = newCat;
+
+    const price = parseFloat(tr.querySelector(".priceInput").value)||0;
+    const discountPrice = parseFloat(tr.querySelector(".discountInput").value)||0;
+    const stock = parseInt(tr.querySelector(".stockInput").value)||0;
+    const active = tr.querySelector(".activeInput").checked;
+
+    const discountPercent =
+      price > 0
+        ? Math.round(((price - discountPrice) / price) * 100)
+        : 0;
+
+    await updateDoc(doc(db,"products",id),{
+      code,
+      category,
+      price,
+      discountPrice,
+      discountPercent,
+      stock,
+      active
+    });
+
+    // limpiar estado visual
+    tr.dataset.changed = "false";
+    tr.style.background = "";
+  }
+
+  alert("✅ Cambios masivos guardados correctamente");
 }
 
+  
 // Bind botones y inputs
 function bindEvents(){
   document.querySelectorAll(".saveBtn").forEach(btn=>{
@@ -211,6 +257,11 @@ function bindEvents(){
     }
   });
 }
+
+document.getElementById("saveAllBtn").onclick = saveAllProducts;
+window.saveAllProducts = saveAllProducts;
+
+  
 
 // Crear nuevo producto
 window.createNewProduct = async () => {
@@ -247,7 +298,6 @@ window.createNewProduct = async () => {
 
   alert("✅ Producto creado correctamente");
 };
-
 
 </script>
 
