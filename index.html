@@ -410,7 +410,7 @@ async function confirmStock(){
   }
 }
 
-async function createOrder() {
+async function createOrder(customerName, customerPhone) {
   if (Object.keys(CART).length === 0) return null;
 
   const sessionId =
@@ -434,12 +434,15 @@ async function createOrder() {
   });
 
   const order = {
-    sessionId,
-    createdAt: serverTimestamp(),
-    status: "pending",
-    total,
-    items
-  };
+  sessionId,
+  customerName,      // 👈 NUEVO
+  customerPhone,     // 👈 NUEVO
+  createdAt: serverTimestamp(),
+  status: "pending",
+  total,
+  items
+};
+
 
   const ref = await addDoc(collection(db, "orders"), order);
   return ref.id;
@@ -752,8 +755,26 @@ async function checkout() {
   // 🔒 confirmar stock (NO se devuelve)
   await confirmStock();
 
+  // 👤 DATOS DEL CLIENTE
+const customerName = prompt("Ingresa tu nombre completo:");
+if (!customerName) {
+  alert("El nombre es obligatorio");
+  checkoutInProgress = false;
+  sessionStorage.removeItem("checkoutConfirmed");
+  return;
+}
+
+const customerPhone = prompt("Ingresa tu número de celular:");
+if (!customerPhone) {
+  alert("El celular es obligatorio");
+  checkoutInProgress = false;
+  sessionStorage.removeItem("checkoutConfirmed");
+  return;
+}
+
+  
   // 📦 crear pedido
-  const orderId = await createOrder();
+  const orderId = await createOrder(customerName, customerPhone);
 
   // 📲 WhatsApp
   const now = new Date();
@@ -761,6 +782,8 @@ async function checkout() {
   const timeStr = now.toLocaleTimeString("es-PE",{hour:'2-digit',minute:'2-digit'});
 
   let msg = `Hola 👋%0A`;
+  msg += `Cliente: ${customerName}%0A`;
+  msg += `Celular: ${customerPhone}%0A%0A`;
   msg += `Pedido: *${orderId}*%0A`;
   msg += `Fecha: ${dateStr} ${timeStr}%0A%0A`;
   msg += `Productos:%0A`;
