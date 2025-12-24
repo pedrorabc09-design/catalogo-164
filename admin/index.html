@@ -31,6 +31,10 @@
 <div id="adminPanel" style="display:none">
   <h1>📦 Panel Admin</h1>
   <button id="newProductBtn" onclick="createNewProduct()">➕ Crear Nuevo Producto</button>
+  <button id="saveAllBtn" style="margin:15px 0;padding:8px 14px;">
+  💾 Guardar todos los cambios
+</button>
+
   <table>
     <thead>
       <tr>
@@ -125,6 +129,9 @@ function listenProducts(){
     // ✅ PASO 2: renderizar filas ya con TODAS las categorías
     products.forEach(p => {
       const tr = document.createElement("tr");
+      tr.dataset.id = p.id;
+      tr.dataset.changed = "false";
+
 
       tr.innerHTML = `
         <td>${p.image ? `<img class="product-img" src="${p.image}">` : ""}</td>
@@ -163,6 +170,13 @@ function listenProducts(){
       `;
 
       productsTable.appendChild(tr);
+
+      tr.querySelectorAll("input, select").forEach(el => {
+      el.onchange = () => {
+      tr.dataset.changed = "true";
+      tr.style.background = "#fff7ed"; // visual (opcional)
+  };
+});
     });
 
     bindEvents();
@@ -220,6 +234,48 @@ window.createNewProduct = async ()=>{
     active: activeCheckbox.checked,
     image
   });
+};
+
+document.getElementById("saveAllBtn").onclick = async () => {
+  const rows = document.querySelectorAll("tr[data-changed='true']");
+
+  if (rows.length === 0) {
+    alert("No hay cambios para guardar");
+    return;
+  }
+
+  if (!confirm(`Guardar ${rows.length} productos modificados?`)) return;
+
+  for (const row of rows) {
+    const id = row.dataset.id;
+
+    const name = row.querySelector(".nameInput").value.trim();
+    const code = row.querySelector(".codeInput").value.trim();
+    const category = row.querySelector(".categoryInput").value.trim();
+    const price = parseFloat(row.querySelector(".priceInput").value);
+    const discountPrice = parseFloat(row.querySelector(".discountPriceInput").value);
+    const stock = parseInt(row.querySelector(".stockInput").value);
+    const active = row.querySelector(".activeInput").checked;
+
+    await updateDoc(doc(db, "products", id), {
+      name,
+      code,
+      category,
+      price,
+      discountPrice,
+      discount:
+        discountPrice < price
+          ? Math.round(((price - discountPrice) / price) * 100)
+          : 0,
+      stock,
+      active
+    });
+
+    row.dataset.changed = "false";
+    row.style.background = "";
+  }
+
+  alert("✅ Cambios guardados correctamente");
 };
 </script>
 
