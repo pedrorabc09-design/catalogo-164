@@ -171,11 +171,13 @@ function listenProducts(){
 
       productsTable.appendChild(tr);
 
-      tr.querySelectorAll("input, select").forEach(el => {
-      el.onchange = () => {
-      tr.dataset.changed = "true";
-      tr.style.background = "#fff7ed"; // visual (opcional)
-  
+tr.querySelectorAll("input, select").forEach(el => {
+  el.onchange = () => {
+    tr.dataset.changed = "true";
+    tr.style.background = "#fff7ed";
+  };
+});
+    });
     bindEvents();
   });
 }
