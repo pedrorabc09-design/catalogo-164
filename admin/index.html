@@ -9,7 +9,6 @@
     table{width:100%;border-collapse:collapse;margin-top:20px;}
     th, td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle;}
     input[type="text"], input[type="number"]{width:100%;box-sizing:border-box;}
-    input[type="file"]{width:100%;}
     button{padding:6px 12px;margin:2px;cursor:pointer;}
     .active-checkbox{text-align:center;}
     img.preview{width:80px;height:80px;object-fit:contain;}
@@ -74,27 +73,23 @@ onSnapshot(collection(db, "products"), snapshot => {
     const id = docSnap.id;
     if (p.name === "init") return;
 
-    const tr = document.createElement("tr");
+    const discountPrice = p.discountPrice || p.price || 0;
 
-    const discountPercent = p.price > 0 && p.discountPrice
-      ? Math.round((1 - p.discountPrice / p.price) * 100)
-      : 0;
+    const tr = document.createElement("tr");
 
     tr.innerHTML = `
       <td><input type="text" value="${p.name}" data-id="${id}" class="nameInput"></td>
       <td><input type="text" value="${p.code||id}" data-id="${id}" class="codeInput"></td>
       <td><input type="text" value="${p.category}" data-id="${id}" class="categoryInput"></td>
       <td><input type="number" min="0" value="${p.price}" data-id="${id}" class="priceInput"></td>
-      <td><input type="number" min="0" value="${p.discountPrice||p.price}" data-id="${id}" class="discountPriceInput"></td>
+      <td><input type="number" min="0" value="${discountPrice}" data-id="${id}" class="discountPriceInput"></td>
       <td><input type="number" min="0" value="${p.stock}" data-id="${id}" class="stockInput"></td>
       <td class="active-checkbox"><input type="checkbox" data-id="${id}" class="activeInput" ${p.active !== false ? 'checked' : ''}></td>
       <td>
-        <img src="${p.image||''}" class="preview"><br>
-        <input type="file" data-id="${id}" class="imageInput">
+        <img src="${p.image ? p.image : `https://pedrorabc09-design.github.io/catalogo-164/imagenes/no-image.png`}" class="preview">
+        ${p.image ? '' : '<input type="file" data-id="'+id+'" class="imageInput">'}
       </td>
-      <td>
-        <button data-id="${id}" class="saveBtn">Guardar</button>
-      </td>
+      <td><button data-id="${id}" class="saveBtn">Guardar</button></td>
     `;
     table.appendChild(tr);
   });
@@ -113,11 +108,11 @@ function bindEvents() {
       const stock = parseInt(document.querySelector(`.stockInput[data-id="${id}"]`).value) || 0;
       const active = document.querySelector(`.activeInput[data-id="${id}"]`).checked;
 
-      // Subir imagen si hay archivo
-      const imageInput = document.querySelector(`.imageInput[data-id="${id}"]`);
-      let imageUrl = imageInput.closest('td').querySelector('img.preview').src;
+      let imageUrl = document.querySelector(`img.preview`).src;
 
-      if (imageInput.files.length > 0) {
+      // Solo subir imagen si input existe (nuevo producto)
+      const imageInput = document.querySelector(`.imageInput[data-id="${id}"]`);
+      if (imageInput && imageInput.files.length > 0) {
         const file = imageInput.files[0];
         const storageRef = sRef(storage, `products/${id}/${file.name}`);
         await uploadBytes(storageRef, file);
