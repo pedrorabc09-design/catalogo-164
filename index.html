@@ -503,6 +503,27 @@ async function createOrder(customerName, customerPhone) {
   document.getElementById("checkoutModal").style.display = "flex";
 }
 
+  function confirmCheckout(){
+  const name = document.getElementById("customerNameInput").value.trim();
+  const phone = document.getElementById("customerPhoneInput").value.trim();
+
+  if(!name){
+    alert("El nombre es obligatorio");
+    return;
+  }
+
+  if(!phone){
+    alert("El celular es obligatorio");
+    return;
+  }
+
+  // cerrar modal
+  document.getElementById("checkoutModal").style.display = "none";
+
+  // llamar al proceso real
+  processCheckout(name, phone);
+}
+
 
 // Timer carrito
 function startCartTimer(){
