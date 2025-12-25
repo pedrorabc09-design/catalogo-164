@@ -342,26 +342,62 @@ window.deleteOrder = async (id)=>{
 };
   
 
-// 📤 Exportar Excel
 window.exportExcel = ()=>{
-  if(ordersCache.length===0){
+  if(ordersCache.length === 0){
     alert("No hay pedidos");
     return;
   }
 
-  const rows = ordersCache.map(o=>({
-    Pedido: o.orderNumber,
-    Cliente: o.customerName,
-    Email: o.customerEmail,
-    Teléfono: o.customerPhone,
-    Total: o.total,
-    Estado: o.status,
-    Fecha: o.createdAt?.toDate
+  const rows = ordersCache.map(o => ({
+    "Pedido": o.orderNumber || o.id,
+    "Cliente": o.customerName || "",
+    "Email": o.customerEmail || "",
+    "Teléfono": o.customerPhone || "",
+    "Total (S/)": o.total || 0,
+    "Estado": o.status || "",
+    "Fecha": o.createdAt?.toDate
       ? o.createdAt.toDate().toLocaleString()
       : ""
   }));
 
   const ws = XLSX.utils.json_to_sheet(rows);
+
+  /* 📐 Ajuste de ancho de columnas */
+  ws["!cols"] = [
+    { wch: 15 }, // Pedido
+    { wch: 25 }, // Cliente
+    { wch: 30 }, // Email
+    { wch: 18 }, // Teléfono
+    { wch: 14 }, // Total
+    { wch: 15 }, // Estado
+    { wch: 22 }  // Fecha
+  ];
+
+  /* 🎨 Estilo encabezados */
+  const headerCells = Object.keys(rows[0]);
+  headerCells.forEach((_, i) => {
+    const cell = ws[XLSX.utils.encode_cell({ r: 0, c: i })];
+    if(cell){
+      cell.s = {
+        font: { bold: true },
+        alignment: { horizontal: "center" },
+        fill: {
+          fgColor: { rgb: "1E293B" } // slate-800
+        },
+        color: { rgb: "FFFFFF" }
+      };
+    }
+  });
+
+  /* 💰 Formato moneda para Total */
+  for(let r = 1; r <= rows.length; r++){
+    const cell = ws[XLSX.utils.encode_cell({ r, c: 4 })];
+    if(cell){
+      cell.t = "n";
+      cell.z = '"S/ "0.00';
+    }
+  }
+
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Pedidos");
 
