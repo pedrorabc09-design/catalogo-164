@@ -484,9 +484,98 @@ window.exportExcel = ()=>{
   }
 
   /* 📘 Workbook */
+
+  /* 📊 RENTABILIDAD POR PRODUCTO (CONSOLIDADO) */
+const productMap = {};
+
+// recorrer pedidos
+sortedOrders.forEach(o=>{
+  (o.items || []).forEach(item=>{
+    const name = item.name || "SIN NOMBRE";
+    const qty = item.quantity || 0;
+    const price = item.price || 0;
+    const cost = item.cost || 0;
+
+    if(!productMap[name]){
+      productMap[name] = {
+        product: name,
+        qty: 0,
+        price,
+        cost
+      };
+    }
+
+    productMap[name].qty += qty;
+  });
+});
+
+// construir filas
+const profitRows = Object.values(productMap).map(p=>{
+  const revenueTotal = p.qty * p.price;
+  const costTotal = p.qty * p.cost;
+  const profitUnit = p.price - p.cost;
+  const profitTotal = revenueTotal - costTotal;
+
+  return {
+    Producto: p.product,
+    "Total Vendidos": p.qty,
+    "Costo Unitario": p.cost,
+    "Precio Venta Unitario": p.price,
+    "Ingreso Total": revenueTotal,
+    "Costo Total": costTotal,
+    "Utilidad por Unidad": profitUnit,
+    "Utilidad Total": profitTotal
+  };
+});
+
+const wsProfit = XLSX.utils.json_to_sheet(profitRows);
+
+/* columnas */
+wsProfit["!cols"] = [
+  { wch: 32 },
+  { wch: 16 },
+  { wch: 16 },
+  { wch: 20 },
+  { wch: 18 },
+  { wch: 18 },
+  { wch: 20 },
+  { wch: 18 }
+];
+
+/* filtros */
+wsProfit["!autofilter"] = {
+  ref: `A1:H${profitRows.length + 1}`
+};
+
+/* encabezados */
+Object.keys(profitRows[0] || {}).forEach((_, c)=>{
+  const cell = wsProfit[XLSX.utils.encode_cell({ r:0, c })];
+  if(cell){
+    cell.s = {
+      font:{ bold:true, color:{ rgb:"FFFFFF" }},
+      fill:{ fgColor:{ rgb:"7C2D12" }},
+      alignment:{ horizontal:"center" }
+    };
+  }
+});
+
+/* formato moneda */
+for(let r=1; r<=profitRows.length; r++){
+  [2,3,4,5,6,7].forEach(c=>{
+    const cell = wsProfit[XLSX.utils.encode_cell({ r, c })];
+    if(cell){
+      cell.t = "n";
+      cell.z = '"S/ "0.00';
+    }
+  });
+}
+
+  
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, wsSummary, "Pedidos");
   XLSX.utils.book_append_sheet(wb, wsDetail, "Detalle & Rentabilidad");
+  XLSX.utils.book_append_sheet(wb, wsProfit, "Rentabilidad por Producto");
+
 
   XLSX.writeFile(wb, "pedidos-ignicar-toys.xlsx");
 };
