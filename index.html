@@ -731,7 +731,18 @@ async function addToCart(name){
     return;
   }
 
-  if(!CART[name]) CART[name] = {...p, qty:0, time:Date.now()};
+  if(!CART[name]) {
+  CART[name] = {
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    finalPrice: p.finalPrice,
+    discount: p.discount,
+    cost: p.cost ?? 0,   // 👈 CLAVE
+    qty: 0,
+    time: Date.now()
+  };
+}
   CART[name].qty += p._qty;
   CART[name].time = Date.now();
 
