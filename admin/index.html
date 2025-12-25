@@ -187,6 +187,7 @@ img.product-img{
         <th>Código</th>
         <th>Categoría</th>
         <th>Precio</th>
+        <th>Costo</th>
         <th>Precio Desc.</th>
         <th>Stock</th>
         <th>Activo</th>
@@ -316,7 +317,8 @@ Productos:
 
   if(order.items){
     order.items.forEach(i=>{
-      text += `• ${i.name} x${i.quantity} - S/ ${i.price}\n`;
+      const qty = Number(i.quantity ?? i.qty ?? i.cantidad ?? 1);
+      text += `• ${i.name} x${qty} - S/ ${i.price}\n`;
     });
   }  
   alert(text);
@@ -426,7 +428,7 @@ window.exportExcel = ()=>{
     (o.items || []).forEach(item=>{
       const price = item.price || 0;
       const cost = item.cost || 0; // 👈 aquí va el costo
-      const qty = item.quantity || 1;
+      const qty = Number(item.quantity ?? item.qty ?? item.cantidad ?? 0);
 
       const revenue = price * qty;
       const expense = cost * qty;
@@ -492,7 +494,7 @@ const productMap = {};
 sortedOrders.forEach(o=>{
   (o.items || []).forEach(item=>{
     const name = item.name || "SIN NOMBRE";
-    const qty = item.quantity || 0;
+    const qty = Number(item.quantity ?? item.qty ?? item.cantidad ?? 0);
     const price = item.price || 0;
     const cost = item.cost || 0;
 
@@ -673,7 +675,16 @@ function listenProducts(){
 
         <td><input type="number" value="${p.price || 0}" class="priceInput"></td>
 
-        <td><input type="number" value="${p.discountPrice || 0}" class="discountInput"></td>
+        <td>
+        <input type="number"
+        value="${p.cost || 0}"
+        class="costInput"
+        style="background:#fef3c7"
+        >
+        </td>
+
+<td><input type="number" value="${p.discountPrice || 0}" class="discountInput"></td>
+
 
         <td><input type="number" value="${p.stock || 0}" class="stockInput"></td>
 
@@ -722,6 +733,7 @@ tr.querySelectorAll("input, select").forEach(el => {
     if(newCat) category = newCat;
 
     const price = parseFloat(tr.querySelector(".priceInput").value)||0;
+    const cost = parseFloat(tr.querySelector(".costInput").value)||0;
     const discountPrice = parseFloat(tr.querySelector(".discountInput").value)||0;
     const stock = parseInt(tr.querySelector(".stockInput").value)||0;
     const active = tr.querySelector(".activeInput").checked;
@@ -731,14 +743,16 @@ tr.querySelectorAll("input, select").forEach(el => {
       : 0;
 
     await updateDoc(doc(db,"products",id),{
-      code,
-      category,
-      price,
-      discountPrice,
-      discountPercent,
-      stock,
-      active
-    });
+  code,
+  category,
+  price,
+  cost, // 👈
+  discountPrice,
+  stock,
+  active,
+  discountPercent
+});
+
 
     tr.dataset.changed = "false";
     tr.style.background = "";
@@ -762,6 +776,7 @@ function bindEvents(){
       if(newCat) category = newCat;
 
       const price = parseFloat(tr.querySelector(".priceInput").value)||0;
+      const cost = parseFloat(tr.querySelector(".costInput").value)||0;
       const discountPrice = parseFloat(tr.querySelector(".discountInput").value)||0;
       const stock = parseInt(tr.querySelector(".stockInput").value)||0;
       const active = tr.querySelector(".activeInput").checked;
@@ -770,8 +785,16 @@ function bindEvents(){
       const discountPercent = price>0?Math.round(100*(price-discountPrice)/price):0;
 
       await updateDoc(doc(db,"products",id),{
-        code, category, price, discountPrice, stock, active, discountPercent
-      });
+  code,
+  category,
+  price,
+  cost, // 👈
+  discountPrice,
+  stock,
+  active,
+  discountPercent
+});
+
       
 tr.style.background = "#dcfce7";
 setTimeout(()=>{
@@ -811,6 +834,7 @@ window.createNewProduct = async () => {
 
   const category = prompt("Categoría del producto:") || "";
   const price = parseFloat(prompt("Precio:")) || 0;
+  const cost = parseFloat(prompt("Costo de compra:")) || 0;
   const discountPrice = parseFloat(prompt("Precio con descuento:")) || 0;
   const stock = parseInt(prompt("Stock:")) || 0;
   const image = prompt(
@@ -823,16 +847,18 @@ window.createNewProduct = async () => {
       : 0;
 
   await addDoc(collection(db, "products"), {
-    name,
-    code: "ID" + Date.now(),
-    category,
-    price,
-    discountPrice,
-    discountPercent,
-    stock,
-    active: true, // 👈 por defecto visible
-    image
-  });
+  name,
+  code,
+  category,
+  price,
+  cost, // 👈
+  discountPrice,
+  discountPercent,
+  stock,
+  active: true,
+  image
+});
+
 
   alert("✅ Producto creado correctamente");
 };
