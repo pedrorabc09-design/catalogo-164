@@ -752,7 +752,12 @@ async function addToCart(name){
 
 
 function buyNow(name){addToCart(name);toggleCart(true)}
-function goHome(){renderAll()}
+function goHome(){
+  checkoutInProgress = false;
+  sessionStorage.removeItem("checkoutConfirmed");
+  renderAll();
+}
+
 
 function saveCart(){
   localStorage.setItem("cart",JSON.stringify(CART));
@@ -802,11 +807,10 @@ function removeFromCart(name){
   
 
 async function processCheckout(customerName, customerPhone) {
-  if (checkoutInProgress || checkoutConfirmed) return;
+  if (checkoutInProgress) return;
 
-  checkoutInProgress = true;
-  checkoutConfirmed = true;
-  sessionStorage.setItem("checkoutConfirmed", "1");
+checkoutInProgress = true;
+
 
   const btn = document.getElementById("checkoutBtn");
   if (btn) {
@@ -874,6 +878,9 @@ if (!customerPhone) {
   CART = {};
   localStorage.removeItem("cart");
   renderCart();
+  checkoutConfirmed = true;
+  sessionStorage.setItem("checkoutConfirmed", "1");
+
 
   window.open(
   `https://wa.me/51942434659?text=${msg}`,
