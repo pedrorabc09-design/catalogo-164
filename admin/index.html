@@ -5,17 +5,155 @@
   <title>Panel Admin - IGNICAR TOYS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body{font-family:sans-serif;padding:20px;background:#f1f5f9}
-    h1{text-align:center;margin-bottom:20px}
-    table{width:100%;border-collapse:collapse;margin-bottom:20px}
-    th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}
-    th{background:#334155;color:white}
-    img.product-img{width:80px;height:50px;object-fit:contain}
-    input,select{width:100%;box-sizing:border-box;padding:4px}
-    button{padding:6px 10px;margin:2px;cursor:pointer}
-    #loginForm{max-width:300px;margin:50px auto;padding:20px;background:white;border-radius:10px;text-align:center}
-    #loginForm input{width:90%;margin:6px 0}
-    #newProductBtn{margin-bottom:10px;padding:8px 12px;background:#0ea5e9;color:white;border:none;border-radius:6px;cursor:pointer}
+    body{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding:20px;
+  background:#f1f5f9;
+  color:#0f172a;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:20px;
+  font-weight:700;
+}
+
+/* Contenedores */
+#adminPanel{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+/* Tablas */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-bottom:20px;
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+th,td{
+  padding:10px;
+  text-align:left;
+  vertical-align:middle;
+}
+
+th{
+  background:#0f172a;
+  color:white;
+  font-weight:600;
+}
+
+tr:nth-child(even){
+  background:#f8fafc;
+}
+
+/* Inputs */
+input, select{
+  width:100%;
+  padding:6px 8px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+}
+
+/* Checkbox Activo */
+.activeInput{
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+
+/* Botones */
+button{
+  padding:7px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all .2s ease;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  opacity:.95;
+}
+
+/* Botones específicos */
+.saveBtn{
+  background:#22c55e;
+  color:white;
+}
+
+.deleteBtn{
+  background:#ef4444;
+  color:white;
+}
+
+#newProductBtn{
+  background:#0ea5e9;
+  color:white;
+}
+
+#saveAllBtn{
+  background:#6366f1;
+  color:white;
+}
+
+/* Imágenes */
+img.product-img{
+  width:80px;
+  height:50px;
+  object-fit:contain;
+  background:white;
+  border-radius:6px;
+}
+
+/* Login */
+#loginForm{
+  max-width:320px;
+  margin:80px auto;
+  padding:25px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 15px 30px rgba(0,0,0,.15);
+  text-align:center;
+}
+
+  .admin-tabs{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:20px;
+}
+
+.admin-tabs button{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+
+.admin-tabs button:hover{
+  background:#c7d2fe;
+}
+
+
+  @media(max-width:768px){
+  table{
+    font-size:13px;
+  }
+
+  h1{
+    font-size:20px;
+  }
+
+  button{
+    padding:6px 8px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -31,7 +169,7 @@
 <div id="adminPanel" style="display:none">
   <h1>📦 Panel Admin</h1>
   <!-- 🔀 MENÚ ADMIN -->
-<div id="adminMenu" style="margin-bottom:20px;text-align:center">
+<div id="adminMenu" class="admin-tabs">
   <button onclick="showSection('productsSection')">📦 Productos</button>
   <button onclick="showSection('ordersSection')">🧾 Pedidos</button>
 </div>
@@ -130,7 +268,11 @@ onSnapshot(collection(db,"orders"), snapshot=>{
 
   snapshot.forEach(docSnap=>{
     const o = docSnap.data();
-    ordersCache.push(o);
+    ordersCache.push({
+  id: docSnap.id,
+  ...o
+});
+
 
     const date = o.createdAt?.toDate
       ? o.createdAt.toDate().toLocaleString()
@@ -145,7 +287,7 @@ onSnapshot(collection(db,"orders"), snapshot=>{
   <td>${o.customerPhone || "-"}</td>
   <td>S/ ${o.total || 0}</td>
   <td>
-    <button onclick='showDetail(${JSON.stringify(o)})'>
+    <button onclick="showDetailById('${docSnap.id}')">
       Ver
     </button>
   </td>
@@ -173,12 +315,23 @@ Productos:
 `;
 
   if(order.items){
-  order.items.forEach(i=>{
-    text += `• ${i.name} x${i.quantity} - S/ ${i.price}\n`;
-  });
+    order.items.forEach(i=>{
+      text += `• ${i.name} x${i.quantity} - S/ ${i.price}\n`;
+    });
   }  
   alert(text);
 };
+
+// 🔍 Ver detalle por ID (SEGURO)
+window.showDetailById = (id)=>{
+  const order = ordersCache.find(o => o.orderNumber === id || o.id === id);
+  if(!order){
+    alert("Pedido no encontrado");
+    return;
+  }
+  showDetail(order);
+};
+
 
 window.deleteOrder = async (id)=>{
   if(!confirm("⚠️ ¿Eliminar este pedido definitivamente?")) return;
@@ -312,8 +465,8 @@ function listenProducts(){
 
         <td><input type="number" value="${p.stock || 0}" class="stockInput"></td>
 
-        <td>
-          <input type="checkbox" class="activeInput" ${p.active ? "checked" : ""}>
+        <td style="text-align:center">
+        <input type="checkbox" class="activeInput" ${p.active ? "checked" : ""}>
         </td>
 
         <td>
@@ -407,6 +560,11 @@ function bindEvents(){
       await updateDoc(doc(db,"products",id),{
         code, category, price, discountPrice, stock, active, discountPercent
       });
+      
+tr.style.background = "#dcfce7";
+setTimeout(()=>{
+  tr.style.background = "";
+}, 800);
 
       alert("✅ Producto actualizado");
     }
@@ -471,6 +629,11 @@ document
   .getElementById("loginBtn")
   .addEventListener("click", login);
 
+document.addEventListener("keydown", e=>{
+  if(e.key === "Enter" && loginForm.style.display !== "none"){
+    login();
+  }
+});
 </script>
 
 </body>
