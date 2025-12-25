@@ -24,7 +24,7 @@
   <h2>🔒 Admin Login</h2>
   <input type="text" id="username" placeholder="Usuario"><br>
   <input type="password" id="password" placeholder="Contraseña"><br>
-  <button onclick="login()">Ingresar</button>
+  <button id="loginBtn">Ingresar</button>
   <p id="loginError" style="color:red"></p>
 </div>
 
@@ -218,7 +218,7 @@ window.exportExcel = ()=>{
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "1234";
 
-window.login = ()=>{
+function login(){
   const u = document.getElementById("username").value;
   const p = document.getElementById("password").value;
   const error = document.getElementById("loginError");
@@ -465,7 +465,6 @@ window.createNewProduct = async () => {
 
   alert("✅ Producto creado correctamente");
 };
-}
 </script>
 
 </body>
