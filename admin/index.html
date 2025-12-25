@@ -68,16 +68,16 @@
 
   <table>
     <thead>
-      <tr>
-      <th>Pedido</th>
-      <th>Cliente</th>
-      <th>Celular</th>
-      <th>Fecha</th>
-      <th>Total</th>
-      <th>Estado</th>
-      <th>Detalle</th>
+  <tr>
+    <th>Fecha</th>
+    <th>Pedido</th>
+    <th>Cliente</th>
+    <th>Celular</th>
+    <th>Total</th>
+    <th>Detalle</th>
   </tr>
 </thead>
+
 
     <tbody id="ordersTable"></tbody>
   </table>
@@ -131,36 +131,40 @@ onSnapshot(collection(db,"orders"), snapshot=>{
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
+  <td>${date}</td>
   <td>${o.orderNumber || docSnap.id}</td>
   <td>${o.customerName || "-"}</td>
   <td>${o.customerPhone || "-"}</td>
-  <td>${date}</td>
   <td>S/ ${o.total || 0}</td>
   <td>
-    <span class="status ${o.status}">
-      ${o.status}
-    </span>
-  </td>
-  <td>
-    <button onclick='showDetail(${JSON.stringify(o.items)})'>
+    <button onclick='showDetail(${JSON.stringify(o)})'>
       Ver
     </button>
   </td>
 `;
-
 
     table.appendChild(tr);
   });
 });
 
 // 👁️ Ver detalle
-window.showDetail = (items)=>{
-  let text = "Productos:\n\n";
-  items.forEach(i=>{
+window.showDetail = (order)=>{
+  let text = `
+Pedido: ${order.orderNumber || "-"}
+Cliente: ${order.customerName || "-"}
+Celular: ${order.customerPhone || "-"}
+Total: S/ ${order.total || 0}
+
+Productos:
+`;
+
+  order.items.forEach(i=>{
     text += `• ${i.name} x${i.quantity} - S/ ${i.price}\n`;
   });
+
   alert(text);
 };
+
 
 // 📤 Exportar Excel
 window.exportExcel = ()=>{
