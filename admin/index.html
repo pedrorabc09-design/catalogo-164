@@ -190,6 +190,8 @@ img.product-img{
         <th>Costo</th>
         <th>Precio Desc.</th>
         <th>Stock</th>
+        <th>Unidades Compra</th>
+        <th>Costo Total Compra</th>
         <th>Activo</th>
         <th>Guardar</th>
         <th>Eliminar</th>
@@ -371,6 +373,7 @@ window.exportExcel = ()=>{
 
   const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
 
+
   /* 🎨 Ancho columnas */
   wsSummary["!cols"] = [
     { wch: 16 },
@@ -503,7 +506,8 @@ sortedOrders.forEach(o=>{
         product: name,
         qty: 0,
         price,
-        cost
+        cost,
+        stock: 0
       };
     }
 
@@ -511,28 +515,46 @@ sortedOrders.forEach(o=>{
   });
 });
 
+// traer stock actual desde la tabla de productos
+document.querySelectorAll("#productsTable tr").forEach(tr=>{
+  const name = tr.querySelector("td:nth-child(2)")?.innerText || "";
+  const stock = parseInt(tr.querySelector(".stockInput")?.value || 0);
+
+  if(productMap[name]){
+    productMap[name].stock = stock;
+  }
+});
+
 // construir filas
 const profitRows = Object.values(productMap).map(p=>{
   const revenueTotal = p.qty * p.price;
-  const costTotal = p.qty * p.cost;
-  const profitUnit = p.price - p.cost;
-  const profitTotal = revenueTotal - costTotal;
+  const costTotalSales = p.qty * p.cost;
+  const stockCostTotal = p.stock * p.cost;
 
   return {
     Producto: p.product,
     "Total Vendidos": p.qty,
     "Costo Unitario": p.cost,
     "Precio Venta Unitario": p.price,
-    "Ingreso Total": revenueTotal,
-    "Costo Total": costTotal,
-    "Utilidad por Unidad": profitUnit,
-    "Utilidad Total": profitTotal
+    "Ingreso Total Ventas": revenueTotal,
+    "Costo Total Ventas": costTotalSales,
+    "Utilidad por Unidad": p.price - p.cost,
+    "Utilidad Total Ventas": revenueTotal - costTotalSales,
+    "Stock Actual": p.stock,
+    "Costo Total Stock": stockCostTotal
   };
 });
 
 const wsProfit = XLSX.utils.json_to_sheet(profitRows);
 
+wsProfit["!autofilter"] = {
+  ref: `A1:J${profitRows.length + 1}`
+};
+
+
 /* columnas */
+
+/* filtros */
 wsProfit["!cols"] = [
   { wch: 32 },
   { wch: 16 },
@@ -541,13 +563,11 @@ wsProfit["!cols"] = [
   { wch: 18 },
   { wch: 18 },
   { wch: 20 },
+  { wch: 18 },
+  { wch: 16 },
   { wch: 18 }
 ];
 
-/* filtros */
-wsProfit["!autofilter"] = {
-  ref: `A1:H${profitRows.length + 1}`
-};
 
 /* encabezados */
 Object.keys(profitRows[0] || {}).forEach((_, c)=>{
@@ -563,7 +583,7 @@ Object.keys(profitRows[0] || {}).forEach((_, c)=>{
 
 /* formato moneda */
 for(let r=1; r<=profitRows.length; r++){
-  [2,3,4,5,6,7].forEach(c=>{
+  [2,3,4,5,6,7,9].forEach(c=>{
     const cell = wsProfit[XLSX.utils.encode_cell({ r, c })];
     if(cell){
       cell.t = "n";
@@ -572,11 +592,34 @@ for(let r=1; r<=profitRows.length; r++){
   });
 }
 
+const inventoryRows = [];
+
+// recorrer productos actuales
+document.querySelectorAll("#productsTable tr").forEach(tr=>{
+  const name = tr.querySelector("td:nth-child(2)")?.innerText || "";
+  const stock = parseInt(tr.querySelector(".stockInput")?.value || 0);
+  const cost = parseFloat(tr.querySelector(".costInput")?.value || 0);
+  const price = parseFloat(tr.querySelector(".priceInput")?.value || 0);
+
+  inventoryRows.push({
+    Producto: name,
+    Stock: stock,
+    "Costo Unitario": cost,
+    "Costo Total Stock": stock * cost,
+    "Precio Venta": price,
+    "Valor Potencial Venta": stock * price,
+    "Ganancia Potencial": (stock * price) - (stock * cost)
+  });
+});
+
+const wsInventory = XLSX.utils.json_to_sheet(inventoryRows);
+
   
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, wsSummary, "Pedidos");
   XLSX.utils.book_append_sheet(wb, wsDetail, "Detalle & Rentabilidad");
   XLSX.utils.book_append_sheet(wb, wsProfit, "Rentabilidad por Producto");
+  XLSX.utils.book_append_sheet(wb, wsInventory, "Inventario & Capital");
 
 
   XLSX.writeFile(wb, "pedidos-ignicar-toys.xlsx");
@@ -674,19 +717,12 @@ function listenProducts(){
         </td>
 
         <td><input type="number" value="${p.price || 0}" class="priceInput"></td>
-
-        <td>
-        <input type="number"
-        value="${p.cost || 0}"
-        class="costInput"
-        style="background:#fef3c7"
-        >
-        </td>
-
-<td><input type="number" value="${p.discountPrice || 0}" class="discountInput"></td>
-
-
+        <td><input type="number" value="${p.cost || 0}"  class="costInput"  style="background:#fef3c7"></td>
+        <td><input type="number" value="${p.discountPrice || 0}" class="discountInput"></td>
         <td><input type="number" value="${p.stock || 0}" class="stockInput"></td>
+        <td><input type="number" class="unitsInput" placeholder="0"></td>
+        <td><input type="number" class="totalCostInput" placeholder="0"></td>
+
 
         <td style="text-align:center">
         <input type="checkbox" class="activeInput" ${p.active ? "checked" : ""}>
@@ -709,6 +745,26 @@ tr.querySelectorAll("input, select").forEach(el => {
     tr.style.background = "#fff7ed";
   };
 });
+
+  const unitsInput = tr.querySelector(".unitsInput");
+  const totalCostInput = tr.querySelector(".totalCostInput");
+  const costInput = tr.querySelector(".costInput");
+
+  function autoCalcUnitCost(){
+  const units = parseFloat(unitsInput.value);
+  const total = parseFloat(totalCostInput.value);
+
+  if(units > 0 && total > 0){
+    costInput.value = (total / units).toFixed(2);
+    tr.dataset.changed = "true";
+    tr.style.background = "#fff7ed";
+  }
+}
+
+unitsInput.oninput = autoCalcUnitCost;
+totalCostInput.oninput = autoCalcUnitCost;
+
+    
     });
     bindEvents();
   });
@@ -848,7 +904,7 @@ window.createNewProduct = async () => {
 
   await addDoc(collection(db, "products"), {
   name,
-  code,
+  code: "ID" + Date.now(),
   category,
   price,
   cost, // 👈
